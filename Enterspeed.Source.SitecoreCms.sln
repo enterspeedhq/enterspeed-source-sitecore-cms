@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30907.101
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enterspeed.Source.SitecoreCms.V9", "src\Enterspeed.Source.SitecoreCms.V9\Enterspeed.Source.SitecoreCms.V9.csproj", "{799B0263-B2B2-4547-9F69-9837FB8EAC72}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Enterspeed.Source.SitecoreCms.V9", "Enterspeed.Source.SitecoreCms.V9", "{9DD96787-C3B7-427A-8B20-5571AEF4E92B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{799B0263-B2B2-4547-9F69-9837FB8EAC72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{799B0263-B2B2-4547-9F69-9837FB8EAC72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{799B0263-B2B2-4547-9F69-9837FB8EAC72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{799B0263-B2B2-4547-9F69-9837FB8EAC72}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{799B0263-B2B2-4547-9F69-9837FB8EAC72} = {9DD96787-C3B7-427A-8B20-5571AEF4E92B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = lib\packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;lib\packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;lib\packages\EnterpriseLibrary.TransientFaultHandling.Caching.6.0.1304.0\lib\NET45;lib\packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45;lib\packages\EnterpriseLibrary.TransientFaultHandling.ServiceBus.6.0.1304.0\lib\NET45;lib\packages\EnterpriseLibrary.TransientFaultHandling.WindowsAzure.Storage.6.0.1304.0\lib\NET45;lib\packages\EnterpriseLibrary.TransientFaultHandling.Configuration.6.0.1304.0\lib\NET45
+		SolutionGuid = {18883A81-ACF4-4B07-9002-B1BDFAAC75F0}
+	EndGlobalSection
+EndGlobal
