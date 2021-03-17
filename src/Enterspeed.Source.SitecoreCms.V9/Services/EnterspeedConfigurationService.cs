@@ -1,18 +1,39 @@
-﻿using Enterspeed.Source.SitecoreCms.V9.Exceptions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Enterspeed.Source.SitecoreCms.V9.Exceptions;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Sitecore.Abstractions;
+using Sitecore.Data.Items;
+using Sitecore.Globalization;
+using Sitecore.Links;
+using Sitecore.Links.UrlBuilders;
+using Sitecore.Sites;
+using Version = Sitecore.Data.Version;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Services
 {
     public class EnterspeedConfigurationService : IEnterspeedConfigurationService
     {
         private readonly BaseSettings _settings;
+        private readonly BaseLanguageManager _languageManager;
+        private readonly BaseItemManager _itemManager;
+        private readonly BaseLinkManager _linkManager;
+        private readonly BaseSiteContextFactory _siteContextFactory;
         private EnterspeedSitecoreConfiguration _configuration;
 
         public EnterspeedConfigurationService(
-            BaseSettings settings)
+            BaseSettings settings,
+            BaseLanguageManager languageManager,
+            BaseItemManager itemManager,
+            BaseLinkManager linkManager,
+            BaseSiteContextFactory siteContextFactory)
         {
             _settings = settings;
+            _languageManager = languageManager;
+            _itemManager = itemManager;
+            _linkManager = linkManager;
+            _siteContextFactory = siteContextFactory;
         }
 
         public EnterspeedSitecoreConfiguration GetConfiguration()
@@ -22,11 +43,50 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 return _configuration;
             }
 
-            _configuration = new EnterspeedSitecoreConfiguration
+            var configuration = new EnterspeedSitecoreConfiguration
             {
                 BaseUrl = GetEnterspeedBaseUrl(_settings),
-                ApiKey = GetEnterspeedApiKey(_settings)
+                ApiKey = GetEnterspeedApiKey(_settings),
+                ItemNotFoundUrl = GetItemNotFoundUrl(_settings),
+                IsHttpsEnabled = GetIsHttpsEnabled(_settings)
             };
+
+            foreach (SiteContext siteContext in GetEnterspeedEnabledSites(_settings))
+            {
+                Language siteLanguage = _languageManager.GetLanguage(siteContext.Language);
+
+                Item startPathItem = _itemManager.GetItem(siteContext.StartPath, siteLanguage, Version.Latest, siteContext.Database);
+                if (startPathItem == null || startPathItem.Versions.Count == 0)
+                {
+                    continue;
+                }
+
+                string name = siteContext.SiteInfo.Name;
+                string startPathUrl = _linkManager.GetItemUrl(startPathItem, new ItemUrlBuilderOptions
+                {
+                    SiteResolving = true,
+                    Site = siteContext,
+                    LanguageEmbedding = LanguageEmbedding.Never,
+                    AlwaysIncludeServerUrl = true
+                });
+
+                if (configuration.IsHttpsEnabled &&
+                    startPathUrl.StartsWith("https://") == false)
+                {
+                    startPathUrl = startPathUrl.Replace("http://", "https://");
+                }
+
+                var enterspeedSiteInfo = new EnterspeedSiteInfo
+                {
+                    Name = name,
+                    BaseUrl = startPathUrl,
+                    StartPath = siteContext.StartPath
+                };
+
+                configuration.SiteInfo.Add(enterspeedSiteInfo);
+            }
+
+            _configuration = configuration;
 
             return _configuration;
         }
@@ -53,6 +113,48 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             }
 
             return apiKey;
+        }
+
+        private static string GetItemNotFoundUrl(BaseSettings settings)
+        {
+            string url = settings.GetSetting("ItemNotFoundUrl", null);
+            if (string.IsNullOrEmpty(url))
+            {
+                throw new EnterspeedSitecoreException(
+                    "Unable to retrieve Enterspeed API Key from the Sitecore Setting \"ItemNotFoundUrl\".");
+            }
+
+            return url;
+        }
+
+        private static bool GetIsHttpsEnabled(BaseSettings settings)
+        {
+            string value = settings.GetSetting("Enterspeed.EnableHttps", bool.FalseString);
+
+            return bool.Parse(value);
+        }
+
+        private List<SiteContext> GetEnterspeedEnabledSites(BaseSettings settings)
+        {
+            string enabledSites = settings.GetSetting("Enterspeed.EnabledSites", null);
+            if (string.IsNullOrEmpty(enabledSites))
+            {
+                throw new EnterspeedSitecoreException(
+                    "Unable to retrieve Enterspeed Enabled Sites from the Sitecore Setting \"Enterspeed.EnabledSites\".");
+            }
+
+            List<SiteContext> sites = enabledSites
+                .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(_siteContextFactory.GetSiteContext)
+                .ToList();
+
+            if (sites.Any() == false)
+            {
+                throw new EnterspeedSitecoreException(
+                    "No sites seem to be configured in the Sitecore Setting \"Enterspeed.EnabledSites\".");
+            }
+
+            return sites;
         }
     }
 }

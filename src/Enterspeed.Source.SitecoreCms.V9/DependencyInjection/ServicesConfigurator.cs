@@ -40,6 +40,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
         private static void RegisterFieldConverters(IServiceCollection services)
         {
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultSingleLineTextFieldValueConverter>();
+            services.AddSingleton<IEnterspeedFieldValueConverter, DefaultRichTextFieldValueConverter>();
         }
     }
 }

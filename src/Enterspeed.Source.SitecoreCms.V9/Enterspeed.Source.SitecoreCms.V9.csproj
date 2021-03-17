@@ -47,8 +47,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Enterspeed.Source.Sdk, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\NuGet.Local\Enterspeed.Source.Sdk.dll</HintPath>
+      <HintPath>..\..\lib\packages\Enterspeed.Source.Sdk.1.0.0\lib\netstandard2.0\Enterspeed.Source.Sdk.dll</HintPath>
     </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.4.9.5, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\..\lib\packages\HtmlAgilityPack.1.4.9.5\lib\Net45\HtmlAgilityPack.dll</HintPath>
@@ -199,8 +198,8 @@
     <Reference Include="System.Text.Encodings.Web, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\lib\packages\System.Text.Encodings.Web.5.0.0\lib\net461\System.Text.Encodings.Web.dll</HintPath>
     </Reference>
-    <Reference Include="System.Text.Json, Version=5.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\System.Text.Json.5.0.1\lib\net461\System.Text.Json.dll</HintPath>
+    <Reference Include="System.Text.Json, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\System.Text.Json.5.0.0\lib\net461\System.Text.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\..\lib\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
@@ -235,6 +234,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Configuration\EnterspeedSiteInfo.cs" />
     <Compile Include="Models\Mappers\SitecoreContentEntityModelMapper.cs" />
     <Compile Include="Models\Configuration\EnterspeedSitecoreConfiguration.cs" />
     <Compile Include="DependencyInjection\ServicesConfigurator.cs" />
@@ -245,6 +245,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\EnterspeedSitecoreConfigurationProvider.cs" />
     <Compile Include="Serialization\EnterspeedJsonSerializer.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultRichTextFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultSingleLineTextFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\IEnterspeedDataSourceConverter.cs" />
     <Compile Include="Services\DataProperties\IEnterspeedFieldValueConverter.cs" />

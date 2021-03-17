@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
+using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties;
 using Sitecore.Collections;
 using Sitecore.Data.Fields;
@@ -13,30 +14,39 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
     {
         private const string MetaData = "metaData";
 
+        private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
         private readonly IContentIdentityService _identityService;
         private readonly IEnumerable<IEnterspeedFieldValueConverter> _fieldValueConverters;
 
         public EnterspeedPropertyService(
+            IEnterspeedConfigurationService enterspeedConfigurationService,
             IContentIdentityService identityService,
             IEnumerable<IEnterspeedFieldValueConverter> fieldValueConverters)
         {
+            _enterspeedConfigurationService = enterspeedConfigurationService;
             _identityService = identityService;
             _fieldValueConverters = fieldValueConverters;
         }
 
         public IDictionary<string, IEnterspeedProperty> GetProperties(Item item)
         {
-            IDictionary<string, IEnterspeedProperty> properties = ConvertFields(item.Fields);
+            EnterspeedSiteInfo siteOfItem = _enterspeedConfigurationService
+                .GetConfiguration()
+                .SiteInfo
+                .FirstOrDefault(x => x.IsItemOfSite(item));
+
+            IDictionary<string, IEnterspeedProperty> properties = ConvertFields(item, siteOfItem);
 
             properties.Add(MetaData, CreateMetaData(item));
 
             return properties;
         }
 
-        private IDictionary<string, IEnterspeedProperty> ConvertFields(FieldCollection fieldsCollection)
+        private IDictionary<string, IEnterspeedProperty> ConvertFields(Item item, EnterspeedSiteInfo siteInfo)
         {
             var output = new Dictionary<string, IEnterspeedProperty>();
 
+            FieldCollection fieldsCollection = item.Fields;
             if (fieldsCollection == null || fieldsCollection.Any() == false)
             {
                 return output;
@@ -61,7 +71,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
                 IEnterspeedFieldValueConverter converter = _fieldValueConverters.FirstOrDefault(x => x.CanConvert(field));
 
-                var value = converter?.Convert(field);
+                var value = converter?.Convert(item, field, siteInfo);
                 if (value == null)
                 {
                     continue;

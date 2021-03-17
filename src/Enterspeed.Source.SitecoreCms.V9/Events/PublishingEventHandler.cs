@@ -1,5 +1,6 @@
 ﻿using System;
 using Enterspeed.Source.Sdk.Api.Services;
+using Enterspeed.Source.Sdk.Domain.Connection;
 using Enterspeed.Source.SitecoreCms.V9.Models;
 using Enterspeed.Source.SitecoreCms.V9.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V9.Services;
@@ -15,17 +16,20 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
     public class PublishingEventHandler
     {
         private readonly BaseItemManager _itemManager;
+        private readonly BaseLog _log;
         private readonly SitecoreContentEntityModelMapper _mapper;
         private readonly IContentIdentityService _identityService;
         private readonly IEnterspeedIngestService _enterspeedIngestService;
 
         public PublishingEventHandler(
             BaseItemManager itemManager,
+            BaseLog log,
             SitecoreContentEntityModelMapper mapper,
             IContentIdentityService identityService,
             IEnterspeedIngestService enterspeedIngestService)
         {
             _itemManager = itemManager;
+            _log = log;
             _mapper = mapper;
             _identityService = identityService;
             _enterspeedIngestService = enterspeedIngestService;
@@ -74,14 +78,35 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
             {
                 string id = _identityService.GetId(context.ItemId.Guid, language);
 
-                _enterspeedIngestService.Delete(id);
+                Response deleteResponse = _enterspeedIngestService.Delete(id);
+
+                if (IsSuccessStatusCode(deleteResponse.StatusCode) == false)
+                {
+                    _log.Error(deleteResponse.Message ?? deleteResponse.Exception.Message, deleteResponse.Exception, this);
+                }
+                else
+                {
+                    _log.Info(deleteResponse.Message, this);
+                }
 
                 return;
             }
 
-            _enterspeedIngestService.Save(sitecoreContentEntity);
+            Response saveResponse = _enterspeedIngestService.Save(sitecoreContentEntity);
 
-            // TODO
+            if (IsSuccessStatusCode(saveResponse.StatusCode) == false)
+            {
+                _log.Error(saveResponse.Message ?? saveResponse.Exception.Message, saveResponse.Exception, this);
+            }
+            else
+            {
+                _log.Info(saveResponse.Message, this);
+            }
+        }
+
+        private static bool IsSuccessStatusCode(int statusCode)
+        {
+            return statusCode >= 200 && statusCode <= 299;
         }
     }
 }
