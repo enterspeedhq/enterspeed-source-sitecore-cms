@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Enterspeed.Source.Sdk.Api.Services;
 using Enterspeed.Source.SitecoreCms.V9.Mappers;
 using Enterspeed.Source.SitecoreCms.V9.Models;
+using Enterspeed.Source.SitecoreCms.V9.Services;
 using Sitecore.Abstractions;
-using Sitecore.Data.Events;
 using Sitecore.Data.Items;
-using Sitecore.Events;
 using Sitecore.Globalization;
 using Sitecore.Publishing;
 using Sitecore.Publishing.Pipelines.PublishItem;
@@ -17,43 +14,21 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
 {
     public class PublishingEventHandler
     {
-        private readonly BaseLanguageManager _languageManager;
         private readonly BaseItemManager _itemManager;
         private readonly SitecoreContentEntityModelMapper _mapper;
+        private readonly IContentIdentityService _identityService;
         private readonly IEnterspeedIngestService _enterspeedIngestService;
 
         public PublishingEventHandler(
-            BaseLanguageManager languageManager,
             BaseItemManager itemManager,
             SitecoreContentEntityModelMapper mapper,
+            IContentIdentityService identityService,
             IEnterspeedIngestService enterspeedIngestService)
         {
-            _languageManager = languageManager;
             _itemManager = itemManager;
             _mapper = mapper;
+            _identityService = identityService;
             _enterspeedIngestService = enterspeedIngestService;
-        }
-
-        public void OnComplete(object sender, EventArgs args)
-        {
-            var publishOptions =
-                Event.ExtractParameter<IEnumerable<DistributedPublishOptions>>(args, 0)?.ToList() ??
-                new List<DistributedPublishOptions>();
-            if (publishOptions.Any() == false)
-            {
-                return;
-            }
-
-            foreach (var publishOption in publishOptions)
-            {
-                // For whatever reason, if the target database is not web, we skip this
-                if (publishOption.TargetDatabaseName.Equals("web", StringComparison.OrdinalIgnoreCase) == false)
-                {
-                    continue;
-                }
-
-                string culture = publishOption.LanguageName;
-            }
         }
 
         public void OnItemProcessed(object sender, EventArgs args)
@@ -67,8 +42,10 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 return;
             }
 
-            if (context.Action != PublishAction.DeleteTargetItem &&
-                context.Action != PublishAction.PublishVersion)
+            var itemIsDeleted = context.Action == PublishAction.DeleteTargetItem;
+            var itemIsPublished = context.Action == PublishAction.PublishVersion;
+
+            if (itemIsDeleted == false && itemIsPublished == false)
             {
                 return;
             }
@@ -81,7 +58,26 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 return;
             }
 
+            // Skip, if the item published is not a content item
+            if (item.Paths.FullPath.StartsWith("/sitecore/content", StringComparison.OrdinalIgnoreCase) == false)
+            {
+                return;
+            }
+
             SitecoreContentEntity sitecoreContentEntity = _mapper.Map(item);
+            if (sitecoreContentEntity == null)
+            {
+                return;
+            }
+
+            if (itemIsDeleted)
+            {
+                string id = _identityService.GetId(context.ItemId.Guid, language);
+
+                _enterspeedIngestService.Delete(id);
+
+                return;
+            }
 
             _enterspeedIngestService.Save(sitecoreContentEntity);
 

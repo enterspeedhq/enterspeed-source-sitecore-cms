@@ -1,5 +1,6 @@
 ﻿using System;
 using Sitecore.Data.Items;
+using Sitecore.Globalization;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Services
 {
@@ -12,12 +13,12 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 return null;
             }
 
-            return GetId(item.ID.Guid, item.Language.Name);
+            return GetId(item.ID.Guid, item.Language);
         }
 
-        public string GetId(Guid itemId, string language)
+        public string GetId(Guid itemId, Language language)
         {
-            return $"{itemId:N}-{language}";
+            return $"{itemId:N}-{language.Name}";
         }
     }
 }

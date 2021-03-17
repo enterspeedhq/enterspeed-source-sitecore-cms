@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
+using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties;
 using Sitecore.Collections;
+using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Services
@@ -12,11 +14,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
         private const string MetaData = "metaData";
 
         private readonly IContentIdentityService _identityService;
+        private readonly IEnumerable<IEnterspeedFieldValueConverter> _fieldValueConverters;
 
         public EnterspeedPropertyService(
-            IContentIdentityService identityService)
+            IContentIdentityService identityService,
+            IEnumerable<IEnterspeedFieldValueConverter> fieldValueConverters)
         {
             _identityService = identityService;
+            _fieldValueConverters = fieldValueConverters;
         }
 
         public IDictionary<string, IEnterspeedProperty> GetProperties(Item item)
@@ -28,13 +33,41 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             return properties;
         }
 
-        private IDictionary<string, IEnterspeedProperty> ConvertFields(FieldCollection fields)
+        private IDictionary<string, IEnterspeedProperty> ConvertFields(FieldCollection fieldsCollection)
         {
             var output = new Dictionary<string, IEnterspeedProperty>();
 
-            if (fields == null || fields.Any() == false)
+            if (fieldsCollection == null || fieldsCollection.Any() == false)
             {
                 return output;
+            }
+
+            // Exclude system fields
+            List<Field> fields = fieldsCollection.Where(field =>
+                    field.InnerItem.Paths.FullPath.StartsWith("/sitecore/templates/system", StringComparison.OrdinalIgnoreCase) == false)
+                .ToList();
+
+            if (fields.Any() == false)
+            {
+                return output;
+            }
+
+            foreach (Field field in fields)
+            {
+                if (field == null)
+                {
+                    continue;
+                }
+
+                IEnterspeedFieldValueConverter converter = _fieldValueConverters.FirstOrDefault(x => x.CanConvert(field));
+
+                var value = converter?.Convert(field);
+                if (value == null)
+                {
+                    continue;
+                }
+
+                output.Add(field.Name, value);
             }
 
             return output;
@@ -43,6 +76,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
         private IEnterspeedProperty CreateMetaData(Item item)
         {
             var paths = item.Paths.LongID.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+
+            // TODO - KEK: revisit / refactor to more pretty solution
             paths.RemoveAt(0); // Remove the first Sitecore item
             paths.RemoveAt(0); // Remove the first Content item
 
@@ -52,7 +87,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             {
                 ["name"] = new StringEnterspeedProperty("name", item.Name),
                 ["displayName"] = new StringEnterspeedProperty("name", item.DisplayName),
-                ["culture"] = new StringEnterspeedProperty("culture", item.Language.Name),
+                ["language"] = new StringEnterspeedProperty("language", item.Language.Name),
                 ["sortOrder"] = new NumberEnterspeedProperty("sortOrder", item.Appearance.Sortorder),
                 ["level"] = new NumberEnterspeedProperty("level", level),
                 ["createDate"] = new StringEnterspeedProperty("createDate", item.Statistics.Created.ToString("yyyy-MM-ddTHH:mm:ss")),
@@ -72,11 +107,12 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 .Select(Guid.Parse)
                 .ToList();
 
+            // TODO - KEK: revisit / refactor to more pretty solution
             ids.RemoveAt(0); // Remove the first Sitecore item
             ids.RemoveAt(0); // Remove the first Content item
 
             var properties = ids
-                .Select(x => new StringEnterspeedProperty(null, _identityService.GetId(x, item.Language.Name)))
+                .Select(x => new StringEnterspeedProperty(null, _identityService.GetId(x, item.Language)))
                 .ToArray();
 
             return properties;
