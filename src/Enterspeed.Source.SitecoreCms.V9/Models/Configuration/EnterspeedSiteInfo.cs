@@ -13,6 +13,11 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Configuration
 
         public bool IsItemOfSite(Item item)
         {
+            if (string.IsNullOrEmpty(StartPath))
+            {
+                return false;
+            }
+
             if (item == null)
             {
                 return false;
