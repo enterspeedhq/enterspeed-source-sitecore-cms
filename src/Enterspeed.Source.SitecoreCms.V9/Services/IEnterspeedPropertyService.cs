@@ -6,6 +6,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 {
     public interface IEnterspeedPropertyService
     {
-        IDictionary<string, IEnterspeedProperty> GetProperties(Item item, string culture);
+        IDictionary<string, IEnterspeedProperty> GetProperties(Item item);
     }
 }

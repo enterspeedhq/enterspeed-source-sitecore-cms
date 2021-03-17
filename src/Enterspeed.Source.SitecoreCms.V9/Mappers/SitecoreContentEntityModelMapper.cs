@@ -22,19 +22,19 @@ namespace Enterspeed.Source.SitecoreCms.V9.Mappers
             _linkManager = linkManager;
         }
 
-        public SitecoreContentEntity Map(Item item, string culture)
+        public SitecoreContentEntity Map(Item item)
         {
             var output = new SitecoreContentEntity();
 
-            output.Id = _contentIdentityService.GetId(item, culture);
+            output.Id = _contentIdentityService.GetId(item);
             output.Type = item.TemplateName;
-            output.ParentId = _contentIdentityService.GetId(item.Parent, culture);
+            output.ParentId = _contentIdentityService.GetId(item.Parent);
             output.Url = _linkManager.GetItemUrl(item, new ItemUrlBuilderOptions
             {
                 AlwaysIncludeServerUrl = true
             });
 
-            output.Properties = _enterspeedPropertyService.GetProperties(item, culture);
+            output.Properties = _enterspeedPropertyService.GetProperties(item);
 
             return output;
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Enterspeed.Source.Sdk.Api.Services;
 using Enterspeed.Source.SitecoreCms.V9.Mappers;
 using Enterspeed.Source.SitecoreCms.V9.Models;
 using Sitecore.Abstractions;
@@ -19,15 +20,18 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
         private readonly BaseLanguageManager _languageManager;
         private readonly BaseItemManager _itemManager;
         private readonly SitecoreContentEntityModelMapper _mapper;
+        private readonly IEnterspeedIngestService _enterspeedIngestService;
 
         public PublishingEventHandler(
             BaseLanguageManager languageManager,
             BaseItemManager itemManager,
-            SitecoreContentEntityModelMapper mapper)
+            SitecoreContentEntityModelMapper mapper,
+            IEnterspeedIngestService enterspeedIngestService)
         {
             _languageManager = languageManager;
             _itemManager = itemManager;
             _mapper = mapper;
+            _enterspeedIngestService = enterspeedIngestService;
         }
 
         public void OnComplete(object sender, EventArgs args)
@@ -77,7 +81,11 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 return;
             }
 
-            SitecoreContentEntity sitecoreContentEntity = _mapper.Map(item, item.Language.Name);
+            SitecoreContentEntity sitecoreContentEntity = _mapper.Map(item);
+
+            _enterspeedIngestService.Save(sitecoreContentEntity);
+
+            // TODO
         }
     }
 }
