@@ -4,7 +4,7 @@ using Enterspeed.Source.Sdk.Api.Services;
 using Enterspeed.Source.Sdk.Domain.Connection;
 using Enterspeed.Source.Sdk.Domain.Services;
 using Enterspeed.Source.Sdk.Domain.SystemTextJson;
-using Enterspeed.Source.SitecoreCms.V9.Mappers;
+using Enterspeed.Source.SitecoreCms.V9.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V9.Providers;
 using Enterspeed.Source.SitecoreCms.V9.Serialization;
 using Enterspeed.Source.SitecoreCms.V9.Services;

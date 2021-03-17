@@ -1,7 +1,7 @@
 ﻿using System;
 using Enterspeed.Source.Sdk.Api.Services;
-using Enterspeed.Source.SitecoreCms.V9.Mappers;
 using Enterspeed.Source.SitecoreCms.V9.Models;
+using Enterspeed.Source.SitecoreCms.V9.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V9.Services;
 using Sitecore.Abstractions;
 using Sitecore.Data.Items;

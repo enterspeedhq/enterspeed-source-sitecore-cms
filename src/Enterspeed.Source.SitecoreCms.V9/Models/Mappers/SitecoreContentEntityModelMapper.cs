@@ -1,10 +1,9 @@
-﻿using Enterspeed.Source.SitecoreCms.V9.Models;
-using Enterspeed.Source.SitecoreCms.V9.Services;
+﻿using Enterspeed.Source.SitecoreCms.V9.Services;
 using Sitecore.Abstractions;
 using Sitecore.Data.Items;
 using Sitecore.Links.UrlBuilders;
 
-namespace Enterspeed.Source.SitecoreCms.V9.Mappers
+namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
 {
     public class SitecoreContentEntityModelMapper
     {

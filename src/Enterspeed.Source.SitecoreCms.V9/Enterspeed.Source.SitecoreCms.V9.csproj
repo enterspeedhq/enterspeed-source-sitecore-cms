@@ -235,7 +235,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Mappers\SitecoreContentEntityModelMapper.cs" />
+    <Compile Include="Models\Mappers\SitecoreContentEntityModelMapper.cs" />
     <Compile Include="Models\Configuration\EnterspeedSitecoreConfiguration.cs" />
     <Compile Include="DependencyInjection\ServicesConfigurator.cs" />
     <Compile Include="Events\PublishingEventHandler.cs" />
