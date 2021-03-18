@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
+﻿using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Sitecore.Abstractions;
 using Sitecore.Data.Items;
 using Sitecore.Links;
@@ -14,15 +12,18 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
         private readonly BaseSiteContextFactory _siteContextFactory;
         private readonly BaseLinkManager _linkManager;
+        private readonly BaseMediaManager _mediaManager;
 
         public EnterspeedSitecoreUrlService(
             IEnterspeedConfigurationService enterspeedConfigurationService,
             BaseSiteContextFactory siteContextFactory,
-            BaseLinkManager linkManager)
+            BaseLinkManager linkManager,
+            BaseMediaManager mediaManager)
         {
             _enterspeedConfigurationService = enterspeedConfigurationService;
             _siteContextFactory = siteContextFactory;
             _linkManager = linkManager;
+            _mediaManager = mediaManager;
         }
 
         public string GetItemUrl(Item item, bool enableLanguageEmbedding = false)
@@ -46,6 +47,30 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             }
 
             return _linkManager.GetItemUrl(item, urlBuilderOptions);
+        }
+
+        public string GetMediaUrl(MediaItem mediaItem)
+        {
+            var urlBuilderOptions = new MediaUrlBuilderOptions
+            {
+                AbsolutePath = true,
+                AlwaysIncludeServerUrl = true,
+                LanguageEmbedding = LanguageEmbedding.Never
+            };
+
+            string mediaUrl = _mediaManager.GetMediaUrl(mediaItem, urlBuilderOptions);
+            if (string.IsNullOrEmpty(mediaUrl))
+            {
+                return null;
+            }
+
+            if (mediaUrl.EndsWith(".ashx") &&
+                string.IsNullOrEmpty(mediaItem.Extension) == false)
+            {
+                mediaUrl = mediaUrl.Replace(".ashx", $".{mediaItem.Extension}");
+            }
+
+            return mediaUrl;
         }
     }
 }
