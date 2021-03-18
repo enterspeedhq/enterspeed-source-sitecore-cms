@@ -1,4 +1,5 @@
-﻿using Enterspeed.Source.Sdk.Api.Models.Properties;
+﻿using System;
+using Enterspeed.Source.Sdk.Api.Models.Properties;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
@@ -7,8 +8,34 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultImageFieldValueConverter : IEnterspeedFieldValueConverter
     {
-        public bool CanConvert(Field field) => throw new System.NotImplementedException();
+        private readonly IEnterspeedUrlService _urlService;
 
-        public IEnterspeedProperty Convert(Item item, Field field, EnterspeedSiteInfo siteInfo) => throw new System.NotImplementedException();
+        public DefaultImageFieldValueConverter(
+            IEnterspeedUrlService urlService)
+        {
+            _urlService = urlService;
+        }
+
+        public bool CanConvert(Field field)
+        {
+            return field != null && field.TypeKey.Equals("image", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public IEnterspeedProperty Convert(Item item, Field field, EnterspeedSiteInfo siteInfo)
+        {
+            ImageField imageField = field;
+            if (imageField?.MediaItem == null)
+            {
+                return null;
+            }
+
+            string mediaUrl = _urlService.GetMediaUrl(imageField.MediaItem);
+            if (string.IsNullOrEmpty(mediaUrl))
+            {
+                return null;
+            }
+
+            return new StringEnterspeedProperty(field.Name, mediaUrl);
+        }
     }
 }
