@@ -245,11 +245,16 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\EnterspeedSitecoreConfigurationProvider.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultCheckboxFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultChecklistFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultDateFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultDroplistFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultFileFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultGroupedDroplinkFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultGroupedDroplistFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultImageFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultIntegerFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultMultiLineTextFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultMultilistFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultNumberFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultRichTextFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultSingleLineTextFieldValueConverter.cs" />
