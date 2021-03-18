@@ -4,6 +4,7 @@ using System.Linq;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties;
+using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.Formatters;
 using Sitecore.Collections;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
@@ -16,15 +17,18 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
         private readonly IContentIdentityService _identityService;
+        private readonly EnterspeedDateFormatter _dateFormatter;
         private readonly IEnumerable<IEnterspeedFieldValueConverter> _fieldValueConverters;
 
         public EnterspeedPropertyService(
             IEnterspeedConfigurationService enterspeedConfigurationService,
             IContentIdentityService identityService,
+            EnterspeedDateFormatter dateFormatter,
             IEnumerable<IEnterspeedFieldValueConverter> fieldValueConverters)
         {
             _enterspeedConfigurationService = enterspeedConfigurationService;
             _identityService = identityService;
+            _dateFormatter = dateFormatter;
             _fieldValueConverters = fieldValueConverters;
         }
 
@@ -99,8 +103,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 ["language"] = new StringEnterspeedProperty("language", item.Language.Name),
                 ["sortOrder"] = new NumberEnterspeedProperty("sortOrder", item.Appearance.Sortorder),
                 ["level"] = new NumberEnterspeedProperty("level", level),
-                ["createDate"] = new StringEnterspeedProperty("createDate", item.Statistics.Created.ToString("yyyy-MM-ddTHH:mm:ss")),
-                ["updateDate"] = new StringEnterspeedProperty("updateDate", item.Statistics.Updated.ToString("yyyy-MM-ddTHH:mm:ss")),
+                ["createDate"] = new StringEnterspeedProperty("createDate", _dateFormatter.FormatDate(item.Statistics.Created)),
+                ["updateDate"] = new StringEnterspeedProperty("updateDate", _dateFormatter.FormatDate(item.Statistics.Updated)),
                 ["fullPath"] = new ArrayEnterspeedProperty("fullPath", GetItemFullPath(item))
             };
 

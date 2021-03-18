@@ -9,6 +9,7 @@ using Enterspeed.Source.SitecoreCms.V9.Providers;
 using Enterspeed.Source.SitecoreCms.V9.Services;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldConverters;
+using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.Formatters;
 using Microsoft.Extensions.DependencyInjection;
 using Sitecore.DependencyInjection;
 
@@ -26,6 +27,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
             services.AddSingleton<IEnterspeedConfigurationService, EnterspeedConfigurationService>();
             services.AddSingleton<IEnterspeedConfigurationProvider, EnterspeedSitecoreConfigurationProvider>();
             services.AddSingleton<IEnterspeedUrlService, EnterspeedSitecoreUrlService>();
+            services.AddSingleton<EnterspeedDateFormatter>();
 
             services.AddSingleton<IEnterspeedConnection>(provider =>
             {
@@ -41,6 +43,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultSingleLineTextFieldValueConverter>();
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultRichTextFieldValueConverter>();
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultCheckboxFieldValueConverter>();
+            services.AddSingleton<IEnterspeedFieldValueConverter, DefaultDateFieldValueConverter>();
         }
     }
 }
