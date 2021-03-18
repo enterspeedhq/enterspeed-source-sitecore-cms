@@ -40,6 +40,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
         {
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultSingleLineTextFieldValueConverter>();
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultRichTextFieldValueConverter>();
+            services.AddSingleton<IEnterspeedFieldValueConverter, DefaultCheckboxFieldValueConverter>();
         }
     }
 }

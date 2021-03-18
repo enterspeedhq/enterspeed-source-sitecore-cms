@@ -244,6 +244,15 @@
     <Compile Include="Pipelines\Initialize\InitializePipeline.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\EnterspeedSitecoreConfigurationProvider.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultCheckboxFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultDateFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultDateTimeFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultFileFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultImageFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultIntegerFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultMultiLineTextFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultNumberFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultPasswordFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultRichTextFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultSingleLineTextFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\IEnterspeedDataSourceConverter.cs" />
