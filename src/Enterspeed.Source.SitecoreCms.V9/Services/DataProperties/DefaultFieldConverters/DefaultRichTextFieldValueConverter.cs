@@ -78,7 +78,17 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
             foreach (var anchorNode in anchorNodes)
             {
                 var href = anchorNode.GetAttributeValue("href", string.Empty);
-                if (href.StartsWith("/") || href.StartsWith("~"))
+                if (string.IsNullOrEmpty(href))
+                {
+                    continue;
+                }
+
+                if (Uri.TryCreate(href, UriKind.RelativeOrAbsolute, out var uri) == false)
+                {
+                    continue;
+                }
+
+                if (uri.IsAbsoluteUri == false || href.StartsWith("/"))
                 {
                     anchorNode.SetAttributeValue("href", new Uri(baseUri, href).ToString());
                 }

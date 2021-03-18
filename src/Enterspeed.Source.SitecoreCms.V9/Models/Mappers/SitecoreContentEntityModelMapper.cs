@@ -1,8 +1,7 @@
 ﻿using System;
+using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Services;
-using Sitecore.Abstractions;
 using Sitecore.Data.Items;
-using Sitecore.Links.UrlBuilders;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
 {
@@ -10,44 +9,37 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
     {
         private readonly IContentIdentityService _contentIdentityService;
         private readonly IEnterspeedPropertyService _enterspeedPropertyService;
-        private readonly BaseLinkManager _linkManager;
+        private readonly IEnterspeedUrlService _urlService;
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
 
         public SitecoreContentEntityModelMapper(
             IContentIdentityService contentIdentityService,
             IEnterspeedPropertyService enterspeedPropertyService,
-            BaseLinkManager linkManager,
+            IEnterspeedUrlService urlService,
             IEnterspeedConfigurationService enterspeedConfigurationService)
         {
             _contentIdentityService = contentIdentityService;
             _enterspeedPropertyService = enterspeedPropertyService;
-            _linkManager = linkManager;
+            _urlService = urlService;
             _enterspeedConfigurationService = enterspeedConfigurationService;
         }
 
         public SitecoreContentEntity Map(Item item)
         {
-            var output = new SitecoreContentEntity();
-
-            output.Id = _contentIdentityService.GetId(item);
-            output.Type = item.TemplateName;
-            output.ParentId = _contentIdentityService.GetId(item.Parent);
-
-            string itemUrl = _linkManager.GetItemUrl(item, new ItemUrlBuilderOptions
+            var output = new SitecoreContentEntity
             {
-                SiteResolving = true,
-                AlwaysIncludeServerUrl = true
-            });
+                Id = _contentIdentityService.GetId(item),
+                Type = item.TemplateName,
+                Url = _urlService.GetItemUrl(item),
+                Properties = _enterspeedPropertyService.GetProperties(item)
+            };
 
-            if (_enterspeedConfigurationService.GetConfiguration().IsHttpsEnabled &&
-                itemUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase) == false)
+            EnterspeedSiteInfo siteInfo = _enterspeedConfigurationService.GetConfiguration().GetSite(item);
+            if (siteInfo != null &&
+                item.Paths.FullPath.Equals(siteInfo.HomeItemPath, StringComparison.OrdinalIgnoreCase) == false)
             {
-                itemUrl = itemUrl.Replace("http://", "https://");
+                output.ParentId = _contentIdentityService.GetId(item.Parent);
             }
-
-            output.Url = itemUrl;
-
-            output.Properties = _enterspeedPropertyService.GetProperties(item);
 
             return output;
         }

@@ -20,6 +20,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
         private readonly BaseItemManager _itemManager;
         private readonly BaseLinkManager _linkManager;
         private readonly BaseSiteContextFactory _siteContextFactory;
+
         private EnterspeedSitecoreConfiguration _configuration;
 
         public EnterspeedConfigurationService(
@@ -47,43 +48,44 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             {
                 BaseUrl = GetEnterspeedBaseUrl(_settings),
                 ApiKey = GetEnterspeedApiKey(_settings),
-                ItemNotFoundUrl = GetItemNotFoundUrl(_settings),
-                IsHttpsEnabled = GetIsHttpsEnabled(_settings)
+                ItemNotFoundUrl = GetItemNotFoundUrl(_settings)
             };
 
             foreach (SiteContext siteContext in GetEnterspeedEnabledSites(_settings))
             {
                 Language siteLanguage = _languageManager.GetLanguage(siteContext.Language);
 
-                Item startPathItem = _itemManager.GetItem(siteContext.StartPath, siteLanguage, Version.Latest, siteContext.Database);
-                if (startPathItem == null || startPathItem.Versions.Count == 0)
+                Item homeItem = _itemManager.GetItem(siteContext.StartPath, siteLanguage, Version.Latest, siteContext.Database);
+                if (homeItem == null || homeItem.Versions.Count == 0)
                 {
+                    // TODO - KEK: throw exception here?
                     continue;
                 }
 
                 string name = siteContext.SiteInfo.Name;
-                string startPathUrl = _linkManager.GetItemUrl(startPathItem, new ItemUrlBuilderOptions
+                string startPathUrl = _linkManager.GetItemUrl(homeItem, new ItemUrlBuilderOptions
                 {
                     SiteResolving = true,
                     Site = siteContext,
-                    LanguageEmbedding = LanguageEmbedding.Never,
-                    AlwaysIncludeServerUrl = true
+                    AlwaysIncludeServerUrl = true,
+                    LowercaseUrls = true,
+                    LanguageEmbedding = LanguageEmbedding.Never
                 });
-
-                if (configuration.IsHttpsEnabled &&
-                    startPathUrl.StartsWith("https://") == false)
-                {
-                    startPathUrl = startPathUrl.Replace("http://", "https://");
-                }
 
                 var enterspeedSiteInfo = new EnterspeedSiteInfo
                 {
                     Name = name,
                     BaseUrl = startPathUrl,
-                    StartPath = siteContext.StartPath
+                    HomeItemPath = siteContext.StartPath // StartPath combines RootPath and StartItem
                 };
 
-                configuration.SiteInfo.Add(enterspeedSiteInfo);
+                if (siteContext.Properties["scheme"] != null &&
+                    siteContext.Properties["scheme"].Equals("https", StringComparison.OrdinalIgnoreCase))
+                {
+                    enterspeedSiteInfo.IsHttpsEnabled = true;
+                }
+
+                configuration.SiteInfos.Add(enterspeedSiteInfo);
             }
 
             _configuration = configuration;
@@ -125,13 +127,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             }
 
             return url;
-        }
-
-        private static bool GetIsHttpsEnabled(BaseSettings settings)
-        {
-            string value = settings.GetSetting("Enterspeed.EnableHttps", bool.FalseString);
-
-            return bool.Parse(value);
         }
 
         private List<SiteContext> GetEnterspeedEnabledSites(BaseSettings settings)

@@ -32,8 +32,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
         {
             EnterspeedSiteInfo siteOfItem = _enterspeedConfigurationService
                 .GetConfiguration()
-                .SiteInfo
-                .FirstOrDefault(x => x.IsItemOfSite(item));
+                .GetSite(item);
 
             IDictionary<string, IEnterspeedProperty> properties = ConvertFields(item, siteOfItem);
 

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using Enterspeed.Source.Sdk.Api.Services;
 using Enterspeed.Source.Sdk.Domain.Connection;
 using Enterspeed.Source.SitecoreCms.V9.Models;
+using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V9.Services;
 using Sitecore.Abstractions;
@@ -20,19 +22,22 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
         private readonly SitecoreContentEntityModelMapper _mapper;
         private readonly IContentIdentityService _identityService;
         private readonly IEnterspeedIngestService _enterspeedIngestService;
+        private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
 
         public PublishingEventHandler(
             BaseItemManager itemManager,
             BaseLog log,
             SitecoreContentEntityModelMapper mapper,
             IContentIdentityService identityService,
-            IEnterspeedIngestService enterspeedIngestService)
+            IEnterspeedIngestService enterspeedIngestService,
+            IEnterspeedConfigurationService enterspeedConfigurationService)
         {
             _itemManager = itemManager;
             _log = log;
             _mapper = mapper;
             _identityService = identityService;
             _enterspeedIngestService = enterspeedIngestService;
+            _enterspeedConfigurationService = enterspeedConfigurationService;
         }
 
         public void OnItemProcessed(object sender, EventArgs args)
@@ -68,6 +73,15 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 return;
             }
 
+            EnterspeedSitecoreConfiguration configuration = _enterspeedConfigurationService.GetConfiguration();
+
+            EnterspeedSiteInfo siteOfItem = configuration.GetSite(item);
+            if (siteOfItem == null)
+            {
+                // If no enabled site was found for this item, skip it
+                return;
+            }
+
             SitecoreContentEntity sitecoreContentEntity = _mapper.Map(item);
             if (sitecoreContentEntity == null)
             {
@@ -82,7 +96,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
 
                 if (IsSuccessStatusCode(deleteResponse.StatusCode) == false)
                 {
-                    _log.Error(deleteResponse.Message ?? deleteResponse.Exception.Message, deleteResponse.Exception, this);
+                    _log.Error(deleteResponse.Message ?? deleteResponse.Exception?.Message ?? "An error occurred during Enterspeed Ingest Delete API request.", deleteResponse.Exception, this);
                 }
                 else
                 {
@@ -96,7 +110,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
 
             if (IsSuccessStatusCode(saveResponse.StatusCode) == false)
             {
-                _log.Error(saveResponse.Message ?? saveResponse.Exception.Message, saveResponse.Exception, this);
+                _log.Error(saveResponse.Message ?? saveResponse.Exception?.Message ?? "An error occurred during Enterspeed Ingest Save API request.", saveResponse.Exception, this);
             }
             else
             {

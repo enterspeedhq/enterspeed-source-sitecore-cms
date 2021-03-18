@@ -6,7 +6,6 @@ using Enterspeed.Source.Sdk.Domain.Services;
 using Enterspeed.Source.Sdk.Domain.SystemTextJson;
 using Enterspeed.Source.SitecoreCms.V9.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V9.Providers;
-using Enterspeed.Source.SitecoreCms.V9.Serialization;
 using Enterspeed.Source.SitecoreCms.V9.Services;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldConverters;
@@ -22,11 +21,11 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
             services.AddSingleton<IEnterspeedPropertyService, EnterspeedPropertyService>();
             services.AddSingleton<IContentIdentityService, SitecoreContentIdentityService>();
             services.AddSingleton<SitecoreContentEntityModelMapper>();
-            /*services.AddSingleton<IJsonSerializer, EnterspeedJsonSerializer>();*/
             services.AddSingleton<IJsonSerializer, SystemTextJsonSerializer>();
             services.AddSingleton<IEnterspeedIngestService, EnterspeedIngestService>();
             services.AddSingleton<IEnterspeedConfigurationService, EnterspeedConfigurationService>();
             services.AddSingleton<IEnterspeedConfigurationProvider, EnterspeedSitecoreConfigurationProvider>();
+            services.AddSingleton<IEnterspeedUrlService, EnterspeedSitecoreUrlService>();
 
             services.AddSingleton<IEnterspeedConnection>(provider =>
             {
