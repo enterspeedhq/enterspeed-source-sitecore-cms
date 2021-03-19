@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
@@ -125,6 +126,16 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 {
                     ["renderingId"] = new StringEnterspeedProperty(renderingReference.RenderingID.Guid.ToString("N"))
                 };
+
+                if (string.IsNullOrEmpty(renderingReference.Settings.Parameters) == false)
+                {
+                    NameValueCollection parameters = HttpUtility.ParseQueryString(renderingReference.Settings.Parameters);
+
+                    if (parameters.Count > 0)
+                    {
+                        renderingProperties.Add("renderingParameters", new ArrayEnterspeedProperty(null, parameters.AllKeys.Select(key => new StringEnterspeedProperty(key, parameters[key])).ToArray()));
+                    }
+                }
 
                 if (string.IsNullOrEmpty(renderingReference.Settings.DataSource) == false)
                 {
