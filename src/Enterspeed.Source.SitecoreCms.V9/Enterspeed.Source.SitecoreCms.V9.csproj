@@ -297,8 +297,8 @@
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultNumberFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultRichTextFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultSingleLineTextFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultTreelistFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\Formatters\EnterspeedDateFormatter.cs" />
-    <Compile Include="Services\DataProperties\IEnterspeedDataSourceConverter.cs" />
     <Compile Include="Services\DataProperties\IEnterspeedFieldValueConverter.cs" />
     <Compile Include="Services\EnterspeedConfigurationService.cs" />
     <Compile Include="Services\EnterspeedFieldConverter.cs" />
@@ -320,7 +320,6 @@
     <Content Include="_nuget\Enterspeed.Source.SitecoreCms.V9.nuspec" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Services\DataProperties\DefaultDataSourceConverters\" />
     <Folder Include="_content\" />
   </ItemGroup>
   <ItemGroup>
