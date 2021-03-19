@@ -255,6 +255,7 @@
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultIntegerFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultMultiLineTextFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultMultilistFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultNameValueListFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultNumberFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultRichTextFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultSingleLineTextFieldValueConverter.cs" />

@@ -41,7 +41,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
 
         private static void RegisterFieldConverters(IServiceCollection services)
         {
-            // Simple field types
+            // Simple Types
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultSingleLineTextFieldValueConverter>();
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultRichTextFieldValueConverter>();
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultCheckboxFieldValueConverter>();
@@ -52,12 +52,13 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultMultiLineTextFieldValueConverter>();
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultNumberFieldValueConverter>();
 
-            // List field types
+            // List Types
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultChecklistFieldValueConverter>();
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultDroplistFieldValueConverter>();
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultGroupedDroplinkFieldValueConverter>();
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultGroupedDroplistFieldValueConverter>();
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultMultilistFieldValueConverter>();
+            services.AddSingleton<IEnterspeedFieldValueConverter, DefaultNameValueListFieldValueConverter>();
         }
     }
 }
