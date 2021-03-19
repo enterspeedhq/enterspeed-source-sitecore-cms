@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Sitecore.Data.Fields;
@@ -8,8 +9,20 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultGroupedDroplistFieldValueConverter : IEnterspeedFieldValueConverter
     {
-        public bool CanConvert(Field field) => throw new System.NotImplementedException();
+        public bool CanConvert(Field field)
+        {
+            return field != null && field.TypeKey.Equals("grouped droplist", StringComparison.OrdinalIgnoreCase);
+        }
 
-        public IEnterspeedProperty Convert(Item item, Field field, EnterspeedSiteInfo siteInfo, List<IEnterspeedFieldValueConverter> fieldValueConverters) => throw new System.NotImplementedException();
+        public IEnterspeedProperty Convert(Item item, Field field, EnterspeedSiteInfo siteInfo, List<IEnterspeedFieldValueConverter> fieldValueConverters)
+        {
+            ReferenceField referenceField = field;
+            if (string.IsNullOrEmpty(referenceField?.Value))
+            {
+                return null;
+            }
+
+            return new StringEnterspeedProperty(field.Name, referenceField.Value);
+        }
     }
 }

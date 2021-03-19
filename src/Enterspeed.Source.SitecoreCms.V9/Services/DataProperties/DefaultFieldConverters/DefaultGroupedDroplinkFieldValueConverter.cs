@@ -9,6 +9,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultGroupedDroplinkFieldValueConverter : IEnterspeedFieldValueConverter
     {
+        private readonly IEnterspeedFieldConverter _fieldConverter;
+
+        public DefaultGroupedDroplinkFieldValueConverter(
+            IEnterspeedFieldConverter fieldConverter)
+        {
+            _fieldConverter = fieldConverter;
+        }
+
         public bool CanConvert(Field field)
         {
             return field != null && field.TypeKey.Equals("grouped droplink", StringComparison.OrdinalIgnoreCase);
@@ -22,7 +30,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                 return null;
             }
 
-            return new StringEnterspeedProperty(field.Name, referenceField.TargetItem.Name);
+            IDictionary<string, IEnterspeedProperty> properties = _fieldConverter.ConvertFields(referenceField.TargetItem, siteInfo, fieldValueConverters);
+
+            return new ObjectEnterspeedProperty(field.Name, properties);
         }
     }
 }
