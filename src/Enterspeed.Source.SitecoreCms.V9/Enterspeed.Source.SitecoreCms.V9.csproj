@@ -235,12 +235,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Configuration\EnterspeedSiteInfo.cs" />
+    <Compile Include="Models\Mappers\IEntityModelMapper.cs" />
     <Compile Include="Models\Mappers\SitecoreContentEntityModelMapper.cs" />
     <Compile Include="Models\Configuration\EnterspeedSitecoreConfiguration.cs" />
     <Compile Include="DependencyInjection\ServicesConfigurator.cs" />
     <Compile Include="Events\PublishingEventHandler.cs" />
     <Compile Include="Exceptions\EnterspeedSitecoreException.cs" />
+    <Compile Include="Models\Mappers\SitecoreRenderingEntityModelMapper.cs" />
     <Compile Include="Models\SitecoreContentEntity.cs" />
+    <Compile Include="Models\SitecoreRenderingEntity.cs" />
     <Compile Include="Pipelines\Initialize\InitializePipeline.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\EnterspeedSitecoreConfigurationProvider.cs" />
@@ -266,13 +269,15 @@
     <Compile Include="Services\EnterspeedConfigurationService.cs" />
     <Compile Include="Services\EnterspeedFieldConverter.cs" />
     <Compile Include="Services\EnterspeedPropertyService.cs" />
+    <Compile Include="Services\EnterspeedRenderingsConverter.cs" />
     <Compile Include="Services\EnterspeedSitecoreUrlService.cs" />
     <Compile Include="Services\IEnterspeedConfigurationService.cs" />
-    <Compile Include="Services\IContentIdentityService.cs" />
+    <Compile Include="Services\IEnterspeedIdentityService.cs" />
     <Compile Include="Services\IEnterspeedFieldConverter.cs" />
     <Compile Include="Services\IEnterspeedPropertyService.cs" />
+    <Compile Include="Services\IEnterspeedRenderingsConverter.cs" />
     <Compile Include="Services\IEnterspeedUrlService.cs" />
-    <Compile Include="Services\SitecoreContentIdentityService.cs" />
+    <Compile Include="Services\EnterspeedSitecoreIdentityService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\lib\settings\stylecop.json">

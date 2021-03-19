@@ -48,7 +48,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             {
                 BaseUrl = GetEnterspeedBaseUrl(_settings),
                 ApiKey = GetEnterspeedApiKey(_settings),
-                ItemNotFoundUrl = GetItemNotFoundUrl(_settings)
+                ItemNotFoundUrl = GetItemNotFoundUrl(_settings),
+                RenderingsBaseUrl = GetEnterspeedRenderingsBaseUrl(_settings)
             };
 
             foreach (SiteContext siteContext in GetEnterspeedEnabledSites(_settings))
@@ -124,6 +125,18 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             {
                 throw new EnterspeedSitecoreException(
                     "Unable to retrieve Enterspeed API Key from the Sitecore Setting \"ItemNotFoundUrl\".");
+            }
+
+            return url;
+        }
+
+        private static string GetEnterspeedRenderingsBaseUrl(BaseSettings settings)
+        {
+            string url = settings.GetSetting("Enterspeed.Renderings.BaseUrl", null);
+            if (string.IsNullOrEmpty(url))
+            {
+                throw new EnterspeedSitecoreException(
+                    "Unable to retrieve Enterspeed API Key from the Sitecore Setting \"Enterspeed.Renderings.BaseUrl\".");
             }
 
             return url;

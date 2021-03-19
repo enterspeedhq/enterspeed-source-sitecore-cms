@@ -4,6 +4,7 @@ using Enterspeed.Source.Sdk.Api.Services;
 using Enterspeed.Source.Sdk.Domain.Connection;
 using Enterspeed.Source.Sdk.Domain.Services;
 using Enterspeed.Source.Sdk.Domain.SystemTextJson;
+using Enterspeed.Source.SitecoreCms.V9.Models;
 using Enterspeed.Source.SitecoreCms.V9.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V9.Providers;
 using Enterspeed.Source.SitecoreCms.V9.Services;
@@ -11,6 +12,7 @@ using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldConverters;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.Formatters;
 using Microsoft.Extensions.DependencyInjection;
+using Sitecore.Data.Items;
 using Sitecore.DependencyInjection;
 
 namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
@@ -20,9 +22,11 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
         public void Configure(IServiceCollection services)
         {
             services.AddSingleton<IEnterspeedFieldConverter, EnterspeedFieldConverter>();
+            services.AddSingleton<IEnterspeedRenderingsConverter, EnterspeedRenderingsConverter>();
             services.AddSingleton<IEnterspeedPropertyService, EnterspeedPropertyService>();
-            services.AddSingleton<IContentIdentityService, SitecoreContentIdentityService>();
-            services.AddSingleton<SitecoreContentEntityModelMapper>();
+            services.AddSingleton<IEnterspeedIdentityService, EnterspeedSitecoreIdentityService>();
+            services.AddSingleton<IEntityModelMapper<Item, SitecoreContentEntity>, SitecoreContentEntityModelMapper>();
+            services.AddSingleton<IEntityModelMapper<RenderingItem, SitecoreRenderingEntity>, SitecoreRenderingEntityModelMapper>();
             services.AddSingleton<IJsonSerializer, SystemTextJsonSerializer>();
             services.AddSingleton<IEnterspeedIngestService, EnterspeedIngestService>();
             services.AddSingleton<IEnterspeedConfigurationService, EnterspeedConfigurationService>();

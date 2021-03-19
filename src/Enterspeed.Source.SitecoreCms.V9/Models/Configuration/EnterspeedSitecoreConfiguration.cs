@@ -9,6 +9,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Configuration
     {
         public string ItemNotFoundUrl { get; set; }
 
+        public string RenderingsBaseUrl { get; set; }
+
         public List<EnterspeedSiteInfo> SiteInfos { get; } = new List<EnterspeedSiteInfo>();
 
         public EnterspeedSiteInfo GetSite(Item item)

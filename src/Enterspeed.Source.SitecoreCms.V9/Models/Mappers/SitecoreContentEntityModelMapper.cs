@@ -5,40 +5,40 @@ using Sitecore.Data.Items;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
 {
-    public class SitecoreContentEntityModelMapper
+    public class SitecoreContentEntityModelMapper : IEntityModelMapper<Item, SitecoreContentEntity>
     {
-        private readonly IContentIdentityService _contentIdentityService;
+        private readonly IEnterspeedIdentityService _enterspeedIdentityService;
         private readonly IEnterspeedPropertyService _enterspeedPropertyService;
         private readonly IEnterspeedUrlService _urlService;
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
 
         public SitecoreContentEntityModelMapper(
-            IContentIdentityService contentIdentityService,
+            IEnterspeedIdentityService enterspeedIdentityService,
             IEnterspeedPropertyService enterspeedPropertyService,
             IEnterspeedUrlService urlService,
             IEnterspeedConfigurationService enterspeedConfigurationService)
         {
-            _contentIdentityService = contentIdentityService;
+            _enterspeedIdentityService = enterspeedIdentityService;
             _enterspeedPropertyService = enterspeedPropertyService;
             _urlService = urlService;
             _enterspeedConfigurationService = enterspeedConfigurationService;
         }
 
-        public SitecoreContentEntity Map(Item item)
+        public SitecoreContentEntity Map(Item renderingItem)
         {
             var output = new SitecoreContentEntity
             {
-                Id = _contentIdentityService.GetId(item),
-                Type = item.TemplateName,
-                Url = _urlService.GetItemUrl(item),
-                Properties = _enterspeedPropertyService.GetProperties(item)
+                Id = _enterspeedIdentityService.GetId(renderingItem),
+                Type = renderingItem.TemplateName,
+                Url = _urlService.GetItemUrl(renderingItem),
+                Properties = _enterspeedPropertyService.GetProperties(renderingItem)
             };
 
-            EnterspeedSiteInfo siteInfo = _enterspeedConfigurationService.GetConfiguration().GetSite(item);
+            EnterspeedSiteInfo siteInfo = _enterspeedConfigurationService.GetConfiguration().GetSite(renderingItem);
             if (siteInfo != null &&
-                item.Paths.FullPath.Equals(siteInfo.HomeItemPath, StringComparison.OrdinalIgnoreCase) == false)
+                renderingItem.Paths.FullPath.Equals(siteInfo.HomeItemPath, StringComparison.OrdinalIgnoreCase) == false)
             {
-                output.ParentId = _contentIdentityService.GetId(item.Parent);
+                output.ParentId = _enterspeedIdentityService.GetId(renderingItem.Parent);
             }
 
             return output;
