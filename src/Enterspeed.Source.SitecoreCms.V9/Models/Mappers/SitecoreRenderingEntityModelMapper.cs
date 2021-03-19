@@ -34,8 +34,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
 
             if (renderingItem.InnerItem.TemplateID == TemplateIds.ControllerRendering)
             {
-                var controller = renderingItem.InnerItem["Controller"];
-                var controllerAction = renderingItem.InnerItem["Controller Action"];
+                var controller = renderingItem.InnerItem[PropertyNames.Controller];
+                var controllerAction = renderingItem.InnerItem[PropertyNames.ControllerAction];
 
                 if (string.IsNullOrEmpty(controller) == false && string.IsNullOrEmpty(controllerAction) == false)
                 {

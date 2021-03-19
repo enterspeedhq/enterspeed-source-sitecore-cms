@@ -28,6 +28,11 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
         public string GetId(Guid itemId, Language language)
         {
+            if (language == null)
+            {
+                return $"{itemId:N}";
+            }
+
             return $"{itemId:N}-{language.Name}";
         }
     }

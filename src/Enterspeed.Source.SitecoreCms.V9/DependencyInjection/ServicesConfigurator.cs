@@ -22,7 +22,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
         public void Configure(IServiceCollection services)
         {
             services.AddSingleton<IEnterspeedFieldConverter, EnterspeedFieldConverter>();
-            services.AddSingleton<IEnterspeedRenderingsConverter, EnterspeedRenderingsConverter>();
             services.AddSingleton<IEnterspeedPropertyService, EnterspeedPropertyService>();
             services.AddSingleton<IEnterspeedIdentityService, EnterspeedSitecoreIdentityService>();
             services.AddSingleton<IEntityModelMapper<Item, SitecoreContentEntity>, SitecoreContentEntityModelMapper>();

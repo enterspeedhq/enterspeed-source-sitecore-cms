@@ -12,11 +12,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
     public class DefaultGeneralLinkFieldValueConverter : IEnterspeedFieldValueConverter
     {
         private readonly IEnterspeedUrlService _urlService;
+        private readonly IEnterspeedIdentityService _enterspeedIdentityService;
 
         public DefaultGeneralLinkFieldValueConverter(
-            IEnterspeedUrlService urlService)
+            IEnterspeedUrlService urlService,
+            IEnterspeedIdentityService enterspeedIdentityService)
         {
             _urlService = urlService;
+            _enterspeedIdentityService = enterspeedIdentityService;
         }
 
         public bool CanConvert(Field field)
@@ -57,6 +60,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
             else if (linkField.TargetItem != null)
             {
                 url = _urlService.GetItemUrl(linkField.TargetItem);
+
+                properties.Add("TargetId", new StringEnterspeedProperty(_enterspeedIdentityService.GetId(linkField.TargetItem)));
             }
 
             if (string.IsNullOrEmpty(url) == false)
