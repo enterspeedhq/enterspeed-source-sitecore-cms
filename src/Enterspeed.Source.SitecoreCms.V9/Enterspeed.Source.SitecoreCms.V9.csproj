@@ -284,6 +284,8 @@
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultCheckboxFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultChecklistFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultDateFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultDroptreeFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultDroplinkFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultDroplistFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultFileFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultGroupedDroplinkFieldValueConverter.cs" />
