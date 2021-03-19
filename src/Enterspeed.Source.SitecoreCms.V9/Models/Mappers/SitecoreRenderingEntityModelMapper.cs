@@ -2,6 +2,7 @@
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Services;
 using Sitecore.Data.Items;
+using Sitecore.Mvc.Names;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
 {
@@ -31,15 +32,18 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
             output.Type = "rendering";
             output.Properties = _enterspeedPropertyService.GetProperties(renderingItem);
 
-            var controller = renderingItem.InnerItem["Controller"];
-            var controllerAction = renderingItem.InnerItem["Controller Action"];
-
-            if (string.IsNullOrEmpty(controller) == false && string.IsNullOrEmpty(controllerAction) == false)
+            if (renderingItem.InnerItem.TemplateID == TemplateIds.ControllerRendering)
             {
-                var controllerSplit = controller.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                if (controllerSplit.Length == 2)
+                var controller = renderingItem.InnerItem["Controller"];
+                var controllerAction = renderingItem.InnerItem["Controller Action"];
+
+                if (string.IsNullOrEmpty(controller) == false && string.IsNullOrEmpty(controllerAction) == false)
                 {
-                    output.Url = $"{configuration.RenderingsBaseUrl.TrimEnd('/')}/{controllerSplit[0].Replace("Controller", string.Empty)}/{controllerAction}".ToLower();
+                    var controllerSplit = controller.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (controllerSplit.Length == 2)
+                    {
+                        output.Url = $"{configuration.RenderingsBaseUrl.TrimEnd('/')}/{controllerSplit[0].Replace("Controller", string.Empty)}/{controllerAction}".ToLower();
+                    }
                 }
             }
 
