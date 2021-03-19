@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
+using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.Formatters;
 using Sitecore.Data.Items;
 
@@ -15,17 +16,20 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
         private readonly IContentIdentityService _identityService;
         private readonly EnterspeedDateFormatter _dateFormatter;
+        private readonly IEnumerable<IEnterspeedFieldValueConverter> _fieldValueConverters;
         private readonly IEnterspeedFieldConverter _fieldConverter;
 
         public EnterspeedPropertyService(
             IEnterspeedConfigurationService enterspeedConfigurationService,
             IContentIdentityService identityService,
             EnterspeedDateFormatter dateFormatter,
+            IEnumerable<IEnterspeedFieldValueConverter> fieldValueConverters,
             IEnterspeedFieldConverter fieldConverter)
         {
             _enterspeedConfigurationService = enterspeedConfigurationService;
             _identityService = identityService;
             _dateFormatter = dateFormatter;
+            _fieldValueConverters = fieldValueConverters;
             _fieldConverter = fieldConverter;
         }
 
@@ -35,7 +39,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 .GetConfiguration()
                 .GetSite(item);
 
-            IDictionary<string, IEnterspeedProperty> properties = _fieldConverter.ConvertFields(item, siteOfItem);
+            IDictionary<string, IEnterspeedProperty> properties = _fieldConverter.ConvertFields(item, siteOfItem, _fieldValueConverters.ToList());
 
             properties.Add(MetaData, CreateMetaData(item));
 
