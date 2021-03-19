@@ -288,6 +288,7 @@
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultDroplinkFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultDroplistFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultFileFieldValueConverter.cs" />
+    <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultGeneralLinkFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultGroupedDroplinkFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultGroupedDroplistFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultImageFieldValueConverter.cs" />
