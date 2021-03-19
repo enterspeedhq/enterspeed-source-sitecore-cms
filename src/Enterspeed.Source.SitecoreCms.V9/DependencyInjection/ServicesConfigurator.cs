@@ -19,6 +19,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
     {
         public void Configure(IServiceCollection services)
         {
+            services.AddSingleton<IEnterspeedFieldConverter, EnterspeedFieldConverter>();
             services.AddSingleton<IEnterspeedPropertyService, EnterspeedPropertyService>();
             services.AddSingleton<IContentIdentityService, SitecoreContentIdentityService>();
             services.AddSingleton<SitecoreContentEntityModelMapper>();
@@ -53,6 +54,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
 
             // List field types
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultChecklistFieldValueConverter>();
+            services.AddSingleton<IEnterspeedFieldValueConverter, DefaultDroplistFieldValueConverter>();
+            services.AddSingleton<IEnterspeedFieldValueConverter, DefaultGroupedDroplinkFieldValueConverter>();
         }
     }
 }

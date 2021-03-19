@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Sitecore.Data.Fields;
@@ -21,7 +22,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
             return field != null && field.TypeKey.Equals("image", StringComparison.OrdinalIgnoreCase);
         }
 
-        public IEnterspeedProperty Convert(Item item, Field field, EnterspeedSiteInfo siteInfo)
+        public IEnterspeedProperty Convert(Item item, Field field, EnterspeedSiteInfo siteInfo, List<IEnterspeedFieldValueConverter> fieldValueConverters)
         {
             ImageField imageField = field;
             if (imageField?.MediaItem == null)

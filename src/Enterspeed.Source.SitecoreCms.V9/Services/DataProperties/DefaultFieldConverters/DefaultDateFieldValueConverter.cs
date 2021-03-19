@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.Formatters;
@@ -24,7 +25,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                     field.TypeKey.Equals("datetime", StringComparison.OrdinalIgnoreCase));
         }
 
-        public IEnterspeedProperty Convert(Item item, Field field, EnterspeedSiteInfo siteInfo)
+        public IEnterspeedProperty Convert(Item item, Field field, EnterspeedSiteInfo siteInfo, List<IEnterspeedFieldValueConverter> fieldValueConverters)
         {
             DateField dateField = field;
             if (dateField == null ||
