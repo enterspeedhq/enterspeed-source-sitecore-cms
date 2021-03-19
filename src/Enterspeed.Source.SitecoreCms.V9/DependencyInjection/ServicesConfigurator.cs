@@ -59,6 +59,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultGroupedDroplistFieldValueConverter>();
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultMultilistFieldValueConverter>();
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultNameValueListFieldValueConverter>();
+            services.AddSingleton<IEnterspeedFieldValueConverter, DefaultNameLookupValueListFieldValueConverter>();
         }
     }
 }
