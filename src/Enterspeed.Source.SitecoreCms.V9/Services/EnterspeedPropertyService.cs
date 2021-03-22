@@ -127,7 +127,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
                 var renderingProperties = new Dictionary<string, IEnterspeedProperty>
                 {
-                    ["renderingId"] = new StringEnterspeedProperty(_enterspeedIdentityService.GetId(renderingReference.RenderingID.Guid, null))
+                    ["renderingId"] = new StringEnterspeedProperty(_enterspeedIdentityService.GetId(renderingReference.RenderingID.Guid, null)),
+                    ["renderingPlaceholder"] = new StringEnterspeedProperty(placeholder)
                 };
 
                 if (string.IsNullOrEmpty(renderingReference.Settings.Parameters) == false)
