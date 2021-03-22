@@ -7,6 +7,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Enterspeed.Source.SitecoreC
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Enterspeed.Source.SitecoreCms.V9", "Enterspeed.Source.SitecoreCms.V9", "{9DD96787-C3B7-427A-8B20-5571AEF4E92B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{60194EB2-CAAD-4ED3-A994-C7F41382037D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		CHANGELOG.md = CHANGELOG.md
+		NuGet.Config = NuGet.Config
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,7 +33,7 @@ Global
 		{799B0263-B2B2-4547-9F69-9837FB8EAC72} = {9DD96787-C3B7-427A-8B20-5571AEF4E92B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPathV6 = lib\packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;lib\packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;lib\packages\EnterpriseLibrary.TransientFaultHandling.Caching.6.0.1304.0\lib\NET45;lib\packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45;lib\packages\EnterpriseLibrary.TransientFaultHandling.ServiceBus.6.0.1304.0\lib\NET45;lib\packages\EnterpriseLibrary.TransientFaultHandling.WindowsAzure.Storage.6.0.1304.0\lib\NET45;lib\packages\EnterpriseLibrary.TransientFaultHandling.Configuration.6.0.1304.0\lib\NET45
 		SolutionGuid = {18883A81-ACF4-4B07-9002-B1BDFAAC75F0}
+		EnterpriseLibraryConfigurationToolBinariesPathV6 = lib\packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;lib\packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;lib\packages\EnterpriseLibrary.TransientFaultHandling.Caching.6.0.1304.0\lib\NET45;lib\packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45;lib\packages\EnterpriseLibrary.TransientFaultHandling.ServiceBus.6.0.1304.0\lib\NET45;lib\packages\EnterpriseLibrary.TransientFaultHandling.WindowsAzure.Storage.6.0.1304.0\lib\NET45;lib\packages\EnterpriseLibrary.TransientFaultHandling.Configuration.6.0.1304.0\lib\NET45
 	EndGlobalSection
 EndGlobal
