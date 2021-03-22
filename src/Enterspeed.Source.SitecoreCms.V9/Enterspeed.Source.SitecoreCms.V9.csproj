@@ -146,9 +146,6 @@
     <Reference Include="Sitecore.Logging.Client, Version=13.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\lib\packages\Sitecore.Logging.Client.9.3.0\lib\net471\Sitecore.Logging.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Sitecore.Mvc, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\Sitecore.Mvc.9.3.0\lib\net471\Sitecore.Mvc.dll</HintPath>
-    </Reference>
     <Reference Include="Sitecore.Nexus.Consumption, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9de34fe2109de40c, processorArchitecture=MSIL">
       <HintPath>..\..\lib\packages\Sitecore.Nexus.Consumption.1.1.1\lib\netstandard2.0\Sitecore.Nexus.Consumption.dll</HintPath>
     </Reference>
@@ -278,7 +275,6 @@
     <Compile Include="Models\Mappers\SitecoreRenderingEntityModelMapper.cs" />
     <Compile Include="Models\SitecoreContentEntity.cs" />
     <Compile Include="Models\SitecoreRenderingEntity.cs" />
-    <Compile Include="Pipelines\Initialize\InitializePipeline.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\EnterspeedSitecoreConfigurationProvider.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultCheckboxFieldValueConverter.cs" />
@@ -320,11 +316,11 @@
     </Content>
     <Content Include="_nuget\Enterspeed.Source.SitecoreCms.V9.nuspec" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="_content\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
+    <Content Include="_content\App_Config\Include\Enterspeed\Enterspeed.SitecoreCms.V9.DependencyInjection.config" />
+    <Content Include="_content\App_Config\Include\Enterspeed\Enterspeed.SitecoreCms.V9.Events.config" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\lib\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
