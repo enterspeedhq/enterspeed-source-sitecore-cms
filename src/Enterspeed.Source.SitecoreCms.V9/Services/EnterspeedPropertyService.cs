@@ -147,7 +147,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                     {
                         IDictionary<string, IEnterspeedProperty> datasourceProperties = _fieldConverter.ConvertFields(datasourceItem, null, _fieldValueConverters.ToList());
 
-                        renderingProperties.Add("datasource", new ObjectEnterspeedProperty(null, datasourceProperties));
+                        renderingProperties.Add("renderingDatasource", new ObjectEnterspeedProperty(null, datasourceProperties));
                     }
                 }
 
