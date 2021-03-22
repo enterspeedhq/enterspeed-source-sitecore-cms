@@ -24,6 +24,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
             // Exclude system fields
             List<Field> fields = fieldsCollection.Where(field =>
+                    field.InnerItem != null &&
                     field.InnerItem.Paths.FullPath.StartsWith("/sitecore/templates/system", StringComparison.OrdinalIgnoreCase) == false)
                 .ToList();
 

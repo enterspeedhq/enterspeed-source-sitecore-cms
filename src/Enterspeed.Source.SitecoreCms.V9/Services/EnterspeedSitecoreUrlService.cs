@@ -28,6 +28,11 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
         public string GetItemUrl(Item item, bool enableLanguageEmbedding = false)
         {
+            if (item == null)
+            {
+                return null;
+            }
+
             EnterspeedSitecoreConfiguration configuration = _enterspeedConfigurationService.GetConfiguration();
             EnterspeedSiteInfo siteInfo = configuration.GetSite(item);
 
@@ -51,6 +56,11 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
         public string GetMediaUrl(MediaItem mediaItem)
         {
+            if (mediaItem == null)
+            {
+                return null;
+            }
+
             var urlBuilderOptions = new MediaUrlBuilderOptions
             {
                 AbsolutePath = true,
