@@ -14,8 +14,8 @@
     <dependencies>
       <dependency id="Enterspeed.Source.Sdk" version="[0.0,1.0)" />
       <dependency id="Newtonsoft.Json" version="11.0.2" />
-      <dependency id="Sitecore.Kernel" version="[9.1.0,9.3.0]" />
-      <dependency id="Sitecore.Mvc" version="[9.1.0,9.3.0]" />
+      <dependency id="Sitecore.Kernel" version="[9.1.0,10.0.0)" />
+      <dependency id="Sitecore.Mvc" version="[9.1.0,10.0.0)" />
     </dependencies>
   </metadata>
   <files>
