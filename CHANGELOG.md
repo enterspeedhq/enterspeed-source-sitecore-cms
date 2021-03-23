@@ -7,3 +7,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [0.1.0 - 2021-03-22]
 
 * Initial release
+
+## [0.1.2 - 2021-03-22]
+
+* Fixed problem with NuGet package dependencies
+* Fixed typo in readme

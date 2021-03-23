@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>Enterspeed.Source.SitecoreCms.V9</id>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
     <authors>Enterspeed</authors>
     <owners>Enterspeed</owners>
     <projectUrl>https://www.enterspeed.com/</projectUrl>
@@ -14,8 +14,8 @@
     <dependencies>
       <dependency id="Enterspeed.Source.Sdk" version="[0.0,1.0)" />
       <dependency id="Newtonsoft.Json" version="11.0.2" />
-      <dependency id="Sitecore.Kernel" version="[9.0.0,9.3.0)" />
-      <dependency id="Sitecore.Mvc" version="[9.0.0,9.3.0)" />
+      <dependency id="Sitecore.Kernel" version="[9.1.0,9.3.0)" />
+      <dependency id="Sitecore.Mvc" version="[9.1.0,9.3.0)" />
     </dependencies>
   </metadata>
   <files>
