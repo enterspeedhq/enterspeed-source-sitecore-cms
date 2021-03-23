@@ -9,6 +9,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Configuration
 
         public string BaseUrl { get; set; }
 
+        public string SiteItemPath { get; set; }
+
         public string HomeItemPath { get; set; }
 
         public bool IsHttpsEnabled { get; set; }
