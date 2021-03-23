@@ -44,7 +44,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
             foreach (var itemInList in items)
             {
                 var properties = _fieldConverter.ConvertFields(itemInList, siteInfo, fieldValueConverters);
-                list.Add(new ObjectEnterspeedProperty(itemInList.Name, properties));
+                list.Add(new ObjectEnterspeedProperty(null, properties));
             }
 
             return new ArrayEnterspeedProperty(field.Name, list.ToArray());

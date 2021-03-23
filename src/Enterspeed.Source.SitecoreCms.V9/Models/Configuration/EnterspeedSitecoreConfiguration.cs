@@ -13,7 +13,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Configuration
 
         public EnterspeedSiteInfo GetSite(Item item)
         {
-            if (item == null || item.Versions.Count == 0)
+            if (item == null)
             {
                 return null;
             }

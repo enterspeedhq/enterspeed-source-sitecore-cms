@@ -76,8 +76,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 {
                     Name = name,
                     BaseUrl = startPathUrl,
-                    SiteItemPath = siteContext.RootPath,
-                    HomeItemPath = siteContext.StartPath // StartPath combines RootPath and StartItem
+                    SiteItemPath = siteContext.RootPath
                 };
 
                 if (siteContext.Properties["scheme"] != null &&

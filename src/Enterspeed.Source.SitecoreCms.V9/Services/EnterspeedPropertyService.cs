@@ -127,8 +127,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
                 var renderingProperties = new Dictionary<string, IEnterspeedProperty>
                 {
-                    ["renderingId"] = new StringEnterspeedProperty(_enterspeedIdentityService.GetId(renderingReference.RenderingID.Guid, null)),
-                    ["renderingPlaceholder"] = new StringEnterspeedProperty(placeholder)
+                    ["renderingId"] = new StringEnterspeedProperty("renderingId", _enterspeedIdentityService.GetId(renderingReference.RenderingID.Guid, null)),
+                    ["renderingPlaceholder"] = new StringEnterspeedProperty("renderingPlaceholder", placeholder)
                 };
 
                 if (string.IsNullOrEmpty(renderingReference.Settings.Parameters) == false)
@@ -137,7 +137,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
                     if (parameters.Count > 0)
                     {
-                        renderingProperties.Add("renderingParameters", new ArrayEnterspeedProperty(null, parameters.AllKeys.Select(key => new StringEnterspeedProperty(key, parameters[key])).ToArray()));
+                        renderingProperties.Add("renderingParameters", new ArrayEnterspeedProperty("renderingParameters", parameters.AllKeys.Select(key => new StringEnterspeedProperty(key, parameters[key])).ToArray()));
                     }
                 }
 
@@ -148,11 +148,11 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                     {
                         IDictionary<string, IEnterspeedProperty> datasourceProperties = _fieldConverter.ConvertFields(datasourceItem, null, _fieldValueConverters.ToList());
 
-                        renderingProperties.Add("renderingDatasource", new ObjectEnterspeedProperty(null, datasourceProperties));
+                        renderingProperties.Add("renderingDatasource", new ObjectEnterspeedProperty("renderingDatasource", datasourceProperties));
                     }
                 }
 
-                renderingReferences.Add(new ObjectEnterspeedProperty(renderingReference.RenderingItem.Name, renderingProperties));
+                renderingReferences.Add(new ObjectEnterspeedProperty(null, renderingProperties));
             }
 
             return new ArrayEnterspeedProperty(Renderings, renderingReferences.ToArray());
