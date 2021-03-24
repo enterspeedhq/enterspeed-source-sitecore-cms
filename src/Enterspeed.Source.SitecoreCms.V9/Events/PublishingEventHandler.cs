@@ -76,7 +76,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
 
             HandleContentItem(item, itemIsDeleted, itemIsPublished);
 
-            HandleRenderig(item, itemIsDeleted, itemIsPublished);
+            HandleRendering(item, itemIsDeleted, itemIsPublished);
         }
 
         private void HandleContentItem(Item item, bool itemIsDeleted, bool itemIsPublished)
@@ -142,7 +142,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
             }
         }
 
-        private void HandleRenderig(Item item, bool itemIsDeleted, bool itemIsPublished)
+        private void HandleRendering(Item item, bool itemIsDeleted, bool itemIsPublished)
         {
             if (item == null)
             {
