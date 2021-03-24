@@ -92,7 +92,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 return;
             }
 
-            EnterspeedSitecoreConfiguration configuration = _enterspeedConfigurationService.GetConfiguration();
+            EnterspeedSitecoreConfiguration configuration = _enterspeedConfigurationService.GetConfigurationFromSitecore();
 
             EnterspeedSiteInfo siteOfItem = configuration.GetSite(item);
             if (siteOfItem == null)
@@ -205,7 +205,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
 
         private bool IsRenderingReferencedFromEnabledContent(Item item)
         {
-            EnterspeedSitecoreConfiguration configuration = _enterspeedConfigurationService.GetConfiguration();
+            EnterspeedSitecoreConfiguration configuration = _enterspeedConfigurationService.GetConfigurationFromSitecore();
 
             GetLinksStrategy linksStrategy = _linkStrategyFactory.Resolve(item);
 

@@ -45,7 +45,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
         public IDictionary<string, IEnterspeedProperty> GetProperties(Item item)
         {
             EnterspeedSiteInfo siteOfItem = _enterspeedConfigurationService
-                .GetConfiguration()
+                .GetConfigurationFromSitecore()
                 .GetSite(item);
 
             if (siteOfItem == null)

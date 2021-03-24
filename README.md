@@ -18,16 +18,11 @@ The NuGet package installs config files into this directory; verify that this fo
 ~\App_Config\Include\Enterspeed
 ```
 
-### Add required settings to your include file
+### Configuring Enterspeed in Sitecore
 
-You need to add ```<settings>``` to your preferred choice of include config file.
+Once installed, your Sitecore instance will be loaded with a new item in ```/sitecore/system``` called "Enterspeed Configuration".
 
-* ```Enterspeed.BaseUrl```
-  * The value of this setting should be the Enterspeed API base URL supplied to you
-* ```Enterspeed.ApiKey```
-  * The value of this setting should be the Enterspeed API key supplied to you
-* ```Enterspeed.EnabledSites```
-  * The value of this setting should be a comma-separated list of site names (or one, if you only have a single site in the solution)
+You will have to enter the necessary values in the respective fields, and publish the changes.
 
 ## How it works
 

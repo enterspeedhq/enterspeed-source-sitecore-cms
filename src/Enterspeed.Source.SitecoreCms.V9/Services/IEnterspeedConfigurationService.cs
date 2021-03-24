@@ -4,6 +4,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 {
     public interface IEnterspeedConfigurationService
     {
-        EnterspeedSitecoreConfiguration GetConfiguration();
+        EnterspeedSitecoreConfiguration GetConfigurationFromSitecore();
     }
 }

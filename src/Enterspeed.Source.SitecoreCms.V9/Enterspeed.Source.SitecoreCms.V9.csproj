@@ -265,6 +265,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Configuration\EnterspeedIDs.cs" />
     <Compile Include="Models\Configuration\EnterspeedSiteInfo.cs" />
     <Compile Include="Models\Mappers\IEntityModelMapper.cs" />
     <Compile Include="Models\Mappers\SitecoreContentEntityModelMapper.cs" />

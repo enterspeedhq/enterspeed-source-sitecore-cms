@@ -33,7 +33,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 return null;
             }
 
-            EnterspeedSitecoreConfiguration configuration = _enterspeedConfigurationService.GetConfiguration();
+            EnterspeedSitecoreConfiguration configuration = _enterspeedConfigurationService.GetConfigurationFromSitecore();
             EnterspeedSiteInfo siteInfo = configuration.GetSite(item);
 
             var urlBuilderOptions = new ItemUrlBuilderOptions
