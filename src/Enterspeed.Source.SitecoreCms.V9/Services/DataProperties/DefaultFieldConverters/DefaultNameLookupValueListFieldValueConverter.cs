@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Web;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
@@ -14,14 +15,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultNameLookupValueListFieldValueConverter : IEnterspeedFieldValueConverter
     {
-        private readonly IEnterspeedFieldConverter _fieldConverter;
+        private readonly IEnterspeedIdentityService _enterspeedIdentityService;
         private readonly BaseItemManager _itemManager;
 
         public DefaultNameLookupValueListFieldValueConverter(
-            IEnterspeedFieldConverter fieldConverter,
+            IEnterspeedIdentityService enterspeedIdentityService,
             BaseItemManager itemManager)
         {
-            _fieldConverter = fieldConverter;
+            _enterspeedIdentityService = enterspeedIdentityService;
             _itemManager = itemManager;
         }
 
@@ -44,7 +45,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                 return null;
             }
 
-            var list = new List<ObjectEnterspeedProperty>();
+            var items = new List<Item>();
 
             foreach (string key in values)
             {
@@ -71,12 +72,12 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                     continue;
                 }
 
-                IDictionary<string, IEnterspeedProperty> properties = _fieldConverter.ConvertFields(referencedItem, siteInfo, fieldValueConverters);
-
-                list.Add(new ObjectEnterspeedProperty(field.Name, properties));
+                items.Add(referencedItem);
             }
 
-            return new ArrayEnterspeedProperty(field.Name, list.ToArray());
+            var referenceIds = items.Select(x => new StringEnterspeedProperty(null, _enterspeedIdentityService.GetId(x))).ToArray();
+
+            return new ArrayEnterspeedProperty(field.Name, referenceIds);
         }
     }
 }

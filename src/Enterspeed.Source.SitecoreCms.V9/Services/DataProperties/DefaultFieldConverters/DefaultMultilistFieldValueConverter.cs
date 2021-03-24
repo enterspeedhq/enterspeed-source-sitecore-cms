@@ -10,12 +10,12 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultMultilistFieldValueConverter : IEnterspeedFieldValueConverter
     {
-        private readonly IEnterspeedFieldConverter _fieldConverter;
+        private readonly IEnterspeedIdentityService _enterspeedIdentityService;
 
         public DefaultMultilistFieldValueConverter(
-            IEnterspeedFieldConverter fieldConverter)
+            IEnterspeedIdentityService enterspeedIdentityService)
         {
-            _fieldConverter = fieldConverter;
+            _enterspeedIdentityService = enterspeedIdentityService;
         }
 
         public bool CanConvert(Field field)
@@ -39,15 +39,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                 return null;
             }
 
-            var list = new List<ObjectEnterspeedProperty>();
+            var referenceIds = items.Select(x => new StringEnterspeedProperty(null, _enterspeedIdentityService.GetId(x))).ToArray();
 
-            foreach (var itemInList in items)
-            {
-                var properties = _fieldConverter.ConvertFields(itemInList, siteInfo, fieldValueConverters);
-                list.Add(new ObjectEnterspeedProperty(null, properties));
-            }
-
-            return new ArrayEnterspeedProperty(field.Name, list.ToArray());
+            return new ArrayEnterspeedProperty(field.Name, referenceIds);
         }
     }
 }
