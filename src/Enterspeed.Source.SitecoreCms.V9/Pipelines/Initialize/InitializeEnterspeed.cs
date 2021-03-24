@@ -88,6 +88,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 enterspeedConfigurationApiKeyField[TemplateFieldIDs.Type] = "Single-Line Text";
                 enterspeedConfigurationApiKeyField[TemplateFieldIDs.Shared] = "1";
                 enterspeedConfigurationApiKeyField[TemplateFieldIDs.Unversioned] = "1";
+                enterspeedConfigurationApiBaseUrlField.Help.ToolTip = "For example \"source-aa5c397d-bd6c-47be-a32d-34df9492d056\".";
             }
 
             Item enterspeedConfigurationEnabledSitesField = enterspeedConfigSection.Add("Enabled Sites", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnabledSitesFieldID);
@@ -98,6 +99,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 enterspeedConfigurationEnabledSitesField[TemplateFieldIDs.Source] = "/sitecore/content";
                 enterspeedConfigurationEnabledSitesField[TemplateFieldIDs.Shared] = "1";
                 enterspeedConfigurationEnabledSitesField[TemplateFieldIDs.Unversioned] = "1";
+                enterspeedConfigurationApiBaseUrlField.Help.ToolTip = "Select the site items here with the same fullPath as the rootPath configured for the respective site(s).";
             }
 
             _publishManager.PublishItem(templatesSystemRoot, new[] { webDb }, new[] { language }, true, false, true);
