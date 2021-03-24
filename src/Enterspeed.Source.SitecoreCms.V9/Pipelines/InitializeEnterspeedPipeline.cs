@@ -14,18 +14,15 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines
     public class InitializeEnterspeedPipeline
     {
         private readonly BaseItemManager _itemManager;
-        private readonly BaseTemplateManager _templateManager;
         private readonly BaseFactory _factory;
         private readonly BasePublishManager _publishManager;
 
         public InitializeEnterspeedPipeline(
             BaseItemManager itemManager,
-            BaseTemplateManager templateManager,
             BaseFactory factory,
             BasePublishManager publishManager)
         {
             _itemManager = itemManager;
-            _templateManager = templateManager;
             _factory = factory;
             _publishManager = publishManager;
         }
@@ -70,7 +67,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines
             }
 
             Item enterspeedConfigSection = enterspeedConfigTemplateItem.Add("Data", new TemplateID(TemplateIDs.TemplateSection), EnterspeedIDs.Templates.EnterspeedConfigurationDataSectionID);
-            Item enterspeedConfigurationApiBaseUrlField = enterspeedConfigSection.Add("API Base Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Templates.Fields.EnterspeedApiBaseUrlFieldID);
+            Item enterspeedConfigurationApiBaseUrlField = enterspeedConfigSection.Add("API Base Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedApiBaseUrlFieldID);
 
             using (new EditContext(enterspeedConfigurationApiBaseUrlField))
             {
@@ -79,7 +76,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines
                 enterspeedConfigurationApiBaseUrlField[TemplateFieldIDs.Unversioned] = "1";
             }
 
-            Item enterspeedConfigurationApiKeyField = enterspeedConfigSection.Add("API Key", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Templates.Fields.EnterspeedApiKeyFieldID);
+            Item enterspeedConfigurationApiKeyField = enterspeedConfigSection.Add("API Key", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedApiKeyFieldID);
 
             using (new EditContext(enterspeedConfigurationApiKeyField))
             {
@@ -88,7 +85,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines
                 enterspeedConfigurationApiKeyField[TemplateFieldIDs.Unversioned] = "1";
             }
 
-            Item enterspeedConfigurationEnabledSitesField = enterspeedConfigSection.Add("Enabled Sites", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Templates.Fields.EnterspeedEnabledSitesFieldID);
+            Item enterspeedConfigurationEnabledSitesField = enterspeedConfigSection.Add("Enabled Sites", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnabledSitesFieldID);
 
             using (new EditContext(enterspeedConfigurationEnabledSitesField))
             {

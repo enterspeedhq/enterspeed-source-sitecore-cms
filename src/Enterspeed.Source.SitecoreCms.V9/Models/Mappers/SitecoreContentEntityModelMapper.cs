@@ -34,7 +34,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
                 Properties = _enterspeedPropertyService.GetProperties(input)
             };
 
-            EnterspeedSiteInfo siteInfo = _enterspeedConfigurationService.GetConfigurationFromSitecore().GetSite(input);
+            EnterspeedSiteInfo siteInfo = _enterspeedConfigurationService.GetConfiguration().GetSite(input);
             if (siteInfo != null &&
                 input.Paths.FullPath.Equals(siteInfo.SiteItemPath, StringComparison.OrdinalIgnoreCase) == false)
             {

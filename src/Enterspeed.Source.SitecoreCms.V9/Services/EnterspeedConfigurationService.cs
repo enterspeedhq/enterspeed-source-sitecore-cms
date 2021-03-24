@@ -43,7 +43,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             _siteContextFactory = siteContextFactory;
         }
 
-        public EnterspeedSitecoreConfiguration GetConfigurationFromSitecore()
+        public EnterspeedSitecoreConfiguration GetConfiguration()
         {
             Item enterspeedConfigurationItem = _itemManager.GetItem(EnterspeedIDs.Items.EnterspeedConfigurationID, Language.Parse("en"), Version.Latest, _factory.GetDatabase("web"));
             if (enterspeedConfigurationItem == null || enterspeedConfigurationItem.Versions.Count == 0)
@@ -58,15 +58,15 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
             var config = new EnterspeedSitecoreConfiguration();
 
-            string configApiBaseUrl = enterspeedConfigurationItem[EnterspeedIDs.Templates.Fields.EnterspeedApiBaseUrlFieldID];
+            string configApiBaseUrl = enterspeedConfigurationItem[EnterspeedIDs.Fields.EnterspeedApiBaseUrlFieldID];
             config.BaseUrl = (configApiBaseUrl ?? string.Empty).Trim();
 
-            string configApiKey = enterspeedConfigurationItem[EnterspeedIDs.Templates.Fields.EnterspeedApiKeyFieldID];
+            string configApiKey = enterspeedConfigurationItem[EnterspeedIDs.Fields.EnterspeedApiKeyFieldID];
             config.ApiKey = (configApiKey ?? string.Empty).Trim();
 
             config.ItemNotFoundUrl = GetItemNotFoundUrl(_settings);
 
-            MultilistField enabledSitesField = enterspeedConfigurationItem.Fields[EnterspeedIDs.Templates.Fields.EnterspeedEnabledSitesFieldID];
+            MultilistField enabledSitesField = enterspeedConfigurationItem.Fields[EnterspeedIDs.Fields.EnterspeedEnabledSitesFieldID];
 
             var enabledSites = enabledSitesField?.GetItems()?.ToList() ?? new List<Item>();
             if (enabledSites.Any())
