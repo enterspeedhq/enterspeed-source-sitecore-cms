@@ -70,7 +70,6 @@ Renderings are processed separately, as well, but only if the rendering is inser
 
 * Improved logging.
 * Functionality to trigger a push to Enterspeed from a contextual ribbon/action in Sitecore.
-* Moving settings to an Enterspeed configuration item within Sitecore, instead of using config files.
 * Forms support.
 * TBD.
 
