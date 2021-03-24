@@ -9,15 +9,15 @@ using Sitecore.Pipelines;
 using Sitecore.SecurityModel;
 using Version = Sitecore.Data.Version;
 
-namespace Enterspeed.Source.SitecoreCms.V9.Pipelines
+namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
 {
-    public class InitializeEnterspeedPipeline
+    public class InitializeEnterspeed
     {
         private readonly BaseItemManager _itemManager;
         private readonly BaseFactory _factory;
         private readonly BasePublishManager _publishManager;
 
-        public InitializeEnterspeedPipeline(
+        public InitializeEnterspeed(
             BaseItemManager itemManager,
             BaseFactory factory,
             BasePublishManager publishManager)
@@ -28,6 +28,11 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines
         }
 
         public void Process(PipelineArgs args)
+        {
+            Init();
+        }
+
+        private void Init()
         {
             using (new SecurityDisabler())
             {

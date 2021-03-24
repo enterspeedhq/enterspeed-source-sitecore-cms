@@ -276,7 +276,7 @@
     <Compile Include="Models\Mappers\SitecoreRenderingEntityModelMapper.cs" />
     <Compile Include="Models\SitecoreContentEntity.cs" />
     <Compile Include="Models\SitecoreRenderingEntity.cs" />
-    <Compile Include="Pipelines\InitializeEnterspeedPipeline.cs" />
+    <Compile Include="Pipelines\Initialize\InitializeEnterspeed.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\EnterspeedSitecoreConfigurationProvider.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultCheckboxFieldValueConverter.cs" />

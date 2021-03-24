@@ -74,6 +74,12 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 return;
             }
 
+            if (item.Paths.FullPath.StartsWith("/sitecore/content", StringComparison.OrdinalIgnoreCase) == false &&
+                item.Paths.FullPath.StartsWith("/sitecore/layout/renderings", StringComparison.OrdinalIgnoreCase) == false)
+            {
+                return;
+            }
+
             HandleContentItem(item, itemIsDeleted, itemIsPublished);
 
             HandleRendering(item, itemIsDeleted, itemIsPublished);
