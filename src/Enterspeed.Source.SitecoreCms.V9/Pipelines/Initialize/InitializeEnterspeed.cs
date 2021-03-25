@@ -201,7 +201,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
 
             EnsureEnterspeedConfigurationDataSectionFields(enterspeedConfigSection);
 
-            _publishManager.PublishItem(templatesSystemRoot, new[] { webDb }, new[] { language }, true, false, true);
+            /*_publishManager.PublishItem(templatesSystemRoot, new[] { webDb }, new[] { language }, true, false, true);*/
         }
 
         private void EnsureItems(Database masterDb, Database webDb, Language language)
@@ -215,7 +215,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
 
             EnsureEnterspeedConfigurationItem(systemRoot);
 
-            _publishManager.PublishItem(systemRoot, new[] { webDb }, new[] { language }, true, false, true);
+            /*_publishManager.PublishItem(systemRoot, new[] { webDb }, new[] { language }, true, false, true);*/
         }
     }
 }

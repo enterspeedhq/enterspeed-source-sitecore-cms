@@ -66,6 +66,12 @@ Renderings are processed separately, as well, but only if the rendering is inser
 * Droptree
 * General Link
 
+### Debugging
+
+You can debug what is sent to Enterspeed when publishing Sitecore content, by requesting this path:
+
+* ```/api/sitecore/enterspeed/debug?id={idOrFullPath}```
+
 ## Roadmap
 
 * Improved logging.

@@ -1,9 +1,13 @@
-﻿using Enterspeed.Source.Sdk.Api.Connection;
+﻿using System;
+using System.Collections.Generic;
+using System.Web.Http;
+using Enterspeed.Source.Sdk.Api.Connection;
 using Enterspeed.Source.Sdk.Api.Providers;
 using Enterspeed.Source.Sdk.Api.Services;
 using Enterspeed.Source.Sdk.Domain.Connection;
 using Enterspeed.Source.Sdk.Domain.Services;
 using Enterspeed.Source.Sdk.Domain.SystemTextJson;
+using Enterspeed.Source.SitecoreCms.V9.Controllers;
 using Enterspeed.Source.SitecoreCms.V9.Models;
 using Enterspeed.Source.SitecoreCms.V9.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V9.Providers;
@@ -40,6 +44,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
             });
 
             RegisterFieldConverters(services);
+
+            RegisterControllers(services);
         }
 
         private static void RegisterFieldConverters(IServiceCollection services)
@@ -69,6 +75,11 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultDroplinkFieldValueConverter>();
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultDroptreeFieldValueConverter>();
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultGeneralLinkFieldValueConverter>();
+        }
+
+        private static void RegisterControllers(IServiceCollection services)
+        {
+            services.AddTransient<EnterspeedController>();
         }
     }
 }
