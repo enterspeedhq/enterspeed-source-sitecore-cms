@@ -14,6 +14,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
     public class InitializeEnterspeed
     {
         private const string GEARICON = "applications/32x32/gear_refresh.png";
+        private const string ENABLEDSITESHELPTEXT = "Select the site items here with the same fullPath as the rootPath configured for the respective site(s).";
+        private const string APIKEYHELPTEXT = "For example \"source-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\".";
 
         private readonly BaseItemManager _itemManager;
         private readonly BaseFactory _factory;
@@ -121,9 +123,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 }
 
                 string currentHelpValue = apiKeyField.Help.ToolTip;
-                if (currentHelpValue.Equals("For example \"source-aa5c397d-bd6c-47be-a32d-34df9492d056\".", StringComparison.OrdinalIgnoreCase) == false)
+                if (currentHelpValue.Equals(APIKEYHELPTEXT, StringComparison.OrdinalIgnoreCase) == false)
                 {
-                    apiKeyField.Help.ToolTip = "For example \"source-aa5c397d-bd6c-47be-a32d-34df9492d056\".";
+                    apiKeyField.Help.ToolTip = APIKEYHELPTEXT;
                 }
             }
 
@@ -153,9 +155,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 }
 
                 string currentHelpValue = enabledSitesField.Help.ToolTip;
-                if (currentHelpValue.Equals("Select the site items here with the same fullPath as the rootPath configured for the respective site(s).", StringComparison.OrdinalIgnoreCase) == false)
+                if (currentHelpValue.Equals(ENABLEDSITESHELPTEXT, StringComparison.OrdinalIgnoreCase) == false)
                 {
-                    enabledSitesField.Help.ToolTip = "Select the site items here with the same fullPath as the rootPath configured for the respective site(s).";
+                    enabledSitesField.Help.ToolTip = ENABLEDSITESHELPTEXT;
                 }
             }
         }
