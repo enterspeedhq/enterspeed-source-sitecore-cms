@@ -146,9 +146,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                     Item datasourceItem = item.Database.GetItem(renderingReference.Settings.DataSource, item.Language, Version.Latest);
                     if (datasourceItem != null && datasourceItem.Versions.Count >= 1)
                     {
-                        IDictionary<string, IEnterspeedProperty> datasourceProperties = _fieldConverter.ConvertFields(datasourceItem, null, _fieldValueConverters.ToList());
-
-                        renderingProperties.Add("renderingDatasource", new ObjectEnterspeedProperty("renderingDatasource", datasourceProperties));
+                        renderingProperties.Add("renderingDatasource", new StringEnterspeedProperty("renderingDatasource", _identityService.GetId(datasourceItem)));
                     }
                 }
 

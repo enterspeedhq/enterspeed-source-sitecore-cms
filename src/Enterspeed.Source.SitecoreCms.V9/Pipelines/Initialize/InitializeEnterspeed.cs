@@ -13,9 +13,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
 {
     public class InitializeEnterspeed
     {
-        private const string GEARICON = "applications/32x32/gear_refresh.png";
-        private const string ENABLEDSITESHELPTEXT = "Select the site items here with the same fullPath as the rootPath configured for the respective site(s).";
-        private const string APIKEYHELPTEXT = "For example \"source-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\".";
+        private const string GearIcon = "applications/32x32/gear_refresh.png";
+        private const string EnabledSitesHelpText = "Select the site items here with the same fullPath as the rootPath configured for the respective site(s).";
+        private const string ApiKeyHelpText = "For example \"source-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\".";
 
         private readonly BaseItemManager _itemManager;
         private readonly BaseFactory _factory;
@@ -60,9 +60,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                     enterspeedConfigTemplateItem[FieldIDs.BaseTemplate] = standardTemplate;
                 }
 
-                if (enterspeedConfigTemplateItem.Appearance.Icon.Equals(GEARICON, StringComparison.OrdinalIgnoreCase) == false)
+                if (enterspeedConfigTemplateItem.Appearance.Icon.Equals(GearIcon, StringComparison.OrdinalIgnoreCase) == false)
                 {
-                    enterspeedConfigTemplateItem.Appearance.Icon = GEARICON;
+                    enterspeedConfigTemplateItem.Appearance.Icon = GearIcon;
                 }
             }
         }
@@ -123,9 +123,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 }
 
                 string currentHelpValue = apiKeyField.Help.ToolTip;
-                if (currentHelpValue.Equals(APIKEYHELPTEXT, StringComparison.OrdinalIgnoreCase) == false)
+                if (currentHelpValue.Equals(ApiKeyHelpText, StringComparison.OrdinalIgnoreCase) == false)
                 {
-                    apiKeyField.Help.ToolTip = APIKEYHELPTEXT;
+                    apiKeyField.Help.ToolTip = ApiKeyHelpText;
                 }
             }
 
@@ -155,9 +155,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 }
 
                 string currentHelpValue = enabledSitesField.Help.ToolTip;
-                if (currentHelpValue.Equals(ENABLEDSITESHELPTEXT, StringComparison.OrdinalIgnoreCase) == false)
+                if (currentHelpValue.Equals(EnabledSitesHelpText, StringComparison.OrdinalIgnoreCase) == false)
                 {
-                    enabledSitesField.Help.ToolTip = ENABLEDSITESHELPTEXT;
+                    enabledSitesField.Help.ToolTip = EnabledSitesHelpText;
                 }
             }
         }
