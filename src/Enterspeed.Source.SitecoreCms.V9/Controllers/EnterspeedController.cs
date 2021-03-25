@@ -36,8 +36,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Controllers
 
             _webDatabase = factory.GetDatabase("web");
             _allLanguages = languageManager.GetLanguages(_webDatabase).ToList();
-
-            var user = Sitecore.Context.User;
         }
 
         [HttpGet]
