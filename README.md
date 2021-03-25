@@ -37,7 +37,7 @@ Each rendering reference sent to Enterspeed could have these properties:
 * ```renderingId``` - the Enterspeed ID for this rendering
 * ```renderingPlaceholder``` - the Sitecore placeholder inserted on either the presentation details or the rendering itself
 * ```renderingParameters``` - an array of key/values inserted on the rendering options
-* ```renderingDatasource``` - the properties (fields) and their values of the datasource item inserted on the rendering
+* ```renderingDatasource``` - a reference to the inserted datasource item
 
 ### Renderings
 
