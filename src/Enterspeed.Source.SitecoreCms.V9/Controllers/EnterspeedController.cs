@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Enterspeed.Source.Sdk.Api.Services;
@@ -9,6 +10,7 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
 using Sitecore.Mvc.Controllers;
+using Version = Sitecore.Data.Version;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Controllers
 {
@@ -34,6 +36,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Controllers
 
             _webDatabase = factory.GetDatabase("web");
             _allLanguages = languageManager.GetLanguages(_webDatabase).ToList();
+
+            var user = Sitecore.Context.User;
         }
 
         [HttpGet]
@@ -61,6 +65,22 @@ namespace Enterspeed.Source.SitecoreCms.V9.Controllers
                 _jsonSerializer.Serialize(
                     items.Select(
                         _itemMapper.Map)));
+        }
+
+        private static void CheckAccessRights()
+        {
+            if (Sitecore.Context.User.IsAuthenticated == false ||
+                Sitecore.Context.User.IsAdministrator == false)
+            {
+                throw new UnauthorizedAccessException();
+            }
+        }
+
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            base.OnActionExecuting(filterContext);
+
+            CheckAccessRights();
         }
     }
 }
