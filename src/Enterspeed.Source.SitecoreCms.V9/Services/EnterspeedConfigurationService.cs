@@ -53,7 +53,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
             if (IsConfigurationUpdated(enterspeedConfigurationItem, out Guid currentRevisionId) == false)
             {
-                return _configuration;
+                return CheckConfigurationIntegrity(_configuration);
             }
 
             var config = new EnterspeedSitecoreConfiguration();
@@ -123,7 +123,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             _configuration = config;
             _configurationRevisionId = currentRevisionId;
 
-            return _configuration;
+            return CheckConfigurationIntegrity(_configuration);
         }
 
         private static string GetItemNotFoundUrl(BaseSettings settings)
@@ -149,6 +149,36 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             }
 
             return true;
+        }
+
+        private EnterspeedSitecoreConfiguration CheckConfigurationIntegrity(EnterspeedSitecoreConfiguration config)
+        {
+            if (config == null)
+            {
+                throw new EnterspeedSitecoreException($"{nameof(EnterspeedSitecoreConfiguration)} is null.");
+            }
+
+            if (string.IsNullOrEmpty(config.BaseUrl))
+            {
+                throw new EnterspeedSitecoreException($"{nameof(EnterspeedSitecoreConfiguration)}.{nameof(config.BaseUrl)} is null or empty.");
+            }
+
+            if (Uri.TryCreate(config.BaseUrl, UriKind.Absolute, out _) == false)
+            {
+                throw new EnterspeedSitecoreException($"{nameof(EnterspeedSitecoreConfiguration)}.{nameof(config.BaseUrl)} could not be parsed as a representation of an absolute URI.");
+            }
+
+            if (string.IsNullOrEmpty(config.ApiKey))
+            {
+                throw new EnterspeedSitecoreException($"{nameof(EnterspeedSitecoreConfiguration)}.{nameof(config.ApiKey)} is null or empty.");
+            }
+
+            if (config.SiteInfos == null || config.SiteInfos.Any() == false)
+            {
+                throw new EnterspeedSitecoreException($"{nameof(EnterspeedSitecoreConfiguration)}.EnabledSites has no Sites added or the sites added were not found as part of the <sites> Sitecore collection.");
+            }
+
+            return config;
         }
     }
 }
