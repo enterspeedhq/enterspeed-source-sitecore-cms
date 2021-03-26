@@ -58,31 +58,60 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 return;
             }
 
-            var itemIsDeleted = context.Action == PublishAction.DeleteTargetItem;
-            var itemIsPublished = context.Action == PublishAction.PublishVersion;
-
-            if (itemIsDeleted == false && itemIsPublished == false)
-            {
-                return;
-            }
-
             Language language = context.PublishOptions.Language;
 
-            Item item = _itemManager.GetItem(context.ItemId, language, Version.Latest, context.PublishHelper.Options.TargetDatabase);
-            if (item == null || item.Versions.Count == 0)
+            // Getting the source item first
+            Item sourceItem = _itemManager.GetItem(context.ItemId, language, Version.Latest, context.PublishHelper.Options.SourceDatabase);
+            if (sourceItem == null)
             {
                 return;
             }
 
-            if (item.Paths.FullPath.StartsWith("/sitecore/content", StringComparison.OrdinalIgnoreCase) == false &&
-                item.Paths.FullPath.StartsWith("/sitecore/layout/renderings", StringComparison.OrdinalIgnoreCase) == false)
+            if (HasAllowedPath(sourceItem) == false)
             {
                 return;
             }
 
-            HandleContentItem(item, itemIsDeleted, itemIsPublished);
+            // Handling if the item was deleted or unpublished
+            bool itemIsDeleted = context.Action == PublishAction.DeleteTargetItem;
 
-            HandleRendering(item, itemIsDeleted, itemIsPublished);
+            if (itemIsDeleted)
+            {
+                HandleContentItem(sourceItem, true, false);
+                HandleRendering(sourceItem, true, false);
+
+                return;
+            }
+
+            // Handling if the item was published
+            Item targetItem = _itemManager.GetItem(context.ItemId, language, Version.Latest, context.PublishHelper.Options.TargetDatabase);
+            if (targetItem == null || targetItem.Versions.Count == 0)
+            {
+                return;
+            }
+
+            if (HasAllowedPath(targetItem) == false)
+            {
+                return;
+            }
+
+            HandleContentItem(targetItem, false, true);
+            HandleRendering(targetItem, false, true);
+        }
+
+        private static bool HasAllowedPath(Item item)
+        {
+            return HasContentPath(item) || HasRenderingsPath(item);
+        }
+
+        private static bool HasContentPath(Item item)
+        {
+            return item.Paths.FullPath.StartsWith("/sitecore/content", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool HasRenderingsPath(Item item)
+        {
+            return item.Paths.FullPath.StartsWith("/sitecore/layout/renderings", StringComparison.OrdinalIgnoreCase);
         }
 
         private void HandleContentItem(Item item, bool itemIsDeleted, bool itemIsPublished)
@@ -93,7 +122,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
             }
 
             // Skip, if the item published is not a content item
-            if (item.Paths.FullPath.StartsWith("/sitecore/content", StringComparison.OrdinalIgnoreCase) == false)
+            if (HasContentPath(item) == false)
             {
                 return;
             }
@@ -156,7 +185,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
             }
 
             // Skip, if the item published is not a rendering item
-            if (item.Paths.FullPath.StartsWith("/sitecore/layout/renderings", StringComparison.OrdinalIgnoreCase) == false)
+            if (HasRenderingsPath(item) == false)
             {
                 return;
             }
