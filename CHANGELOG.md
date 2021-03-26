@@ -13,6 +13,7 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 * Changed several field converters to have the correct properties added.
 * Moved configuration to Sitecore. Previous <setting /> tags are no longer used.
 * Added way of debugging what will be sent to Enterspeed (via requesting '/api/sitecore/enterspeed/debug?id=xyz').
+* Fixed potential bug when unpublishing items.
 
 ## [0.1.0 - 2021-03-22]
 
