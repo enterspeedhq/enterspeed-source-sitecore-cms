@@ -40,7 +40,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
             htmlDocument.LoadHtml(html);
 
             var imageNodes = htmlDocument.DocumentNode.SelectNodes("//img");
-            if (imageNodes == null || imageNodes.Any() == false)
+            if (imageNodes == null || !imageNodes.Any())
             {
                 return html;
             }
@@ -70,7 +70,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
             htmlDocument.LoadHtml(html);
 
             var anchorNodes = htmlDocument.DocumentNode.SelectNodes("//a");
-            if (anchorNodes == null || anchorNodes.Any() == false)
+            if (anchorNodes == null || !anchorNodes.Any())
             {
                 return html;
             }
@@ -84,12 +84,12 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                     continue;
                 }
 
-                if (Uri.TryCreate(href, UriKind.RelativeOrAbsolute, out var uri) == false)
+                if (!Uri.TryCreate(href, UriKind.RelativeOrAbsolute, out var uri))
                 {
                     continue;
                 }
 
-                if (uri.IsAbsoluteUri == false || href.StartsWith("/"))
+                if (!uri.IsAbsoluteUri || href.StartsWith("/"))
                 {
                     anchorNode.SetAttributeValue("href", new Uri(baseUri, href).ToString());
                 }

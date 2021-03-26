@@ -75,7 +75,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             }
 
             if (mediaUrl.EndsWith(".ashx") &&
-                string.IsNullOrEmpty(mediaItem.Extension) == false)
+                !string.IsNullOrEmpty(mediaItem.Extension))
             {
                 mediaUrl = mediaUrl.Replace(".ashx", $".{mediaItem.Extension}");
             }
