@@ -110,7 +110,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             {
                 string placeholder;
 
-                if (string.IsNullOrEmpty(renderingReference.Placeholder) == false)
+                if (!string.IsNullOrEmpty(renderingReference.Placeholder))
                 {
                     placeholder = renderingReference.Placeholder;
                 }
@@ -127,32 +127,30 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
                 var renderingProperties = new Dictionary<string, IEnterspeedProperty>
                 {
-                    ["renderingId"] = new StringEnterspeedProperty(_enterspeedIdentityService.GetId(renderingReference.RenderingID.Guid, null)),
-                    ["renderingPlaceholder"] = new StringEnterspeedProperty(placeholder)
+                    ["renderingId"] = new StringEnterspeedProperty("renderingId", _enterspeedIdentityService.GetId(renderingReference.RenderingID.Guid, null)),
+                    ["renderingPlaceholder"] = new StringEnterspeedProperty("renderingPlaceholder", placeholder)
                 };
 
-                if (string.IsNullOrEmpty(renderingReference.Settings.Parameters) == false)
+                if (!string.IsNullOrEmpty(renderingReference.Settings.Parameters))
                 {
                     NameValueCollection parameters = HttpUtility.ParseQueryString(renderingReference.Settings.Parameters);
 
                     if (parameters.Count > 0)
                     {
-                        renderingProperties.Add("renderingParameters", new ArrayEnterspeedProperty(null, parameters.AllKeys.Select(key => new StringEnterspeedProperty(key, parameters[key])).ToArray()));
+                        renderingProperties.Add("renderingParameters", new ArrayEnterspeedProperty("renderingParameters", parameters.AllKeys.Select(key => new StringEnterspeedProperty(key, parameters[key])).ToArray()));
                     }
                 }
 
-                if (string.IsNullOrEmpty(renderingReference.Settings.DataSource) == false)
+                if (!string.IsNullOrEmpty(renderingReference.Settings.DataSource))
                 {
                     Item datasourceItem = item.Database.GetItem(renderingReference.Settings.DataSource, item.Language, Version.Latest);
-                    if (datasourceItem != null && datasourceItem.Versions.Count >= 1)
+                    if (datasourceItem != null && datasourceItem.Versions.Count > 0)
                     {
-                        IDictionary<string, IEnterspeedProperty> datasourceProperties = _fieldConverter.ConvertFields(datasourceItem, null, _fieldValueConverters.ToList());
-
-                        renderingProperties.Add("renderingDatasource", new ObjectEnterspeedProperty(null, datasourceProperties));
+                        renderingProperties.Add("renderingDatasource", new StringEnterspeedProperty("renderingDatasource", _identityService.GetId(datasourceItem)));
                     }
                 }
 
-                renderingReferences.Add(new ObjectEnterspeedProperty(renderingReference.RenderingItem.Name, renderingProperties));
+                renderingReferences.Add(new ObjectEnterspeedProperty(null, renderingProperties));
             }
 
             return new ArrayEnterspeedProperty(Renderings, renderingReferences.ToArray());

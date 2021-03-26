@@ -16,13 +16,13 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
             _enterspeedPropertyService = enterspeedPropertyService;
         }
 
-        public SitecoreRenderingEntity Map(RenderingItem renderingItem)
+        public SitecoreRenderingEntity Map(RenderingItem input)
         {
             var output = new SitecoreRenderingEntity();
 
-            output.Id = _enterspeedIdentityService.GetId(renderingItem);
+            output.Id = _enterspeedIdentityService.GetId(input);
             output.Type = "rendering";
-            output.Properties = _enterspeedPropertyService.GetProperties(renderingItem);
+            output.Properties = _enterspeedPropertyService.GetProperties(input);
 
             return output;
         }

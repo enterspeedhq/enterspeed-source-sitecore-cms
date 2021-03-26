@@ -9,7 +9,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models
         public string Id { get; set; }
         public string Type { get; set; }
         public string Url { get; set; }
-        public string[] Redirects { get; set; }
+        public string[] Redirects { get; set; } = new string[0];
         public string ParentId { get; set; }
         public IDictionary<string, IEnterspeedProperty> Properties { get; set; }
     }
