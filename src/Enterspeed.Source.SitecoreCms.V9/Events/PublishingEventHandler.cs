@@ -67,7 +67,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 return;
             }
 
-            if (HasAllowedPath(sourceItem) == false)
+            if (!HasAllowedPath(sourceItem))
             {
                 return;
             }
@@ -90,7 +90,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 return;
             }
 
-            if (HasAllowedPath(targetItem) == false)
+            if (!HasAllowedPath(targetItem))
             {
                 return;
             }
@@ -122,7 +122,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
             }
 
             // Skip, if the item published is not a content item
-            if (HasContentPath(item) == false)
+            if (!HasContentPath(item))
             {
                 return;
             }
@@ -148,7 +148,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
 
                 Response deleteResponse = _enterspeedIngestService.Delete(id);
 
-                if (deleteResponse.Success == false)
+                if (!deleteResponse.Success)
                 {
                     _log.Warn($"Failed deleting entity ({id}). Message: {deleteResponse.Message}", deleteResponse.Exception, this);
                 }
@@ -166,7 +166,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
 
                 Response saveResponse = _enterspeedIngestService.Save(sitecoreContentEntity);
 
-                if (saveResponse.Success == false)
+                if (!saveResponse.Success)
                 {
                     _log.Warn($"Failed ingesting entity ({id}). Message: {saveResponse.Message}", saveResponse.Exception, this);
                 }
@@ -185,7 +185,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
             }
 
             // Skip, if the item published is not a rendering item
-            if (HasRenderingsPath(item) == false)
+            if (!HasRenderingsPath(item))
             {
                 return;
             }
@@ -196,7 +196,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 return;
             }
 
-            if (IsRenderingReferencedFromEnabledContent(item) == false)
+            if (!IsRenderingReferencedFromEnabledContent(item))
             {
                 return;
             }
@@ -209,7 +209,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
 
                 Response deleteResponse = _enterspeedIngestService.Delete(id);
 
-                if (deleteResponse.Success == false)
+                if (!deleteResponse.Success)
                 {
                     _log.Warn($"Failed deleting entity ({id}). Message: {deleteResponse.Message}", deleteResponse.Exception, this);
                 }
@@ -227,7 +227,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
 
                 Response saveResponse = _enterspeedIngestService.Save(sitecoreRenderingEntity);
 
-                if (saveResponse.Success == false)
+                if (!saveResponse.Success)
                 {
                     _log.Warn($"Failed ingesting entity ({id}). Message: {saveResponse.Message}", saveResponse.Exception, this);
                 }

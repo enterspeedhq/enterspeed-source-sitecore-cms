@@ -55,12 +55,12 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 string currentBaseTemplate = enterspeedConfigTemplateItem[FieldIDs.BaseTemplate];
                 string standardTemplate = TemplateIDs.StandardTemplate.ToString();
 
-                if (currentBaseTemplate.Equals(standardTemplate, StringComparison.OrdinalIgnoreCase) == false)
+                if (!currentBaseTemplate.Equals(standardTemplate, StringComparison.OrdinalIgnoreCase))
                 {
                     enterspeedConfigTemplateItem[FieldIDs.BaseTemplate] = standardTemplate;
                 }
 
-                if (enterspeedConfigTemplateItem.Appearance.Icon.Equals(GearIcon, StringComparison.OrdinalIgnoreCase) == false)
+                if (!enterspeedConfigTemplateItem.Appearance.Icon.Equals(GearIcon, StringComparison.OrdinalIgnoreCase))
                 {
                     enterspeedConfigTemplateItem.Appearance.Icon = GearIcon;
                 }
@@ -81,7 +81,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
             using (new EditContext(apiBaseUrlField))
             {
                 string currentTypeValue = apiBaseUrlField[TemplateFieldIDs.Type];
-                if (currentTypeValue.Equals("Single-Line Text", StringComparison.OrdinalIgnoreCase) == false)
+                if (!currentTypeValue.Equals("Single-Line Text", StringComparison.OrdinalIgnoreCase))
                 {
                     apiBaseUrlField[TemplateFieldIDs.Type] = "Single-Line Text";
                 }
@@ -105,7 +105,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
             using (new EditContext(apiKeyField))
             {
                 string currentTypeValue = apiKeyField[TemplateFieldIDs.Type];
-                if (currentTypeValue.Equals("Single-Line Text", StringComparison.OrdinalIgnoreCase) == false)
+                if (!currentTypeValue.Equals("Single-Line Text", StringComparison.OrdinalIgnoreCase))
                 {
                     apiKeyField[TemplateFieldIDs.Type] = "Single-Line Text";
                 }
@@ -123,7 +123,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 }
 
                 string currentHelpValue = apiKeyField.Help.ToolTip;
-                if (currentHelpValue.Equals(ApiKeyHelpText, StringComparison.OrdinalIgnoreCase) == false)
+                if (!currentHelpValue.Equals(ApiKeyHelpText, StringComparison.OrdinalIgnoreCase))
                 {
                     apiKeyField.Help.ToolTip = ApiKeyHelpText;
                 }
@@ -135,7 +135,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
             using (new EditContext(enabledSitesField))
             {
                 string currentTypeValue = enabledSitesField[TemplateFieldIDs.Type];
-                if (currentTypeValue.Equals("Treelist", StringComparison.OrdinalIgnoreCase) == false)
+                if (!currentTypeValue.Equals("Treelist", StringComparison.OrdinalIgnoreCase))
                 {
                     enabledSitesField[TemplateFieldIDs.Type] = "Treelist";
                 }
@@ -155,7 +155,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 }
 
                 string currentHelpValue = enabledSitesField.Help.ToolTip;
-                if (currentHelpValue.Equals(EnabledSitesHelpText, StringComparison.OrdinalIgnoreCase) == false)
+                if (!currentHelpValue.Equals(EnabledSitesHelpText, StringComparison.OrdinalIgnoreCase))
                 {
                     enabledSitesField.Help.ToolTip = EnabledSitesHelpText;
                 }

@@ -17,7 +17,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             var output = new Dictionary<string, IEnterspeedProperty>();
 
             FieldCollection fieldsCollection = item.Fields;
-            if (fieldsCollection == null || fieldsCollection.Any() == false)
+            if (fieldsCollection == null || !fieldsCollection.Any())
             {
                 return output;
             }
@@ -25,10 +25,10 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             // Exclude system fields
             List<Field> fields = fieldsCollection.Where(field =>
                     field.InnerItem != null &&
-                    field.InnerItem.Paths.FullPath.StartsWith("/sitecore/templates/system", StringComparison.OrdinalIgnoreCase) == false)
+                    !field.InnerItem.Paths.FullPath.StartsWith("/sitecore/templates/system", StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
-            if (fields.Any() == false)
+            if (!fields.Any())
             {
                 return output;
             }

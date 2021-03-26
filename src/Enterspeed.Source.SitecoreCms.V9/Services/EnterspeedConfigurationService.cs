@@ -51,7 +51,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 throw new NullReferenceException("Unable to find Enterspeed Configuration item.");
             }
 
-            if (IsConfigurationUpdated(enterspeedConfigurationItem, out Guid currentRevisionId) == false)
+            if (!IsConfigurationUpdated(enterspeedConfigurationItem, out Guid currentRevisionId))
             {
                 return CheckConfigurationIntegrity(_configuration);
             }
@@ -163,7 +163,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 throw new EnterspeedSitecoreException($"{nameof(EnterspeedSitecoreConfiguration)}.{nameof(config.BaseUrl)} is null or empty.");
             }
 
-            if (Uri.TryCreate(config.BaseUrl, UriKind.Absolute, out _) == false)
+            if (!Uri.TryCreate(config.BaseUrl, UriKind.Absolute, out _))
             {
                 throw new EnterspeedSitecoreException($"{nameof(EnterspeedSitecoreConfiguration)}.{nameof(config.BaseUrl)} could not be parsed as a representation of an absolute URI.");
             }
@@ -173,7 +173,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 throw new EnterspeedSitecoreException($"{nameof(EnterspeedSitecoreConfiguration)}.{nameof(config.ApiKey)} is null or empty.");
             }
 
-            if (config.SiteInfos == null || config.SiteInfos.Any() == false)
+            if (config.SiteInfos == null || !config.SiteInfos.Any())
             {
                 throw new EnterspeedSitecoreException($"{nameof(EnterspeedSitecoreConfiguration)}.EnabledSites has no Sites added or the sites added were not found as part of the <sites> Sitecore collection.");
             }

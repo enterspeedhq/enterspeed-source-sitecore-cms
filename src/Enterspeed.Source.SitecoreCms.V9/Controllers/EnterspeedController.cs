@@ -67,8 +67,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Controllers
 
         private static void CheckAccessRights()
         {
-            if (Sitecore.Context.User.IsAuthenticated == false ||
-                Sitecore.Context.User.IsAdministrator == false)
+            if (!Sitecore.Context.User.IsAuthenticated ||
+                !Sitecore.Context.User.IsAdministrator)
             {
                 throw new UnauthorizedAccessException();
             }

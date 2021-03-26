@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
-## [0.1.2 - 2021-03-23]
+## [0.1.2 - 2021-03-26]
 
 * Fixed problem with NuGet package dependencies.
 * Fixed typo in readme.

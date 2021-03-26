@@ -34,7 +34,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
             }
 
             var items = multilistField.GetItems()?.ToList() ?? new List<Item>();
-            if (items.Any() == false)
+            if (!items.Any())
             {
                 return null;
             }

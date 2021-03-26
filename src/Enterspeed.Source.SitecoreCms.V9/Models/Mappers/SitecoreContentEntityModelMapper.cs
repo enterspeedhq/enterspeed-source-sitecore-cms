@@ -36,7 +36,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
 
             EnterspeedSiteInfo siteInfo = _enterspeedConfigurationService.GetConfiguration().GetSite(input);
             if (siteInfo != null &&
-                input.Paths.FullPath.Equals(siteInfo.SiteItemPath, StringComparison.OrdinalIgnoreCase) == false)
+                !input.Paths.FullPath.Equals(siteInfo.SiteItemPath, StringComparison.OrdinalIgnoreCase))
             {
                 // If the input item is the Site item, we do not set a parent ID.
                 output.ParentId = _enterspeedIdentityService.GetId(input.Parent);

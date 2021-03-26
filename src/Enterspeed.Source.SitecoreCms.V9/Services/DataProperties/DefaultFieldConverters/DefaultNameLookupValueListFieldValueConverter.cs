@@ -60,7 +60,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                     continue;
                 }
 
-                if (Guid.TryParse(value, out var itemId) == false)
+                if (!Guid.TryParse(value, out var itemId))
                 {
                     continue;
                 }

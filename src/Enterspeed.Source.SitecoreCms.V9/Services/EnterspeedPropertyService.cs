@@ -110,7 +110,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             {
                 string placeholder;
 
-                if (string.IsNullOrEmpty(renderingReference.Placeholder) == false)
+                if (!string.IsNullOrEmpty(renderingReference.Placeholder))
                 {
                     placeholder = renderingReference.Placeholder;
                 }
@@ -131,7 +131,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                     ["renderingPlaceholder"] = new StringEnterspeedProperty("renderingPlaceholder", placeholder)
                 };
 
-                if (string.IsNullOrEmpty(renderingReference.Settings.Parameters) == false)
+                if (!string.IsNullOrEmpty(renderingReference.Settings.Parameters))
                 {
                     NameValueCollection parameters = HttpUtility.ParseQueryString(renderingReference.Settings.Parameters);
 
@@ -141,10 +141,10 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                     }
                 }
 
-                if (string.IsNullOrEmpty(renderingReference.Settings.DataSource) == false)
+                if (!string.IsNullOrEmpty(renderingReference.Settings.DataSource))
                 {
                     Item datasourceItem = item.Database.GetItem(renderingReference.Settings.DataSource, item.Language, Version.Latest);
-                    if (datasourceItem != null && datasourceItem.Versions.Count >= 1)
+                    if (datasourceItem != null && datasourceItem.Versions.Count > 0)
                     {
                         renderingProperties.Add("renderingDatasource", new StringEnterspeedProperty("renderingDatasource", _identityService.GetId(datasourceItem)));
                     }
