@@ -9,13 +9,13 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Configuration
 
         public string BaseUrl { get; set; }
 
-        public string HomeItemPath { get; set; }
+        public string SiteItemPath { get; set; }
 
         public bool IsHttpsEnabled { get; set; }
 
         public bool IsItemOfSite(Item item)
         {
-            if (string.IsNullOrEmpty(HomeItemPath))
+            if (string.IsNullOrEmpty(SiteItemPath))
             {
                 return false;
             }
@@ -25,7 +25,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Configuration
                 return false;
             }
 
-            return item.Paths.FullPath.StartsWith(HomeItemPath, StringComparison.OrdinalIgnoreCase);
+            return item.Paths.FullPath.StartsWith(SiteItemPath, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

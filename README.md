@@ -18,16 +18,11 @@ The NuGet package installs config files into this directory; verify that this fo
 ~\App_Config\Include\Enterspeed
 ```
 
-### Add required settings to your include file
+### Configuring Enterspeed in Sitecore
 
-You need to add ```<settings>``` to your preferred choice of include config file.
+Once installed, your Sitecore instance will be loaded with a new item in ```/sitecore/system``` called "Enterspeed Configuration".
 
-* ```Enterspeed.BaseUrl```
-  * The value of this setting should be the Enterspeed API base URL supplied to you
-* ```Enterspeed.ApiKey```
-  * The value of this setting should be the Enterspeed API key supplied to you
-* ```Enterspeed.EnabledSites```
-  * The value of this setting should be a comma-separated list of site names (or one, if you only have a single site in the solution)
+You will have to enter the necessary values in the respective fields, and publish the changes.
 
 ## How it works
 
@@ -42,17 +37,45 @@ Each rendering reference sent to Enterspeed could have these properties:
 * ```renderingId``` - the Enterspeed ID for this rendering
 * ```renderingPlaceholder``` - the Sitecore placeholder inserted on either the presentation details or the rendering itself
 * ```renderingParameters``` - an array of key/values inserted on the rendering options
-* ```renderingDatasource``` - the properties (fields) and their values of the datasource item inserted on the rendering
+* ```renderingDatasource``` - a reference to the inserted datasource item
 
 ### Renderings
 
 Renderings are processed separately, as well, but only if the rendering is inserted on the presentation details of a content item which resides in an enabled site. This means that newly created renderings are not processed until they're inserted to be rendered on content for which you have enabled.
 
+### Supported field types
+
+* Single-Line Text
+* Rich-Text
+* Checkbox
+* Date
+* File
+* Image
+* Integer
+* Multi-Line Text
+* Number
+* Checklist
+* Droplist
+* Grouped Droplink
+* Grouped Droplist
+* Multilist
+* Name Value List
+* Name Lookup Value List
+* Treelist
+* Droplink
+* Droptree
+* General Link
+
+### Debugging
+
+You can debug what is sent to Enterspeed when publishing Sitecore content, by requesting this path:
+
+* ```/api/sitecore/enterspeed/debug?id={idOrFullPath}```
+
 ## Roadmap
 
 * Improved logging.
-* Functionality to trigger a push to Enterspeed from a contextaul ribbon/action in Sitecore.
-* Moving settings to an Enterspeed configuration item within Sitecore, instead of using config files.
+* Functionality to trigger a push to Enterspeed from a contextual ribbon/action in Sitecore.
 * Forms support.
 * TBD.
 

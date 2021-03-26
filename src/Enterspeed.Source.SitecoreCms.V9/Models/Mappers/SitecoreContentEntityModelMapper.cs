@@ -24,21 +24,22 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
             _enterspeedConfigurationService = enterspeedConfigurationService;
         }
 
-        public SitecoreContentEntity Map(Item renderingItem)
+        public SitecoreContentEntity Map(Item input)
         {
             var output = new SitecoreContentEntity
             {
-                Id = _enterspeedIdentityService.GetId(renderingItem),
-                Type = renderingItem.TemplateName,
-                Url = _urlService.GetItemUrl(renderingItem),
-                Properties = _enterspeedPropertyService.GetProperties(renderingItem)
+                Id = _enterspeedIdentityService.GetId(input),
+                Type = input.TemplateName,
+                Url = _urlService.GetItemUrl(input),
+                Properties = _enterspeedPropertyService.GetProperties(input)
             };
 
-            EnterspeedSiteInfo siteInfo = _enterspeedConfigurationService.GetConfiguration().GetSite(renderingItem);
+            EnterspeedSiteInfo siteInfo = _enterspeedConfigurationService.GetConfiguration().GetSite(input);
             if (siteInfo != null &&
-                renderingItem.Paths.FullPath.Equals(siteInfo.HomeItemPath, StringComparison.OrdinalIgnoreCase) == false)
+                !input.Paths.FullPath.Equals(siteInfo.SiteItemPath, StringComparison.OrdinalIgnoreCase))
             {
-                output.ParentId = _enterspeedIdentityService.GetId(renderingItem.Parent);
+                // If the input item is the Site item, we do not set a parent ID.
+                output.ParentId = _enterspeedIdentityService.GetId(input.Parent);
             }
 
             return output;

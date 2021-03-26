@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
-using Sitecore.Abstractions;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
-using Sitecore.Links.UrlBuilders;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldConverters
 {
@@ -39,29 +37,29 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 
             var properties = new Dictionary<string, IEnterspeedProperty>();
 
-            if (string.IsNullOrEmpty(linkField.Target) == false)
+            if (!string.IsNullOrEmpty(linkField.Target))
             {
-                properties.Add("Target", new StringEnterspeedProperty(linkField.Target));
+                properties.Add("Target", new StringEnterspeedProperty("Target", linkField.Target));
             }
 
-            if (string.IsNullOrEmpty(linkField.Anchor) == false)
+            if (!string.IsNullOrEmpty(linkField.Anchor))
             {
-                properties.Add("Anchor", new StringEnterspeedProperty(linkField.Anchor));
+                properties.Add("Anchor", new StringEnterspeedProperty("Anchor", linkField.Anchor));
             }
 
-            if (string.IsNullOrEmpty(linkField.Text) == false)
+            if (!string.IsNullOrEmpty(linkField.Text))
             {
-                properties.Add("Text", new StringEnterspeedProperty(linkField.Text));
+                properties.Add("Text", new StringEnterspeedProperty("Text", linkField.Text));
             }
 
-            if (string.IsNullOrEmpty(linkField.Title) == false)
+            if (!string.IsNullOrEmpty(linkField.Title))
             {
-                properties.Add("Title", new StringEnterspeedProperty(linkField.Title));
+                properties.Add("Title", new StringEnterspeedProperty("Title", linkField.Title));
             }
 
-            if (string.IsNullOrEmpty(linkField.Class) == false)
+            if (!string.IsNullOrEmpty(linkField.Class))
             {
-                properties.Add("Class", new StringEnterspeedProperty(linkField.Class));
+                properties.Add("Class", new StringEnterspeedProperty("Class", linkField.Class));
             }
 
             string url = null;
@@ -76,7 +74,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 
                 if (linkField.TargetItem != null)
                 {
-                    properties.Add("TargetId", new StringEnterspeedProperty(_enterspeedIdentityService.GetId(linkField.TargetItem)));
+                    properties.Add("TargetId", new StringEnterspeedProperty("TargetId", _enterspeedIdentityService.GetId(linkField.TargetItem)));
                 }
             }
             else if (linkField.LinkType == "external" ||
@@ -87,9 +85,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                 url = linkField.GetFriendlyUrl();
             }
 
-            if (string.IsNullOrEmpty(url) == false)
+            if (!string.IsNullOrEmpty(url))
             {
-                properties.Add("Url", new StringEnterspeedProperty(url));
+                properties.Add("Url", new StringEnterspeedProperty("Url", url));
             }
             else
             {

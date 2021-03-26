@@ -18,7 +18,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
         {
             var value = 0;
 
-            if (string.IsNullOrEmpty(field.Value) == false)
+            if (!string.IsNullOrEmpty(field.Value))
             {
                 value = int.Parse(field.Value);
             }
