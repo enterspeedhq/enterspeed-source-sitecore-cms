@@ -12,8 +12,9 @@
     <description>Enterspeed integration for Sitecore version 9</description>
     <tags>Enterspeed, Sitecore 9</tags>
     <dependencies>
-      <dependency id="Enterspeed.Source.Sdk" version="[0.0,1.0)" />
+      <dependency id="Enterspeed.Source.Sdk" version="[0.4.0,1.0)" />
       <dependency id="Newtonsoft.Json" version="11.0.2" />
+      <dependency id="System.Runtime.CompilerServices.Unsafe" version="5.0.0" />
       <dependency id="Sitecore.Kernel" version="[9.1.0,10.0.0)" />
       <dependency id="Sitecore.Mvc" version="[9.1.0,10.0.0)" />
     </dependencies>

@@ -4,7 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
-## [0.1.2 - 2021-03-26]
+## [0.2.1 - 2021-03-29]
+
+* Fixed problem when exceptions are thrown too early from the configuration service.
+* Added enabled checkbox on the enterspeed configuration item.
+* Added requirement to ```Enterspeed.Source.Sdk``` v0.4.0 as a minimum.
+* Added requirement to ```System.Runtime.CompilerServices.Unsafe``` v5.0.0.
+* 
+
+## [0.2.0 - 2021-03-26]
 
 * Fixed problem with NuGet package dependencies.
 * Fixed typo in readme.

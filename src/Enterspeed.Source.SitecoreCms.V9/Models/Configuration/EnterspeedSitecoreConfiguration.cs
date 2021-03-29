@@ -7,6 +7,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Configuration
 {
     public class EnterspeedSitecoreConfiguration : EnterspeedConfiguration
     {
+        public bool IsEnabled { get; set; }
+
         public string ItemNotFoundUrl { get; set; }
 
         public List<EnterspeedSiteInfo> SiteInfos { get; } = new List<EnterspeedSiteInfo>();

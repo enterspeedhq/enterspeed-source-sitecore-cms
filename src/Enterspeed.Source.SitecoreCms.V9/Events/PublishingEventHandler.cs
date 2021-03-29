@@ -58,6 +58,12 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 return;
             }
 
+            EnterspeedSitecoreConfiguration configuration = _enterspeedConfigurationService.GetConfiguration();
+            if (!configuration.IsEnabled)
+            {
+                return;
+            }
+
             Language language = context.PublishOptions.Language;
 
             // Getting the source item first
@@ -77,8 +83,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
 
             if (itemIsDeleted)
             {
-                HandleContentItem(sourceItem, true, false);
-                HandleRendering(sourceItem, true, false);
+                HandleContentItem(sourceItem, configuration, true, false);
+                HandleRendering(sourceItem, configuration, true, false);
 
                 return;
             }
@@ -95,8 +101,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 return;
             }
 
-            HandleContentItem(targetItem, false, true);
-            HandleRendering(targetItem, false, true);
+            HandleContentItem(targetItem, configuration, false, true);
+            HandleRendering(targetItem, configuration, false, true);
         }
 
         private static bool HasAllowedPath(Item item)
@@ -114,7 +120,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
             return item.Paths.FullPath.StartsWith("/sitecore/layout/renderings", StringComparison.OrdinalIgnoreCase);
         }
 
-        private void HandleContentItem(Item item, bool itemIsDeleted, bool itemIsPublished)
+        private void HandleContentItem(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished)
         {
             if (item == null)
             {
@@ -126,8 +132,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
             {
                 return;
             }
-
-            EnterspeedSitecoreConfiguration configuration = _enterspeedConfigurationService.GetConfiguration();
 
             EnterspeedSiteInfo siteOfItem = configuration.GetSite(item);
             if (siteOfItem == null)
@@ -177,7 +181,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
             }
         }
 
-        private void HandleRendering(Item item, bool itemIsDeleted, bool itemIsPublished)
+        private void HandleRendering(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished)
         {
             if (item == null)
             {
@@ -196,7 +200,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 return;
             }
 
-            if (!IsRenderingReferencedFromEnabledContent(item))
+            if (!IsRenderingReferencedFromEnabledContent(item, configuration))
             {
                 return;
             }
@@ -238,10 +242,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
             }
         }
 
-        private bool IsRenderingReferencedFromEnabledContent(Item item)
+        private bool IsRenderingReferencedFromEnabledContent(Item item, EnterspeedSitecoreConfiguration configuration)
         {
-            EnterspeedSitecoreConfiguration configuration = _enterspeedConfigurationService.GetConfiguration();
-
             GetLinksStrategy linksStrategy = _linkStrategyFactory.Resolve(item);
 
             var strategyContextArgs = new StrategyContextArgs(item);
