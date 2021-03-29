@@ -28,6 +28,13 @@ You will have to enter the necessary values in the respective fields, and publis
 
 This connector revolves a lot around the setting above, EnabledSites. The philosophy is that you can publish every item in your Sitecore solution and only items that belong to your enabled sites are being ingested to/deleted in Enterspeed.
 
+### Site
+
+This connector requires a Site/Home item structure in ```/sitecore/content```, which could look like this:
+
+* YourSite <-- add this item to the EnabledSites configuration field
+  * Home
+
 ### Content
 
 Content items that are being sent to Enterspeed, will have references to the renderings inserted on them, along with information of the fields of the given datasources inserted on these renderings.
