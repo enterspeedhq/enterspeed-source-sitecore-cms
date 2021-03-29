@@ -10,7 +10,6 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 * Added enabled checkbox on the enterspeed configuration item.
 * Added requirement to ```Enterspeed.Source.Sdk``` v0.4.0 as a minimum.
 * Added requirement to ```System.Runtime.CompilerServices.Unsafe``` v5.0.0.
-* 
 
 ## [0.2.0 - 2021-03-26]
 
