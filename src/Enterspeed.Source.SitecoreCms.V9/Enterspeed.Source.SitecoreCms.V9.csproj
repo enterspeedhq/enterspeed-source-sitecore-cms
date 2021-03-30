@@ -269,16 +269,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\EnterspeedController.cs" />
+    <Compile Include="Extensions\ItemExtensions.cs" />
     <Compile Include="Models\Configuration\EnterspeedIDs.cs" />
     <Compile Include="Models\Configuration\EnterspeedSiteInfo.cs" />
+    <Compile Include="Models\EnterspeedSitecoreIdentity.cs" />
     <Compile Include="Models\Mappers\IEntityModelMapper.cs" />
     <Compile Include="Models\Mappers\SitecoreContentEntityModelMapper.cs" />
     <Compile Include="Models\Configuration\EnterspeedSitecoreConfiguration.cs" />
     <Compile Include="DependencyInjection\ServicesConfigurator.cs" />
     <Compile Include="Events\PublishingEventHandler.cs" />
     <Compile Include="Exceptions\EnterspeedSitecoreException.cs" />
+    <Compile Include="Models\Mappers\SitecoreDictionaryEntityModelMapper.cs" />
     <Compile Include="Models\Mappers\SitecoreRenderingEntityModelMapper.cs" />
     <Compile Include="Models\SitecoreContentEntity.cs" />
+    <Compile Include="Models\SitecoreDictionaryEntity.cs" />
     <Compile Include="Models\SitecoreRenderingEntity.cs" />
     <Compile Include="Pipelines\Initialize\InitializeEnterspeed.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

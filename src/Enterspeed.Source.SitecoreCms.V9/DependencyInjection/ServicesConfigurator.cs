@@ -27,6 +27,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
             services.AddSingleton<IEnterspeedIdentityService, EnterspeedSitecoreIdentityService>();
             services.AddSingleton<IEntityModelMapper<Item, SitecoreContentEntity>, SitecoreContentEntityModelMapper>();
             services.AddSingleton<IEntityModelMapper<RenderingItem, SitecoreRenderingEntity>, SitecoreRenderingEntityModelMapper>();
+            services.AddSingleton<IEntityModelMapper<Item, SitecoreDictionaryEntity>, SitecoreDictionaryEntityModelMapper>();
             services.AddSingleton<IJsonSerializer, SystemTextJsonSerializer>();
             services.AddSingleton<IEnterspeedIngestService, EnterspeedIngestService>();
             services.AddSingleton<IEnterspeedConfigurationService, EnterspeedConfigurationService>();

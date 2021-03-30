@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
+using Enterspeed.Source.SitecoreCms.V9.Extensions;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.Formatters;
@@ -44,6 +45,13 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
         public IDictionary<string, IEnterspeedProperty> GetProperties(Item item)
         {
+            if (item.IsDictionaryItem())
+            {
+                IDictionary<string, IEnterspeedProperty> dictionaryProperties = _fieldConverter.ConvertFields(item, null, _fieldValueConverters.ToList());
+
+                return dictionaryProperties;
+            }
+
             EnterspeedSiteInfo siteOfItem = _enterspeedConfigurationService
                 .GetConfiguration()
                 .GetSite(item);
@@ -108,6 +116,16 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
             foreach (RenderingReference renderingReference in renderings)
             {
+                if (renderingReference.RenderingItem == null)
+                {
+                    continue;
+                }
+
+                if (renderingReference.RenderingID.Guid == Guid.Empty)
+                {
+                    continue;
+                }
+
                 string placeholder;
 
                 if (!string.IsNullOrEmpty(renderingReference.Placeholder))
@@ -127,17 +145,35 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
                 var renderingProperties = new Dictionary<string, IEnterspeedProperty>
                 {
-                    ["renderingId"] = new StringEnterspeedProperty("renderingId", _enterspeedIdentityService.GetId(renderingReference.RenderingID.Guid, null)),
-                    ["renderingPlaceholder"] = new StringEnterspeedProperty("renderingPlaceholder", placeholder)
+                    ["name"] = new StringEnterspeedProperty("name", renderingReference.RenderingItem.Name),
+                    ["placeholder"] = new StringEnterspeedProperty("placeholder", placeholder)
                 };
 
                 if (!string.IsNullOrEmpty(renderingReference.Settings.Parameters))
                 {
                     NameValueCollection parameters = HttpUtility.ParseQueryString(renderingReference.Settings.Parameters);
 
-                    if (parameters.Count > 0)
+                    var parameterItems = new List<StringEnterspeedProperty>();
+
+                    foreach (string key in parameters)
                     {
-                        renderingProperties.Add("renderingParameters", new ArrayEnterspeedProperty("renderingParameters", parameters.AllKeys.Select(key => new StringEnterspeedProperty(key, parameters[key])).ToArray()));
+                        if (string.IsNullOrEmpty(key))
+                        {
+                            continue;
+                        }
+
+                        string value = parameters[key];
+                        if (string.IsNullOrEmpty(value))
+                        {
+                            continue;
+                        }
+
+                        parameterItems.Add(new StringEnterspeedProperty(key, value));
+                    }
+
+                    if (parameters.Count > 0 && parameterItems.Count > 0)
+                    {
+                        renderingProperties.Add("parameters", new ArrayEnterspeedProperty("parameters", parameterItems.ToArray()));
                     }
                 }
 
@@ -146,7 +182,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                     Item datasourceItem = item.Database.GetItem(renderingReference.Settings.DataSource, item.Language, Version.Latest);
                     if (datasourceItem != null && datasourceItem.Versions.Count > 0)
                     {
-                        renderingProperties.Add("renderingDatasource", new StringEnterspeedProperty("renderingDatasource", _identityService.GetId(datasourceItem)));
+                        renderingProperties.Add("datasource", new StringEnterspeedProperty("datasource", _identityService.GetId(datasourceItem)));
                     }
                 }
 

@@ -21,9 +21,12 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
         {
             string value = FieldRenderer.Render(item, field.Name);
 
-            value = PrefixRelativeImagesWithDomain(value, siteInfo.BaseUrl);
+            if (siteInfo != null)
+            {
+                value = PrefixRelativeImagesWithDomain(value, siteInfo.BaseUrl);
 
-            value = PrefixRelativeLinksWithDomain(value, siteInfo.BaseUrl);
+                value = PrefixRelativeLinksWithDomain(value, siteInfo.BaseUrl);
+            }
 
             return new StringEnterspeedProperty(field.Name, value);
         }
