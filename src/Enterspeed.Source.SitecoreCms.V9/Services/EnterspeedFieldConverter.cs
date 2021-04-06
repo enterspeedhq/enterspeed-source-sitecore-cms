@@ -13,6 +13,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 {
     public class EnterspeedFieldConverter : IEnterspeedFieldConverter
     {
+        private readonly IEnterspeedSitecoreFieldService _fieldService;
+
+        public EnterspeedFieldConverter(
+            IEnterspeedSitecoreFieldService fieldService)
+        {
+            _fieldService = fieldService;
+        }
+
         public IDictionary<string, IEnterspeedProperty> ConvertFields(Item item, EnterspeedSiteInfo siteInfo, List<IEnterspeedFieldValueConverter> fieldValueConverters)
         {
             var output = new Dictionary<string, IEnterspeedProperty>();
@@ -63,7 +71,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                     continue;
                 }
 
-                output.Add(field.Name, value);
+                output.Add(_fieldService.GetFieldName(field), value);
             }
 
             return output;

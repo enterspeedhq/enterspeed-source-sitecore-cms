@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using Enterspeed.Source.Sdk.Api.Models;
+using Enterspeed.Source.Sdk.Api.Models.Properties;
 using Enterspeed.Source.Sdk.Api.Services;
 using Enterspeed.Source.Sdk.Domain.Connection;
 using Enterspeed.Source.SitecoreCms.V9.Extensions;
@@ -201,40 +203,13 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 return;
             }
 
-            SitecoreRenderingEntity sitecoreRenderingEntity = _sitecoreRenderingEntityModelMapper.Map(renderingItem);
-
             if (itemIsDeleted)
             {
-                string id = _identityService.GetId(renderingItem);
-
-                Response deleteResponse = _enterspeedIngestService.Delete(id);
-
-                if (!deleteResponse.Success)
-                {
-                    _log.Warn($"Failed deleting entity ({id}). Message: {deleteResponse.Message}", deleteResponse.Exception, this);
-                }
-                else
-                {
-                    _log.Debug($"Successfully deleting entity ({id})", this);
-                }
-
-                return;
+                DeleteEntity(renderingItem);
             }
-
-            if (itemIsPublished)
+            else if (itemIsPublished)
             {
-                string id = _identityService.GetId(renderingItem);
-
-                Response saveResponse = _enterspeedIngestService.Save(sitecoreRenderingEntity);
-
-                if (!saveResponse.Success)
-                {
-                    _log.Warn($"Failed ingesting entity ({id}). Message: {saveResponse.Message}", saveResponse.Exception, this);
-                }
-                else
-                {
-                    _log.Debug($"Successfully ingested entity ({id})", this);
-                }
+                SaveEntity(renderingItem);
             }
         }
 
@@ -325,6 +300,40 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
             }
 
             return false;
+        }
+
+        private void DeleteEntity(RenderingItem renderingItem)
+        {
+            string id = _identityService.GetId(renderingItem);
+
+            Response deleteResponse = _enterspeedIngestService.Delete(id);
+
+            if (!deleteResponse.Success)
+            {
+                _log.Warn($"Failed deleting entity ({id}). Message: {deleteResponse.Message}", deleteResponse.Exception, this);
+            }
+            else
+            {
+                _log.Debug($"Successfully deleting entity ({id})", this);
+            }
+        }
+
+        private void SaveEntity(RenderingItem renderingItem)
+        {
+            SitecoreRenderingEntity sitecoreRenderingEntity = _sitecoreRenderingEntityModelMapper.Map(renderingItem);
+
+            string id = _identityService.GetId(renderingItem);
+
+            Response saveResponse = _enterspeedIngestService.Save(sitecoreRenderingEntity);
+
+            if (!saveResponse.Success)
+            {
+                _log.Warn($"Failed ingesting entity ({id}). Message: {saveResponse.Message}", saveResponse.Exception, this);
+            }
+            else
+            {
+                _log.Debug($"Successfully ingested entity ({id})", this);
+            }
         }
     }
 }

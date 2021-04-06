@@ -312,11 +312,13 @@
     <Compile Include="Services\EnterspeedConfigurationService.cs" />
     <Compile Include="Services\EnterspeedFieldConverter.cs" />
     <Compile Include="Services\EnterspeedPropertyService.cs" />
+    <Compile Include="Services\EnterspeedSitecoreFieldService.cs" />
     <Compile Include="Services\EnterspeedSitecoreUrlService.cs" />
     <Compile Include="Services\IEnterspeedConfigurationService.cs" />
     <Compile Include="Services\IEnterspeedIdentityService.cs" />
     <Compile Include="Services\IEnterspeedFieldConverter.cs" />
     <Compile Include="Services\IEnterspeedPropertyService.cs" />
+    <Compile Include="Services\IEnterspeedSitecoreFieldService.cs" />
     <Compile Include="Services\IEnterspeedUrlService.cs" />
     <Compile Include="Services\EnterspeedSitecoreIdentityService.cs" />
   </ItemGroup>

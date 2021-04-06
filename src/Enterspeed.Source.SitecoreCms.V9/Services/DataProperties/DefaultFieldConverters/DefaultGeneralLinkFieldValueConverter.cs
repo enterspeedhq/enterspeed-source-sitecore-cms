@@ -9,13 +9,24 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultGeneralLinkFieldValueConverter : IEnterspeedFieldValueConverter
     {
+        private const string PropertyTarget = "target";
+        private const string PropertyAnchor = "anchor";
+        private const string PropertyText = "text";
+        private const string PropertyTitle = "title";
+        private const string PropertyClass = "class";
+        private const string PropertyTargetId = "targetid";
+        private const string PropertyUrl = "url";
+
+        private readonly IEnterspeedSitecoreFieldService _fieldService;
         private readonly IEnterspeedUrlService _urlService;
         private readonly IEnterspeedIdentityService _enterspeedIdentityService;
 
         public DefaultGeneralLinkFieldValueConverter(
+            IEnterspeedSitecoreFieldService fieldService,
             IEnterspeedUrlService urlService,
             IEnterspeedIdentityService enterspeedIdentityService)
         {
+            _fieldService = fieldService;
             _urlService = urlService;
             _enterspeedIdentityService = enterspeedIdentityService;
         }
@@ -39,27 +50,27 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 
             if (!string.IsNullOrEmpty(linkField.Target))
             {
-                properties.Add("Target", new StringEnterspeedProperty("Target", linkField.Target));
+                properties.Add(PropertyTarget, new StringEnterspeedProperty(PropertyTarget, linkField.Target));
             }
 
             if (!string.IsNullOrEmpty(linkField.Anchor))
             {
-                properties.Add("Anchor", new StringEnterspeedProperty("Anchor", linkField.Anchor));
+                properties.Add(PropertyAnchor, new StringEnterspeedProperty(PropertyAnchor, linkField.Anchor));
             }
 
             if (!string.IsNullOrEmpty(linkField.Text))
             {
-                properties.Add("Text", new StringEnterspeedProperty("Text", linkField.Text));
+                properties.Add(PropertyText, new StringEnterspeedProperty(PropertyText, linkField.Text));
             }
 
             if (!string.IsNullOrEmpty(linkField.Title))
             {
-                properties.Add("Title", new StringEnterspeedProperty("Title", linkField.Title));
+                properties.Add(PropertyTitle, new StringEnterspeedProperty(PropertyTitle, linkField.Title));
             }
 
             if (!string.IsNullOrEmpty(linkField.Class))
             {
-                properties.Add("Class", new StringEnterspeedProperty("Class", linkField.Class));
+                properties.Add(PropertyClass, new StringEnterspeedProperty(PropertyClass, linkField.Class));
             }
 
             string url = null;
@@ -74,7 +85,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 
                 if (linkField.TargetItem != null)
                 {
-                    properties.Add("TargetId", new StringEnterspeedProperty("TargetId", _enterspeedIdentityService.GetId(linkField.TargetItem)));
+                    properties.Add(PropertyTargetId, new StringEnterspeedProperty(PropertyTargetId, _enterspeedIdentityService.GetId(linkField.TargetItem)));
                 }
             }
             else if (linkField.LinkType == "external" ||
@@ -87,14 +98,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 
             if (!string.IsNullOrEmpty(url))
             {
-                properties.Add("Url", new StringEnterspeedProperty("Url", url));
+                properties.Add(PropertyUrl, new StringEnterspeedProperty(PropertyUrl, url));
             }
             else
             {
                 return null;
             }
 
-            return new ObjectEnterspeedProperty(field.Name, properties);
+            return new ObjectEnterspeedProperty(_fieldService.GetFieldName(field), properties);
         }
     }
 }

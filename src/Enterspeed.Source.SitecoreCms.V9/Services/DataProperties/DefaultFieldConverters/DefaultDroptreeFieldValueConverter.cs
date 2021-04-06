@@ -9,11 +9,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultDroptreeFieldValueConverter : IEnterspeedFieldValueConverter
     {
+        private readonly IEnterspeedSitecoreFieldService _fieldService;
         private readonly IEnterspeedIdentityService _enterspeedIdentityService;
 
         public DefaultDroptreeFieldValueConverter(
+            IEnterspeedSitecoreFieldService fieldService,
             IEnterspeedIdentityService enterspeedIdentityService)
         {
+            _fieldService = fieldService;
             _enterspeedIdentityService = enterspeedIdentityService;
         }
 
@@ -30,7 +33,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                 return null;
             }
 
-            return new StringEnterspeedProperty(field.Name, _enterspeedIdentityService.GetId(referenceField.TargetItem));
+            return new StringEnterspeedProperty(_fieldService.GetFieldName(field), _enterspeedIdentityService.GetId(referenceField.TargetItem));
         }
     }
 }

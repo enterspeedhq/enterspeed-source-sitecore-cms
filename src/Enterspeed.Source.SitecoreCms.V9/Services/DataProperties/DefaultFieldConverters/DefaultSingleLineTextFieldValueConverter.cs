@@ -10,6 +10,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultSingleLineTextFieldValueConverter : IEnterspeedFieldValueConverter
     {
+        private readonly IEnterspeedSitecoreFieldService _fieldService;
+
+        public DefaultSingleLineTextFieldValueConverter(
+            IEnterspeedSitecoreFieldService fieldService)
+        {
+            _fieldService = fieldService;
+        }
+
         public bool CanConvert(Field field)
         {
             return field != null && field.TypeKey.Equals("single-line text", StringComparison.OrdinalIgnoreCase);
@@ -19,7 +27,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
         {
             string value = FieldRenderer.Render(item, field.Name);
 
-            return new StringEnterspeedProperty(field.Name, value);
+            return new StringEnterspeedProperty(_fieldService.GetFieldName(field), value);
         }
     }
 }

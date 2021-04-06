@@ -25,22 +25,19 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
         private readonly EnterspeedDateFormatter _dateFormatter;
         private readonly IEnumerable<IEnterspeedFieldValueConverter> _fieldValueConverters;
         private readonly IEnterspeedFieldConverter _fieldConverter;
-        private readonly IEnterspeedIdentityService _enterspeedIdentityService;
 
         public EnterspeedPropertyService(
             IEnterspeedConfigurationService enterspeedConfigurationService,
             IEnterspeedIdentityService identityService,
             EnterspeedDateFormatter dateFormatter,
             IEnumerable<IEnterspeedFieldValueConverter> fieldValueConverters,
-            IEnterspeedFieldConverter fieldConverter,
-            IEnterspeedIdentityService enterspeedIdentityService)
+            IEnterspeedFieldConverter fieldConverter)
         {
             _enterspeedConfigurationService = enterspeedConfigurationService;
             _identityService = identityService;
             _dateFormatter = dateFormatter;
             _fieldValueConverters = fieldValueConverters;
             _fieldConverter = fieldConverter;
-            _enterspeedIdentityService = enterspeedIdentityService;
         }
 
         public IDictionary<string, IEnterspeedProperty> GetProperties(Item item)

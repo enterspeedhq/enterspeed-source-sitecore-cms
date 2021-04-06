@@ -12,6 +12,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultRichTextFieldValueConverter : IEnterspeedFieldValueConverter
     {
+        private readonly IEnterspeedSitecoreFieldService _fieldService;
+
+        public DefaultRichTextFieldValueConverter(
+            IEnterspeedSitecoreFieldService fieldService)
+        {
+            _fieldService = fieldService;
+        }
+
         public bool CanConvert(Field field)
         {
             return field != null && field.TypeKey.Equals("rich text", StringComparison.OrdinalIgnoreCase);
@@ -28,7 +36,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                 value = PrefixRelativeLinksWithDomain(value, siteInfo.BaseUrl);
             }
 
-            return new StringEnterspeedProperty(field.Name, value);
+            return new StringEnterspeedProperty(_fieldService.GetFieldName(field), value);
         }
 
         private static string PrefixRelativeImagesWithDomain(string html, string baseUrl)

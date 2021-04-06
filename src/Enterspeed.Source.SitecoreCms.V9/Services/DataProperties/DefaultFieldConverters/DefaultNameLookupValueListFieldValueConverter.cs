@@ -15,13 +15,16 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultNameLookupValueListFieldValueConverter : IEnterspeedFieldValueConverter
     {
+        private readonly IEnterspeedSitecoreFieldService _fieldService;
         private readonly IEnterspeedIdentityService _enterspeedIdentityService;
         private readonly BaseItemManager _itemManager;
 
         public DefaultNameLookupValueListFieldValueConverter(
+            IEnterspeedSitecoreFieldService fieldService,
             IEnterspeedIdentityService enterspeedIdentityService,
             BaseItemManager itemManager)
         {
+            _fieldService = fieldService;
             _enterspeedIdentityService = enterspeedIdentityService;
             _itemManager = itemManager;
         }
@@ -77,7 +80,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 
             var referenceIds = items.Select(x => new StringEnterspeedProperty(null, _enterspeedIdentityService.GetId(x))).ToArray();
 
-            return new ArrayEnterspeedProperty(field.Name, referenceIds);
+            return new ArrayEnterspeedProperty(_fieldService.GetFieldName(field), referenceIds);
         }
     }
 }

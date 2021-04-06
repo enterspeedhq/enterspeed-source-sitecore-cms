@@ -41,10 +41,10 @@ Content items that are being sent to Enterspeed, will have references to the ren
 
 Each rendering reference sent to Enterspeed could have these properties:
 
-* ```renderingId``` - the Enterspeed ID for this rendering
-* ```renderingPlaceholder``` - the Sitecore placeholder inserted on either the presentation details or the rendering itself
-* ```renderingParameters``` - an array of key/values inserted on the rendering options
-* ```renderingDatasource``` - a reference to the inserted datasource item
+* ```name``` - the name of this rendering
+* ```placeholder``` - the Sitecore placeholder inserted on either the presentation details or the rendering itself
+* ```parameters``` - an array of key/values inserted on the rendering options
+* ```datasource``` - a reference to the inserted datasource item
 
 ### Renderings
 
@@ -73,11 +73,33 @@ Renderings are processed separately, as well, but only if the rendering is inser
 * Droptree
 * General Link
 
+### Field names in Enterspeed
+
+Field names on your content are sanitized when sent to Enterspeed. See below example:
+
+* Content
+  * Title
+  * Text
+  * CTA Link
+* Footer
+  * Contact Link
+  * Text
+
+The above sections and fields will be sanitized like this - see below:
+
+* ```content_title```
+* ```content_text```
+* ```content_ctalink```
+* ```footer_contactlink```
+* ```footer_text```
+
+In this way, we can support the out-of-the-box option Sitecore provides for having multiple fields with the same name.
+
 ### Debugging
 
 You can debug what is sent to Enterspeed when publishing Sitecore content, by requesting this path:
 
-* ```/api/sitecore/enterspeed/debug?id={idOrFullPath}```
+* ```/api/sitecore/enterspeed/debug?id=[idOrFullPath]```
 
 ## Roadmap
 

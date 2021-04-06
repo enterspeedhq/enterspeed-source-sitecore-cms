@@ -10,6 +10,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultNumberFieldValueConverter : IEnterspeedFieldValueConverter
     {
+        private readonly IEnterspeedSitecoreFieldService _fieldService;
+
+        public DefaultNumberFieldValueConverter(
+            IEnterspeedSitecoreFieldService fieldService)
+        {
+            _fieldService = fieldService;
+        }
+
         public bool CanConvert(Field field)
         {
             return field != null && field.TypeKey.Equals("number", StringComparison.OrdinalIgnoreCase);
@@ -33,7 +41,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                 double.TryParse(field.Value, NumberStyles.Any, new CultureInfo("da-DK"), out value);
             }
 
-            return new NumberEnterspeedProperty(field.Name, value);
+            return new NumberEnterspeedProperty(_fieldService.GetFieldName(field), value);
         }
     }
 }

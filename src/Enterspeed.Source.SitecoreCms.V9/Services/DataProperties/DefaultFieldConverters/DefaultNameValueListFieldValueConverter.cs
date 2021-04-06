@@ -11,6 +11,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultNameValueListFieldValueConverter : IEnterspeedFieldValueConverter
     {
+        private readonly IEnterspeedSitecoreFieldService _fieldService;
+
+        public DefaultNameValueListFieldValueConverter(
+            IEnterspeedSitecoreFieldService fieldService)
+        {
+            _fieldService = fieldService;
+        }
+
         public bool CanConvert(Field field)
         {
             return field != null && field.TypeKey.Equals("name value list", StringComparison.OrdinalIgnoreCase);
@@ -48,7 +56,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                 list.Add(new StringEnterspeedProperty(key, value));
             }
 
-            return new ArrayEnterspeedProperty(field.Name, list.ToArray());
+            return new ArrayEnterspeedProperty(_fieldService.GetFieldName(field), list.ToArray());
         }
     }
 }

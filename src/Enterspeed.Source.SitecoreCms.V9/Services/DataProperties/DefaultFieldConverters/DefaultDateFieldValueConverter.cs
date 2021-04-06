@@ -10,11 +10,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultDateFieldValueConverter : IEnterspeedFieldValueConverter
     {
+        private readonly IEnterspeedSitecoreFieldService _fieldService;
         private readonly EnterspeedDateFormatter _dateFormatter;
 
         public DefaultDateFieldValueConverter(
+            IEnterspeedSitecoreFieldService fieldService,
             EnterspeedDateFormatter dateFormatter)
         {
+            _fieldService = fieldService;
             _dateFormatter = dateFormatter;
         }
 
@@ -34,7 +37,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                 return null;
             }
 
-            return new StringEnterspeedProperty(field.Name, _dateFormatter.FormatDate(dateField.DateTime));
+            return new StringEnterspeedProperty(_fieldService.GetFieldName(field), _dateFormatter.FormatDate(dateField.DateTime));
         }
     }
 }
