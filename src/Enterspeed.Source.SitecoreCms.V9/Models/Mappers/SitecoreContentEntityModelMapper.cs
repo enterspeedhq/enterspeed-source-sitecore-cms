@@ -30,16 +30,23 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
             {
                 Id = _enterspeedIdentityService.GetId(input),
                 Type = input.TemplateName,
-                Url = _urlService.GetItemUrl(input),
                 Properties = _enterspeedPropertyService.GetProperties(input)
             };
 
             EnterspeedSiteInfo siteInfo = _enterspeedConfigurationService.GetConfiguration().GetSite(input);
-            if (siteInfo != null &&
-                !input.Paths.FullPath.Equals(siteInfo.SiteItemPath, StringComparison.OrdinalIgnoreCase))
+            if (siteInfo != null)
             {
-                // If the input item is the Site item, we do not set a parent ID.
-                output.ParentId = _enterspeedIdentityService.GetId(input.Parent);
+                if (input.Paths.FullPath.StartsWith(siteInfo.HomeItemPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    // Routable content resides on or below the Home item path.
+                    output.Url = _urlService.GetItemUrl(input);
+                }
+
+                if (!input.Paths.FullPath.Equals(siteInfo.SiteItemPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    // If the input item is the Site item, we do not set a parent ID.
+                    output.ParentId = _enterspeedIdentityService.GetId(input.Parent);
+                }
             }
 
             return output;

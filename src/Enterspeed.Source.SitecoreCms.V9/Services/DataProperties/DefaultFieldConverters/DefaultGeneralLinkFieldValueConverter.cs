@@ -15,6 +15,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
         private const string PropertyTitle = "title";
         private const string PropertyClass = "class";
         private const string PropertyTargetId = "targetid";
+        private const string PropertyTargetType = "targettype";
         private const string PropertyUrl = "url";
 
         private readonly IEnterspeedSitecoreFieldService _fieldService;
@@ -85,6 +86,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 
                 if (linkField.TargetItem != null)
                 {
+                    properties.Add(PropertyTargetType, new StringEnterspeedProperty(PropertyTargetType, linkField.TargetItem.TemplateName));
                     properties.Add(PropertyTargetId, new StringEnterspeedProperty(PropertyTargetId, _enterspeedIdentityService.GetId(linkField.TargetItem)));
                 }
             }

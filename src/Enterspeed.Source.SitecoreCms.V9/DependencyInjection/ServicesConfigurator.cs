@@ -22,6 +22,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
     {
         public void Configure(IServiceCollection services)
         {
+            services.AddSingleton<IEnterspeedSitecoreLoggingService, EnterspeedSitecoreLoggingService>();
             services.AddSingleton<IEnterspeedFieldConverter, EnterspeedFieldConverter>();
             services.AddSingleton<IEnterspeedPropertyService, EnterspeedPropertyService>();
             services.AddSingleton<IEnterspeedSitecoreFieldService, EnterspeedSitecoreFieldService>();

@@ -9,7 +9,9 @@ using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.Formatters;
 using Sitecore;
+using Sitecore.Abstractions;
 using Sitecore.Data.Items;
+using Sitecore.Globalization;
 using Sitecore.Layouts;
 using Version = Sitecore.Data.Version;
 
@@ -25,19 +27,22 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
         private readonly EnterspeedDateFormatter _dateFormatter;
         private readonly IEnumerable<IEnterspeedFieldValueConverter> _fieldValueConverters;
         private readonly IEnterspeedFieldConverter _fieldConverter;
+        private readonly BaseItemManager _itemManager;
 
         public EnterspeedPropertyService(
             IEnterspeedConfigurationService enterspeedConfigurationService,
             IEnterspeedIdentityService identityService,
             EnterspeedDateFormatter dateFormatter,
             IEnumerable<IEnterspeedFieldValueConverter> fieldValueConverters,
-            IEnterspeedFieldConverter fieldConverter)
+            IEnterspeedFieldConverter fieldConverter,
+            BaseItemManager itemManager)
         {
             _enterspeedConfigurationService = enterspeedConfigurationService;
             _identityService = identityService;
             _dateFormatter = dateFormatter;
             _fieldValueConverters = fieldValueConverters;
             _fieldConverter = fieldConverter;
+            _itemManager = itemManager;
         }
 
         public IDictionary<string, IEnterspeedProperty> GetProperties(Item item)
@@ -61,7 +66,12 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             IDictionary<string, IEnterspeedProperty> properties = _fieldConverter.ConvertFields(item, siteOfItem, _fieldValueConverters.ToList());
 
             properties.Add(MetaData, CreateMetaData(item));
-            properties.Add(Renderings, CreateRenderings(item));
+
+            IEnterspeedProperty renderings = CreateRenderings(item);
+            if (renderings != null)
+            {
+                properties.Add(Renderings, renderings);
+            }
 
             return properties;
         }
@@ -99,7 +109,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 ["level"] = new NumberEnterspeedProperty("level", level),
                 ["createDate"] = new StringEnterspeedProperty("createDate", _dateFormatter.FormatDate(item.Statistics.Created)),
                 ["updateDate"] = new StringEnterspeedProperty("updateDate", _dateFormatter.FormatDate(item.Statistics.Updated)),
-                ["fullPath"] = new ArrayEnterspeedProperty("fullPath", GetItemFullPath(item))
+                ["fullPath"] = new ArrayEnterspeedProperty("fullPath", GetItemFullPath(item)),
+                ["languages"] = new ArrayEnterspeedProperty("languages", GetAvailableLanguagesOfItem(item))
             };
 
             return new ObjectEnterspeedProperty(MetaData, metaData);
@@ -186,6 +197,11 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 renderingReferences.Add(new ObjectEnterspeedProperty(null, renderingProperties));
             }
 
+            if (!renderingReferences.Any())
+            {
+                return null;
+            }
+
             return new ArrayEnterspeedProperty(Renderings, renderingReferences.ToArray());
         }
 
@@ -198,6 +214,25 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 .ToArray();
 
             return properties;
+        }
+
+        private IEnterspeedProperty[] GetAvailableLanguagesOfItem(Item item)
+        {
+            var languages = new List<StringEnterspeedProperty>();
+
+            foreach (Language language in item.Languages)
+            {
+                Item itemInLanguage = _itemManager.GetItem(item.ID, language, Version.Latest, item.Database);
+                if (itemInLanguage == null ||
+                    itemInLanguage.Versions.Count == 0)
+                {
+                    continue;
+                }
+
+                languages.Add(new StringEnterspeedProperty(null, language.Name));
+            }
+
+            return languages.ToArray();
         }
     }
 }

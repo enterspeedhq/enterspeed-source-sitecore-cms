@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
-## [0.2.1 - 2021-04-06]
+## [0.2.1 - 2021-04-07]
 
 * Fixed problem when exceptions are thrown too early from the configuration service.
 * Added enabled checkbox on the Enterspeed configuration item.
@@ -12,6 +12,9 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 * Added support for dictionary items to be ingested.
 * The ```/api/sitecore/enterspeed/debug``` endpoint can now be used with a GUID, itemPath or Enterspeed ID.
 * Field names are now sanitized and prefixed with the section name they reside in.
+* Now logs into separate Enterspeed log file.
+* The "url" property of an ```SitecoreContentEntity``` is now only mapped if the particular item is routable.
+* The "metaData" of the mapped Enterspeed Entity now contains an array of available languages for that particular item.
 
 ## [0.2.0 - 2021-03-26]
 
