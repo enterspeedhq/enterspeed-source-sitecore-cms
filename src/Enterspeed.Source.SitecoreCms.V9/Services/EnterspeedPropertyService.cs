@@ -13,6 +13,8 @@ using Sitecore.Abstractions;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
 using Sitecore.Layouts;
+using Sitecore.Security.AccessControl;
+using Sitecore.Security.Accounts;
 using Version = Sitecore.Data.Version;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Services
@@ -28,6 +30,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
         private readonly IEnumerable<IEnterspeedFieldValueConverter> _fieldValueConverters;
         private readonly IEnterspeedFieldConverter _fieldConverter;
         private readonly BaseItemManager _itemManager;
+        private readonly BaseUserManager _userManager;
+        private readonly BaseAccessRightManager _accessRightManager;
+        private readonly BaseRolesInRolesManager _rolesInRolesManager;
 
         public EnterspeedPropertyService(
             IEnterspeedConfigurationService enterspeedConfigurationService,
@@ -35,7 +40,10 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             EnterspeedDateFormatter dateFormatter,
             IEnumerable<IEnterspeedFieldValueConverter> fieldValueConverters,
             IEnterspeedFieldConverter fieldConverter,
-            BaseItemManager itemManager)
+            BaseItemManager itemManager,
+            BaseUserManager userManager,
+            BaseAccessRightManager accessRightManager,
+            BaseRolesInRolesManager rolesInRolesManager)
         {
             _enterspeedConfigurationService = enterspeedConfigurationService;
             _identityService = identityService;
@@ -43,6 +51,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             _fieldValueConverters = fieldValueConverters;
             _fieldConverter = fieldConverter;
             _itemManager = itemManager;
+            _userManager = userManager;
+            _accessRightManager = accessRightManager;
+            _rolesInRolesManager = rolesInRolesManager;
         }
 
         public IDictionary<string, IEnterspeedProperty> GetProperties(Item item)
@@ -103,14 +114,17 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             var metaData = new Dictionary<string, IEnterspeedProperty>
             {
                 ["name"] = new StringEnterspeedProperty("name", item.Name),
-                ["displayName"] = new StringEnterspeedProperty("name", item.DisplayName),
+                ["displayName"] = new StringEnterspeedProperty("displayName", item.DisplayName),
                 ["language"] = new StringEnterspeedProperty("language", item.Language.Name),
                 ["sortOrder"] = new NumberEnterspeedProperty("sortOrder", item.Appearance.Sortorder),
                 ["level"] = new NumberEnterspeedProperty("level", level),
                 ["createDate"] = new StringEnterspeedProperty("createDate", _dateFormatter.FormatDate(item.Statistics.Created)),
                 ["updateDate"] = new StringEnterspeedProperty("updateDate", _dateFormatter.FormatDate(item.Statistics.Updated)),
+                ["updatedBy"] = new StringEnterspeedProperty("updatedBy", item.Statistics.UpdatedBy),
                 ["fullPath"] = new ArrayEnterspeedProperty("fullPath", GetItemFullPath(item)),
-                ["languages"] = new ArrayEnterspeedProperty("languages", GetAvailableLanguagesOfItem(item))
+                ["languages"] = new ArrayEnterspeedProperty("languages", GetAvailableLanguagesOfItem(item)),
+                ["isAccessRestricted"] = GetIsAccessRestricted(item),
+                ["accessRestrictions"] = GetAccessRestrictions(item)
             };
 
             return new ObjectEnterspeedProperty(MetaData, metaData);
@@ -233,6 +247,54 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             }
 
             return languages.ToArray();
+        }
+
+        private IEnterspeedProperty GetIsAccessRestricted(Item item)
+        {
+            bool isAccessRestricted;
+
+            var allUsers = _userManager.GetUsers().ToList();
+            var anonymous = allUsers.Single(x => x.Name.Equals("extranet\\anonymous", StringComparison.OrdinalIgnoreCase));
+            using (new UserSwitcher(anonymous))
+            {
+                isAccessRestricted = !item.Access.CanRead();
+            }
+
+            return new BooleanEnterspeedProperty("isAccessRestricted", isAccessRestricted);
+        }
+
+        private IEnterspeedProperty GetAccessRestrictions(Item item)
+        {
+            var readAccess = new Dictionary<string, bool>();
+
+            foreach (var user in _userManager.GetUsers())
+            {
+                using (new UserSwitcher(user))
+                {
+                    var canRead = item.Access.CanRead();
+
+                    var userName = user.LocalName.ToLower();
+                    if (readAccess.ContainsKey(userName))
+                    {
+                        readAccess[userName] = canRead;
+                    }
+                    else
+                    {
+                        readAccess.Add(userName, canRead);
+                    }
+                }
+            }
+
+            var accessRestrictionItems = new List<BooleanEnterspeedProperty>();
+
+            if (readAccess.Any(x => !x.Value))
+            {
+                var usersWithRestrictedAccess = readAccess.Where(x => !x.Value).ToList();
+
+                accessRestrictionItems.AddRange(usersWithRestrictedAccess.Select(x => new BooleanEnterspeedProperty(x.Key, x.Value)));
+            }
+
+            return new ArrayEnterspeedProperty("accessRestrictions", accessRestrictionItems.ToArray());
         }
     }
 }
