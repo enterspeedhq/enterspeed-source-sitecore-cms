@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
-## [0.2.1 - 2021-04-07]
+## [0.3.0 - 2021-05-20]
 
 * Fixed problem when exceptions are thrown too early from the configuration service.
 * Added enabled checkbox on the Enterspeed configuration item.
