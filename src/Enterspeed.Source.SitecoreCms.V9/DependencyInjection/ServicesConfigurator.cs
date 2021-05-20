@@ -22,11 +22,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
     {
         public void Configure(IServiceCollection services)
         {
+            services.AddSingleton<IEnterspeedSitecoreLoggingService, EnterspeedSitecoreLoggingService>();
             services.AddSingleton<IEnterspeedFieldConverter, EnterspeedFieldConverter>();
             services.AddSingleton<IEnterspeedPropertyService, EnterspeedPropertyService>();
+            services.AddSingleton<IEnterspeedSitecoreFieldService, EnterspeedSitecoreFieldService>();
             services.AddSingleton<IEnterspeedIdentityService, EnterspeedSitecoreIdentityService>();
             services.AddSingleton<IEntityModelMapper<Item, SitecoreContentEntity>, SitecoreContentEntityModelMapper>();
             services.AddSingleton<IEntityModelMapper<RenderingItem, SitecoreRenderingEntity>, SitecoreRenderingEntityModelMapper>();
+            services.AddSingleton<IEntityModelMapper<Item, SitecoreDictionaryEntity>, SitecoreDictionaryEntityModelMapper>();
             services.AddSingleton<IJsonSerializer, SystemTextJsonSerializer>();
             services.AddSingleton<IEnterspeedIngestService, EnterspeedIngestService>();
             services.AddSingleton<IEnterspeedConfigurationService, EnterspeedConfigurationService>();

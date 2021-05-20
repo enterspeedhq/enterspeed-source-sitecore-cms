@@ -9,11 +9,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultImageFieldValueConverter : IEnterspeedFieldValueConverter
     {
+        private readonly IEnterspeedSitecoreFieldService _fieldService;
         private readonly IEnterspeedUrlService _urlService;
 
         public DefaultImageFieldValueConverter(
+            IEnterspeedSitecoreFieldService fieldService,
             IEnterspeedUrlService urlService)
         {
+            _fieldService = fieldService;
             _urlService = urlService;
         }
 
@@ -36,7 +39,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                 return null;
             }
 
-            return new StringEnterspeedProperty(field.Name, mediaUrl);
+            return new StringEnterspeedProperty(_fieldService.GetFieldName(field), mediaUrl);
         }
     }
 }

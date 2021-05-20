@@ -75,11 +75,39 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
 
         private static void EnsureEnterspeedConfigurationDataSectionFields(Item enterspeedConfigSection)
         {
+            Item enabledField = enterspeedConfigSection.Children["Enabled"]
+                ?? enterspeedConfigSection.Add("Enabled", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnabledFieldID);
+
+            using (new EditContext(enabledField))
+            {
+                enabledField.Appearance.Sortorder = 100;
+
+                string currentTypeValue = enabledField[TemplateFieldIDs.Type];
+                if (!currentTypeValue.Equals("Checkbox", StringComparison.OrdinalIgnoreCase))
+                {
+                    enabledField[TemplateFieldIDs.Type] = "Checkbox";
+                }
+
+                string currentSharedValue = enabledField[TemplateFieldIDs.Shared];
+                if (currentSharedValue != "1")
+                {
+                    enabledField[TemplateFieldIDs.Shared] = "1";
+                }
+
+                string currentUnversionedValue = enabledField[TemplateFieldIDs.Unversioned];
+                if (currentUnversionedValue != "1")
+                {
+                    enabledField[TemplateFieldIDs.Unversioned] = "1";
+                }
+            }
+
             Item apiBaseUrlField = enterspeedConfigSection.Children["API Base Url"]
                 ?? enterspeedConfigSection.Add("API Base Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedApiBaseUrlFieldID);
 
             using (new EditContext(apiBaseUrlField))
             {
+                apiBaseUrlField.Appearance.Sortorder = 110;
+
                 string currentTypeValue = apiBaseUrlField[TemplateFieldIDs.Type];
                 if (!currentTypeValue.Equals("Single-Line Text", StringComparison.OrdinalIgnoreCase))
                 {
@@ -104,6 +132,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
 
             using (new EditContext(apiKeyField))
             {
+                apiKeyField.Appearance.Sortorder = 120;
+
                 string currentTypeValue = apiKeyField[TemplateFieldIDs.Type];
                 if (!currentTypeValue.Equals("Single-Line Text", StringComparison.OrdinalIgnoreCase))
                 {
@@ -134,6 +164,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
 
             using (new EditContext(enabledSitesField))
             {
+                enabledSitesField.Appearance.Sortorder = 130;
+
                 string currentTypeValue = enabledSitesField[TemplateFieldIDs.Type];
                 if (!currentTypeValue.Equals("Treelist", StringComparison.OrdinalIgnoreCase))
                 {

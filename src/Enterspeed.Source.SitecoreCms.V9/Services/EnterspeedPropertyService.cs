@@ -4,12 +4,17 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
+using Enterspeed.Source.SitecoreCms.V9.Extensions;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.Formatters;
 using Sitecore;
+using Sitecore.Abstractions;
 using Sitecore.Data.Items;
+using Sitecore.Globalization;
 using Sitecore.Layouts;
+using Sitecore.Security.AccessControl;
+using Sitecore.Security.Accounts;
 using Version = Sitecore.Data.Version;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Services
@@ -24,7 +29,10 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
         private readonly EnterspeedDateFormatter _dateFormatter;
         private readonly IEnumerable<IEnterspeedFieldValueConverter> _fieldValueConverters;
         private readonly IEnterspeedFieldConverter _fieldConverter;
-        private readonly IEnterspeedIdentityService _enterspeedIdentityService;
+        private readonly BaseItemManager _itemManager;
+        private readonly BaseUserManager _userManager;
+        private readonly BaseAccessRightManager _accessRightManager;
+        private readonly BaseRolesInRolesManager _rolesInRolesManager;
 
         public EnterspeedPropertyService(
             IEnterspeedConfigurationService enterspeedConfigurationService,
@@ -32,18 +40,31 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             EnterspeedDateFormatter dateFormatter,
             IEnumerable<IEnterspeedFieldValueConverter> fieldValueConverters,
             IEnterspeedFieldConverter fieldConverter,
-            IEnterspeedIdentityService enterspeedIdentityService)
+            BaseItemManager itemManager,
+            BaseUserManager userManager,
+            BaseAccessRightManager accessRightManager,
+            BaseRolesInRolesManager rolesInRolesManager)
         {
             _enterspeedConfigurationService = enterspeedConfigurationService;
             _identityService = identityService;
             _dateFormatter = dateFormatter;
             _fieldValueConverters = fieldValueConverters;
             _fieldConverter = fieldConverter;
-            _enterspeedIdentityService = enterspeedIdentityService;
+            _itemManager = itemManager;
+            _userManager = userManager;
+            _accessRightManager = accessRightManager;
+            _rolesInRolesManager = rolesInRolesManager;
         }
 
         public IDictionary<string, IEnterspeedProperty> GetProperties(Item item)
         {
+            if (item.IsDictionaryItem())
+            {
+                IDictionary<string, IEnterspeedProperty> dictionaryProperties = _fieldConverter.ConvertFields(item, null, _fieldValueConverters.ToList());
+
+                return dictionaryProperties;
+            }
+
             EnterspeedSiteInfo siteOfItem = _enterspeedConfigurationService
                 .GetConfiguration()
                 .GetSite(item);
@@ -56,7 +77,12 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             IDictionary<string, IEnterspeedProperty> properties = _fieldConverter.ConvertFields(item, siteOfItem, _fieldValueConverters.ToList());
 
             properties.Add(MetaData, CreateMetaData(item));
-            properties.Add(Renderings, CreateRenderings(item));
+
+            IEnterspeedProperty renderings = CreateRenderings(item);
+            if (renderings != null)
+            {
+                properties.Add(Renderings, renderings);
+            }
 
             return properties;
         }
@@ -88,13 +114,17 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             var metaData = new Dictionary<string, IEnterspeedProperty>
             {
                 ["name"] = new StringEnterspeedProperty("name", item.Name),
-                ["displayName"] = new StringEnterspeedProperty("name", item.DisplayName),
+                ["displayName"] = new StringEnterspeedProperty("displayName", item.DisplayName),
                 ["language"] = new StringEnterspeedProperty("language", item.Language.Name),
                 ["sortOrder"] = new NumberEnterspeedProperty("sortOrder", item.Appearance.Sortorder),
                 ["level"] = new NumberEnterspeedProperty("level", level),
                 ["createDate"] = new StringEnterspeedProperty("createDate", _dateFormatter.FormatDate(item.Statistics.Created)),
                 ["updateDate"] = new StringEnterspeedProperty("updateDate", _dateFormatter.FormatDate(item.Statistics.Updated)),
-                ["fullPath"] = new ArrayEnterspeedProperty("fullPath", GetItemFullPath(item))
+                ["updatedBy"] = new StringEnterspeedProperty("updatedBy", item.Statistics.UpdatedBy),
+                ["fullPath"] = new ArrayEnterspeedProperty("fullPath", GetItemFullPath(item)),
+                ["languages"] = new ArrayEnterspeedProperty("languages", GetAvailableLanguagesOfItem(item)),
+                ["isAccessRestricted"] = GetIsAccessRestricted(item),
+                ["accessRestrictions"] = GetAccessRestrictions(item)
             };
 
             return new ObjectEnterspeedProperty(MetaData, metaData);
@@ -108,6 +138,16 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
             foreach (RenderingReference renderingReference in renderings)
             {
+                if (renderingReference.RenderingItem == null)
+                {
+                    continue;
+                }
+
+                if (renderingReference.RenderingID.Guid == Guid.Empty)
+                {
+                    continue;
+                }
+
                 string placeholder;
 
                 if (!string.IsNullOrEmpty(renderingReference.Placeholder))
@@ -127,17 +167,35 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
                 var renderingProperties = new Dictionary<string, IEnterspeedProperty>
                 {
-                    ["renderingId"] = new StringEnterspeedProperty("renderingId", _enterspeedIdentityService.GetId(renderingReference.RenderingID.Guid, null)),
-                    ["renderingPlaceholder"] = new StringEnterspeedProperty("renderingPlaceholder", placeholder)
+                    ["name"] = new StringEnterspeedProperty("name", renderingReference.RenderingItem.Name),
+                    ["placeholder"] = new StringEnterspeedProperty("placeholder", placeholder)
                 };
 
                 if (!string.IsNullOrEmpty(renderingReference.Settings.Parameters))
                 {
                     NameValueCollection parameters = HttpUtility.ParseQueryString(renderingReference.Settings.Parameters);
 
-                    if (parameters.Count > 0)
+                    var parameterItems = new List<StringEnterspeedProperty>();
+
+                    foreach (string key in parameters)
                     {
-                        renderingProperties.Add("renderingParameters", new ArrayEnterspeedProperty("renderingParameters", parameters.AllKeys.Select(key => new StringEnterspeedProperty(key, parameters[key])).ToArray()));
+                        if (string.IsNullOrEmpty(key))
+                        {
+                            continue;
+                        }
+
+                        string value = parameters[key];
+                        if (string.IsNullOrEmpty(value))
+                        {
+                            continue;
+                        }
+
+                        parameterItems.Add(new StringEnterspeedProperty(key, value));
+                    }
+
+                    if (parameters.Count > 0 && parameterItems.Count > 0)
+                    {
+                        renderingProperties.Add("parameters", new ArrayEnterspeedProperty("parameters", parameterItems.ToArray()));
                     }
                 }
 
@@ -146,11 +204,16 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                     Item datasourceItem = item.Database.GetItem(renderingReference.Settings.DataSource, item.Language, Version.Latest);
                     if (datasourceItem != null && datasourceItem.Versions.Count > 0)
                     {
-                        renderingProperties.Add("renderingDatasource", new StringEnterspeedProperty("renderingDatasource", _identityService.GetId(datasourceItem)));
+                        renderingProperties.Add("datasource", new StringEnterspeedProperty("datasource", _identityService.GetId(datasourceItem)));
                     }
                 }
 
                 renderingReferences.Add(new ObjectEnterspeedProperty(null, renderingProperties));
+            }
+
+            if (!renderingReferences.Any())
+            {
+                return null;
             }
 
             return new ArrayEnterspeedProperty(Renderings, renderingReferences.ToArray());
@@ -165,6 +228,73 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 .ToArray();
 
             return properties;
+        }
+
+        private IEnterspeedProperty[] GetAvailableLanguagesOfItem(Item item)
+        {
+            var languages = new List<StringEnterspeedProperty>();
+
+            foreach (Language language in item.Languages)
+            {
+                Item itemInLanguage = _itemManager.GetItem(item.ID, language, Version.Latest, item.Database);
+                if (itemInLanguage == null ||
+                    itemInLanguage.Versions.Count == 0)
+                {
+                    continue;
+                }
+
+                languages.Add(new StringEnterspeedProperty(null, language.Name));
+            }
+
+            return languages.ToArray();
+        }
+
+        private IEnterspeedProperty GetIsAccessRestricted(Item item)
+        {
+            bool isAccessRestricted;
+
+            var allUsers = _userManager.GetUsers().ToList();
+            var anonymous = allUsers.Single(x => x.Name.Equals("extranet\\anonymous", StringComparison.OrdinalIgnoreCase));
+            using (new UserSwitcher(anonymous))
+            {
+                isAccessRestricted = !item.Access.CanRead();
+            }
+
+            return new BooleanEnterspeedProperty("isAccessRestricted", isAccessRestricted);
+        }
+
+        private IEnterspeedProperty GetAccessRestrictions(Item item)
+        {
+            var readAccess = new Dictionary<string, bool>();
+
+            foreach (var user in _userManager.GetUsers())
+            {
+                using (new UserSwitcher(user))
+                {
+                    var canRead = item.Access.CanRead();
+
+                    var userName = user.LocalName.ToLower();
+                    if (readAccess.ContainsKey(userName))
+                    {
+                        readAccess[userName] = canRead;
+                    }
+                    else
+                    {
+                        readAccess.Add(userName, canRead);
+                    }
+                }
+            }
+
+            var accessRestrictionItems = new List<BooleanEnterspeedProperty>();
+
+            if (readAccess.Any(x => !x.Value))
+            {
+                var usersWithRestrictedAccess = readAccess.Where(x => !x.Value).ToList();
+
+                accessRestrictionItems.AddRange(usersWithRestrictedAccess.Select(x => new BooleanEnterspeedProperty(x.Key, x.Value)));
+            }
+
+            return new ArrayEnterspeedProperty("accessRestrictions", accessRestrictionItems.ToArray());
         }
     }
 }

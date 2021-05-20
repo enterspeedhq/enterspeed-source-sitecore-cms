@@ -9,6 +9,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultCheckboxFieldValueConverter : IEnterspeedFieldValueConverter
     {
+        private readonly IEnterspeedSitecoreFieldService _fieldService;
+
+        public DefaultCheckboxFieldValueConverter(
+            IEnterspeedSitecoreFieldService fieldService)
+        {
+            _fieldService = fieldService;
+        }
+
         public bool CanConvert(Field field)
         {
             return field != null && field.TypeKey.Equals("checkbox", StringComparison.OrdinalIgnoreCase);
@@ -18,7 +26,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
         {
             bool value = item[field.Name] == "1";
 
-            return new BooleanEnterspeedProperty(field.Name, value);
+            return new BooleanEnterspeedProperty(_fieldService.GetFieldName(field), value);
         }
     }
 }

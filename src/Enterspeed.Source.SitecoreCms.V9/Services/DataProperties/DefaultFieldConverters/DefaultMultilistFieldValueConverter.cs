@@ -10,11 +10,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultMultilistFieldValueConverter : IEnterspeedFieldValueConverter
     {
+        private readonly IEnterspeedSitecoreFieldService _fieldService;
         private readonly IEnterspeedIdentityService _enterspeedIdentityService;
 
         public DefaultMultilistFieldValueConverter(
+            IEnterspeedSitecoreFieldService fieldService,
             IEnterspeedIdentityService enterspeedIdentityService)
         {
+            _fieldService = fieldService;
             _enterspeedIdentityService = enterspeedIdentityService;
         }
 
@@ -41,7 +44,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 
             var referenceIds = items.Select(x => new StringEnterspeedProperty(null, _enterspeedIdentityService.GetId(x))).ToArray();
 
-            return new ArrayEnterspeedProperty(field.Name, referenceIds);
+            return new ArrayEnterspeedProperty(_fieldService.GetFieldName(field), referenceIds);
         }
     }
 }

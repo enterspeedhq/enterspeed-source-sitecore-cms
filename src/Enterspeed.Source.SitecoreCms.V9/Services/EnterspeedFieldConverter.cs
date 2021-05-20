@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
+using Enterspeed.Source.SitecoreCms.V9.Extensions;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties;
 using Sitecore.Collections;
@@ -12,6 +13,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 {
     public class EnterspeedFieldConverter : IEnterspeedFieldConverter
     {
+        private readonly IEnterspeedSitecoreFieldService _fieldService;
+
+        public EnterspeedFieldConverter(
+            IEnterspeedSitecoreFieldService fieldService)
+        {
+            _fieldService = fieldService;
+        }
+
         public IDictionary<string, IEnterspeedProperty> ConvertFields(Item item, EnterspeedSiteInfo siteInfo, List<IEnterspeedFieldValueConverter> fieldValueConverters)
         {
             var output = new Dictionary<string, IEnterspeedProperty>();
@@ -22,11 +31,25 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 return output;
             }
 
-            // Exclude system fields
-            List<Field> fields = fieldsCollection.Where(field =>
-                    field.InnerItem != null &&
-                    !field.InnerItem.Paths.FullPath.StartsWith("/sitecore/templates/system", StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            // Mapping all fields, by default
+            List<Field> fields = fieldsCollection.ToList();
+
+            if (item.IsDictionaryItem())
+            {
+                // Only include dictionary fields
+                fields = fields.Where(field =>
+                        field.InnerItem != null &&
+                        field.InnerItem.Paths.FullPath.StartsWith("/sitecore/templates/System/Dictionary", StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
+            else if (item.IsContentItem() || item.IsRenderingItem())
+            {
+                // Exclude system fields for content and renderings
+                fields = fields.Where(field =>
+                        field.InnerItem != null &&
+                        !field.InnerItem.Paths.FullPath.StartsWith("/sitecore/templates/system", StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
 
             if (!fields.Any())
             {
@@ -48,7 +71,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                     continue;
                 }
 
-                output.Add(field.Name, value);
+                output.Add(_fieldService.GetFieldName(field), value);
             }
 
             return output;

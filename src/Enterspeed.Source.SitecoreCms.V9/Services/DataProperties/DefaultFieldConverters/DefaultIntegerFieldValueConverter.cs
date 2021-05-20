@@ -9,6 +9,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultIntegerFieldValueConverter : IEnterspeedFieldValueConverter
     {
+        private readonly IEnterspeedSitecoreFieldService _fieldService;
+
+        public DefaultIntegerFieldValueConverter(
+            IEnterspeedSitecoreFieldService fieldService)
+        {
+            _fieldService = fieldService;
+        }
+
         public bool CanConvert(Field field)
         {
             return field != null && field.TypeKey.Equals("integer", StringComparison.OrdinalIgnoreCase);
@@ -23,7 +31,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                 value = int.Parse(field.Value);
             }
 
-            return new NumberEnterspeedProperty(field.Name, value);
+            return new NumberEnterspeedProperty(_fieldService.GetFieldName(field), value);
         }
     }
 }

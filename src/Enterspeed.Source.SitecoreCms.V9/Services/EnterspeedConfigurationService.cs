@@ -48,15 +48,24 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             Item enterspeedConfigurationItem = _itemManager.GetItem(EnterspeedIDs.Items.EnterspeedConfigurationID, Language.Parse("en"), Version.Latest, _factory.GetDatabase("web"));
             if (enterspeedConfigurationItem == null || enterspeedConfigurationItem.Versions.Count == 0)
             {
-                throw new NullReferenceException("Unable to find Enterspeed Configuration item.");
+                return new EnterspeedSitecoreConfiguration();
+            }
+
+            string enabled = enterspeedConfigurationItem[EnterspeedIDs.Fields.EnterspeedEnabledFieldID] ?? string.Empty;
+            if (enabled != "1")
+            {
+                return new EnterspeedSitecoreConfiguration();
             }
 
             if (!IsConfigurationUpdated(enterspeedConfigurationItem, out Guid currentRevisionId))
             {
-                return CheckConfigurationIntegrity(_configuration);
+                return _configuration;
             }
 
-            var config = new EnterspeedSitecoreConfiguration();
+            var config = new EnterspeedSitecoreConfiguration
+            {
+                IsEnabled = true
+            };
 
             string configApiBaseUrl = enterspeedConfigurationItem[EnterspeedIDs.Fields.EnterspeedApiBaseUrlFieldID];
             config.BaseUrl = (configApiBaseUrl ?? string.Empty).Trim();
@@ -75,7 +84,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
                 foreach (Item enabledSite in enabledSites)
                 {
-                    var matchingSite = allSiteInfos.FirstOrDefault(x => x.RootPath.Equals(enabledSite.Paths.FullPath, StringComparison.OrdinalIgnoreCase));
+                    SiteInfo matchingSite = allSiteInfos.FirstOrDefault(x => x.RootPath.Equals(enabledSite.Paths.FullPath, StringComparison.OrdinalIgnoreCase));
                     if (matchingSite == null)
                     {
                         continue;
@@ -106,6 +115,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                     {
                         Name = name,
                         BaseUrl = startPathUrl,
+                        HomeItemPath = siteContext.StartPath,
                         SiteItemPath = siteContext.RootPath
                     };
 
@@ -123,7 +133,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             _configuration = config;
             _configurationRevisionId = currentRevisionId;
 
-            return CheckConfigurationIntegrity(_configuration);
+            return _configuration;
         }
 
         private static string GetItemNotFoundUrl(BaseSettings settings)
@@ -149,36 +159,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             }
 
             return true;
-        }
-
-        private EnterspeedSitecoreConfiguration CheckConfigurationIntegrity(EnterspeedSitecoreConfiguration config)
-        {
-            if (config == null)
-            {
-                throw new EnterspeedSitecoreException($"{nameof(EnterspeedSitecoreConfiguration)} is null.");
-            }
-
-            if (string.IsNullOrEmpty(config.BaseUrl))
-            {
-                throw new EnterspeedSitecoreException($"{nameof(EnterspeedSitecoreConfiguration)}.{nameof(config.BaseUrl)} is null or empty.");
-            }
-
-            if (!Uri.TryCreate(config.BaseUrl, UriKind.Absolute, out _))
-            {
-                throw new EnterspeedSitecoreException($"{nameof(EnterspeedSitecoreConfiguration)}.{nameof(config.BaseUrl)} could not be parsed as a representation of an absolute URI.");
-            }
-
-            if (string.IsNullOrEmpty(config.ApiKey))
-            {
-                throw new EnterspeedSitecoreException($"{nameof(EnterspeedSitecoreConfiguration)}.{nameof(config.ApiKey)} is null or empty.");
-            }
-
-            if (config.SiteInfos == null || !config.SiteInfos.Any())
-            {
-                throw new EnterspeedSitecoreException($"{nameof(EnterspeedSitecoreConfiguration)}.EnabledSites has no Sites added or the sites added were not found as part of the <sites> Sitecore collection.");
-            }
-
-            return config;
         }
     }
 }

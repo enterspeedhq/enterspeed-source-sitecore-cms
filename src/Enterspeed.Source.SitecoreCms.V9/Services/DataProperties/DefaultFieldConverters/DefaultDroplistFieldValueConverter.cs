@@ -9,6 +9,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 {
     public class DefaultDroplistFieldValueConverter : IEnterspeedFieldValueConverter
     {
+        private readonly IEnterspeedSitecoreFieldService _fieldService;
+
+        public DefaultDroplistFieldValueConverter(
+            IEnterspeedSitecoreFieldService fieldService)
+        {
+            _fieldService = fieldService;
+        }
+
         public bool CanConvert(Field field)
         {
             return field != null && field.TypeKey.Equals("droplist", StringComparison.OrdinalIgnoreCase);
@@ -22,7 +30,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                 return null;
             }
 
-            return new StringEnterspeedProperty(field.Name, referenceField.Value);
+            return new StringEnterspeedProperty(_fieldService.GetFieldName(field), referenceField.Value);
         }
     }
 }
