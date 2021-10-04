@@ -6,6 +6,7 @@ using Enterspeed.Source.Sdk.Api.Models;
 using Enterspeed.Source.Sdk.Api.Services;
 using Enterspeed.Source.SitecoreCms.V9.Extensions;
 using Enterspeed.Source.SitecoreCms.V9.Models;
+using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V9.Services;
 using Sitecore.Abstractions;
@@ -51,7 +52,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Controllers
         }
 
         [HttpGet]
-        public ActionResult Debug(string id)
+        public ActionResult Debug(string id, EnterspeedSitecoreConfiguration configuration)
         {
             if (string.IsNullOrEmpty(id))
             {
@@ -78,7 +79,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Controllers
 
                 foreach (Item item in items)
                 {
-                    entities.Add(Map(item));
+                    entities.Add(Map(item, configuration));
                 }
 
                 return Content(_jsonSerializer.Serialize(entities));
@@ -96,7 +97,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Controllers
                 return null;
             }
 
-            return Content(_jsonSerializer.Serialize(Map(itemOfId)));
+            return Content(_jsonSerializer.Serialize(Map(itemOfId, configuration)));
         }
 
         private static void CheckAccessRights()
@@ -108,21 +109,21 @@ namespace Enterspeed.Source.SitecoreCms.V9.Controllers
             }
         }
 
-        private IEnterspeedEntity Map(Item item)
+        private IEnterspeedEntity Map(Item item, EnterspeedSitecoreConfiguration configuration)
         {
             IEnterspeedEntity entity;
 
             if (item.IsRenderingItem())
             {
-                entity = _renderingMapper.Map(item);
+                entity = _renderingMapper.Map(item, configuration);
             }
             else if (item.IsDictionaryItem())
             {
-                entity = _dictionaryMapper.Map(item);
+                entity = _dictionaryMapper.Map(item, configuration);
             }
             else
             {
-                entity = _itemMapper.Map(item);
+                entity = _itemMapper.Map(item, configuration);
             }
 
             return entity;

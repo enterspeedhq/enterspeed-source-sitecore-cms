@@ -10,6 +10,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Configuration
             public static readonly ID EnterspeedFolderID = new ID(Guid.Parse("{3EBB1059-E90A-4DF4-82DB-E6092F0C3F45}"));
             public static readonly ID EnterspeedConfigurationID = new ID(Guid.Parse("{99BBFAAE-4C3C-440A-A80A-8756227D0AEE}"));
             public static readonly ID EnterspeedConfigurationDataSectionID = new ID(Guid.Parse("{0874F5FA-0441-4BC8-98B0-267052422AB8}"));
+            public static readonly ID EnterspeedSiteConfigurationID = new ID(Guid.Parse("{f68dd470-ca5c-49b9-a946-4a88308c45d1}"));
+            public static readonly ID EnterspeedSiteConfigurationDataSectionID = new ID(Guid.Parse("{60e7a64d-5177-40bc-9529-2f968fd5373b}"));
         }
 
         public static class Fields

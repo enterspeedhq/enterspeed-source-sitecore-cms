@@ -56,25 +56,23 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             _rolesInRolesManager = rolesInRolesManager;
         }
 
-        public IDictionary<string, IEnterspeedProperty> GetProperties(Item item)
+        public IDictionary<string, IEnterspeedProperty> GetProperties(Item item,  EnterspeedSitecoreConfiguration configuration)
         {
             if (item.IsDictionaryItem())
             {
-                IDictionary<string, IEnterspeedProperty> dictionaryProperties = _fieldConverter.ConvertFields(item, null, _fieldValueConverters.ToList());
+                IDictionary<string, IEnterspeedProperty> dictionaryProperties = _fieldConverter.ConvertFields(item, null, _fieldValueConverters.ToList(), configuration);
 
                 return dictionaryProperties;
             }
 
-            EnterspeedSiteInfo siteOfItem = _enterspeedConfigurationService
-                .GetConfiguration()
-                .GetSite(item);
+            EnterspeedSiteInfo siteOfItem = configuration.GetSite(item);
 
             if (siteOfItem == null)
             {
                 return null;
             }
 
-            IDictionary<string, IEnterspeedProperty> properties = _fieldConverter.ConvertFields(item, siteOfItem, _fieldValueConverters.ToList());
+            IDictionary<string, IEnterspeedProperty> properties = _fieldConverter.ConvertFields(item, siteOfItem, _fieldValueConverters.ToList(), configuration);
 
             properties.Add(MetaData, CreateMetaData(item));
 
@@ -87,9 +85,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             return properties;
         }
 
-        public IDictionary<string, IEnterspeedProperty> GetProperties(RenderingItem item)
+        public IDictionary<string, IEnterspeedProperty> GetProperties(RenderingItem item, EnterspeedSitecoreConfiguration configuration)
         {
-            IDictionary<string, IEnterspeedProperty> properties = _fieldConverter.ConvertFields(item.InnerItem, null, _fieldValueConverters.ToList());
+            IDictionary<string, IEnterspeedProperty> properties = _fieldConverter.ConvertFields(item.InnerItem, null, _fieldValueConverters.ToList(), configuration);
 
             return properties;
         }

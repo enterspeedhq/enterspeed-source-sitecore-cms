@@ -63,53 +63,56 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 return;
             }
 
-            EnterspeedSitecoreConfiguration configuration = _enterspeedConfigurationService.GetConfiguration();
-            if (!configuration.IsEnabled)
+            var siteConfigurations = _enterspeedConfigurationService.GetConfiguration();
+            foreach (EnterspeedSitecoreConfiguration configuration in siteConfigurations)
             {
-                return;
+                if (!configuration.IsEnabled)
+                {
+                    return;
+                }
+
+                Language language = context.PublishOptions.Language;
+
+                // Getting the source item first
+                Item sourceItem = _itemManager.GetItem(context.ItemId, language, Version.Latest, context.PublishHelper.Options.SourceDatabase);
+                if (sourceItem == null)
+                {
+                    return;
+                }
+
+                if (!HasAllowedPath(sourceItem))
+                {
+                    return;
+                }
+
+                // Handling if the item was deleted or unpublished
+                bool itemIsDeleted = context.Action == PublishAction.DeleteTargetItem;
+
+                if (itemIsDeleted)
+                {
+                    HandleContentItem(sourceItem, configuration, true, false);
+                    HandleRendering(sourceItem, configuration, true, false);
+                    HandleDictionary(sourceItem, configuration, true, false);
+
+                    return;
+                }
+
+                // Handling if the item was published
+                Item targetItem = _itemManager.GetItem(context.ItemId, language, Version.Latest, context.PublishHelper.Options.TargetDatabase);
+                if (targetItem == null || targetItem.Versions.Count == 0)
+                {
+                    return;
+                }
+
+                if (!HasAllowedPath(targetItem))
+                {
+                    return;
+                }
+
+                HandleContentItem(targetItem, configuration, false, true);
+                HandleRendering(targetItem, configuration, false, true);
+                HandleDictionary(targetItem, configuration, false, true);
             }
-
-            Language language = context.PublishOptions.Language;
-
-            // Getting the source item first
-            Item sourceItem = _itemManager.GetItem(context.ItemId, language, Version.Latest, context.PublishHelper.Options.SourceDatabase);
-            if (sourceItem == null)
-            {
-                return;
-            }
-
-            if (!HasAllowedPath(sourceItem))
-            {
-                return;
-            }
-
-            // Handling if the item was deleted or unpublished
-            bool itemIsDeleted = context.Action == PublishAction.DeleteTargetItem;
-
-            if (itemIsDeleted)
-            {
-                HandleContentItem(sourceItem, configuration, true, false);
-                HandleRendering(sourceItem, configuration, true, false);
-                HandleDictionary(sourceItem, configuration, true, false);
-
-                return;
-            }
-
-            // Handling if the item was published
-            Item targetItem = _itemManager.GetItem(context.ItemId, language, Version.Latest, context.PublishHelper.Options.TargetDatabase);
-            if (targetItem == null || targetItem.Versions.Count == 0)
-            {
-                return;
-            }
-
-            if (!HasAllowedPath(targetItem))
-            {
-                return;
-            }
-
-            HandleContentItem(targetItem, configuration, false, true);
-            HandleRendering(targetItem, configuration, false, true);
-            HandleDictionary(targetItem, configuration, false, true);
         }
 
         private static bool HasAllowedPath(Item item)
@@ -139,7 +142,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                     return;
                 }
 
-                SitecoreContentEntity sitecoreContentEntity = _sitecoreContentEntityModelMapper.Map(item);
+                SitecoreContentEntity sitecoreContentEntity = _sitecoreContentEntityModelMapper.Map(item, configuration);
                 if (sitecoreContentEntity == null)
                 {
                     return;
@@ -217,7 +220,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 }
                 else if (itemIsPublished)
                 {
-                    SaveEntity(renderingItem);
+                    SaveEntity(renderingItem, configuration);
                 }
             }
             catch (Exception exception)
@@ -244,7 +247,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 return;
             }
 
-            SitecoreDictionaryEntity sitecoreDictionaryEntity = _sitecoreDictionaryEntityModelMapper.Map(item);
+            SitecoreDictionaryEntity sitecoreDictionaryEntity = _sitecoreDictionaryEntityModelMapper.Map(item, configuration);
             if (sitecoreDictionaryEntity == null)
             {
                 return;
@@ -331,9 +334,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
             }
         }
 
-        private void SaveEntity(RenderingItem renderingItem)
+        private void SaveEntity(RenderingItem renderingItem, EnterspeedSitecoreConfiguration configuration)
         {
-            SitecoreRenderingEntity sitecoreRenderingEntity = _sitecoreRenderingEntityModelMapper.Map(renderingItem);
+            SitecoreRenderingEntity sitecoreRenderingEntity = _sitecoreRenderingEntityModelMapper.Map(renderingItem, configuration);
 
             string id = _identityService.GetId(renderingItem);
             _loggingService.Info($"Beginning to ingest rendering entity ({id}).");

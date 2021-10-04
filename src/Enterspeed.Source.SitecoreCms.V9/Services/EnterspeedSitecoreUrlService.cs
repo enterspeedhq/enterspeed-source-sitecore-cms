@@ -26,14 +26,13 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             _mediaManager = mediaManager;
         }
 
-        public string GetItemUrl(Item item, bool enableLanguageEmbedding = false)
+        public string GetItemUrl(Item item, EnterspeedSitecoreConfiguration configuration, bool enableLanguageEmbedding = false)
         {
             if (item == null)
             {
                 return null;
             }
 
-            EnterspeedSitecoreConfiguration configuration = _enterspeedConfigurationService.GetConfiguration();
             EnterspeedSiteInfo siteInfo = configuration.GetSite(item);
 
             var urlBuilderOptions = new ItemUrlBuilderOptions

@@ -1,4 +1,5 @@
-﻿using Enterspeed.Source.SitecoreCms.V9.Services;
+﻿using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
+using Enterspeed.Source.SitecoreCms.V9.Services;
 using Sitecore.Data.Items;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
@@ -16,13 +17,13 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
             _enterspeedPropertyService = enterspeedPropertyService;
         }
 
-        public SitecoreRenderingEntity Map(RenderingItem input)
+        public SitecoreRenderingEntity Map(RenderingItem input, EnterspeedSitecoreConfiguration configuration)
         {
             var output = new SitecoreRenderingEntity();
 
             output.Id = _enterspeedIdentityService.GetId(input);
             output.Type = "rendering";
-            output.Properties = _enterspeedPropertyService.GetProperties(input);
+            output.Properties = _enterspeedPropertyService.GetProperties(input, configuration);
 
             return output;
         }

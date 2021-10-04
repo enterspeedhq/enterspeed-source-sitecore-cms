@@ -1,5 +1,4 @@
 ﻿using Sitecore.Data.Fields;
-
 namespace Enterspeed.Source.SitecoreCms.V9.Services
 {
     public class EnterspeedSitecoreFieldService : IEnterspeedSitecoreFieldService
@@ -24,7 +23,10 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
             fieldName = fieldName.ToLower(); // i.e. "LinkText" becomes "linktext"
 
-            return $"{field.Section.ToLower()}_{fieldName}"; // i.e. becomes "content_linktext"
+            string sectionName = field.Section
+                .Replace(" ", string.Empty)
+                .ToLower();
+            return $"{sectionName}_{fieldName}"; // i.e. becomes "content_linktext"
         }
     }
 }

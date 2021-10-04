@@ -14,6 +14,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
     public class InitializeEnterspeed
     {
         private const string GearIcon = "applications/32x32/gear_refresh.png";
+        private const string SiteIcon = "Applications/32x32/window_gear.png";
         private const string EnabledSitesHelpText = "Select the site items here with the same fullPath as the rootPath configured for the respective site(s).";
         private const string ApiKeyHelpText = "For example \"source-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\".";
 
@@ -100,9 +101,54 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                     enabledField[TemplateFieldIDs.Unversioned] = "1";
                 }
             }
+        }
 
-            Item apiBaseUrlField = enterspeedConfigSection.Children["API Base Url"]
-                ?? enterspeedConfigSection.Add("API Base Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedApiBaseUrlFieldID);
+        private static Item EnsureEnterspeedSiteConfigurationTemplate(Item enterspeedRootTemplatesFolder)
+        {
+            return enterspeedRootTemplatesFolder.Children["Site Configuration"] ??
+                enterspeedRootTemplatesFolder.Add("Site Configuration", new TemplateID(TemplateIDs.Template), EnterspeedIDs.Templates.EnterspeedSiteConfigurationID);
+        }
+
+        private static void EnsureEnterspeedConfigurationItem(Item systemRoot)
+        {
+            if (systemRoot.Children["Enterspeed Configuration"] == null)
+            {
+                var settingsItem = systemRoot.Add("Enterspeed Configuration", new TemplateID(EnterspeedIDs.Templates.EnterspeedConfigurationID), EnterspeedIDs.Items.EnterspeedConfigurationID);
+                settingsItem.Editing.BeginEdit();
+                settingsItem.Fields["__Masters"].Value = EnterspeedIDs.Templates.EnterspeedSiteConfigurationID.ToString();
+                settingsItem.Editing.EndEdit();
+            }
+        }
+
+        private static void EnsureEnterspeedSiteConfigurationTemplateFields(Item enterspeedSiteConfigTemplateItem)
+        {
+            using (new EditContext(enterspeedSiteConfigTemplateItem))
+            {
+                string currentBaseTemplate = enterspeedSiteConfigTemplateItem[FieldIDs.BaseTemplate];
+                string standardTemplate = TemplateIDs.StandardTemplate.ToString();
+
+                if (!currentBaseTemplate.Equals(standardTemplate, StringComparison.OrdinalIgnoreCase))
+                {
+                    enterspeedSiteConfigTemplateItem[FieldIDs.BaseTemplate] = standardTemplate;
+                }
+
+                if (!enterspeedSiteConfigTemplateItem.Appearance.Icon.Equals(SiteIcon, StringComparison.OrdinalIgnoreCase))
+                {
+                    enterspeedSiteConfigTemplateItem.Appearance.Icon = SiteIcon;
+                }
+            }
+        }
+
+        private static Item EnsureEnterspeedSiteConfigurationTemplateDataSection(Item enterspeedSiteConfigTemplateItem)
+        {
+            return enterspeedSiteConfigTemplateItem.Children["Data"]
+                ?? enterspeedSiteConfigTemplateItem.Add("Data", new TemplateID(TemplateIDs.TemplateSection), EnterspeedIDs.Templates.EnterspeedSiteConfigurationDataSectionID);
+        }
+
+        private static void EnsureEnterspeedSiteConfigurationDataSectionFields(Item enterspeedSiteConfigSection)
+        {
+            Item apiBaseUrlField = enterspeedSiteConfigSection.Children["API Base Url"]
+                ?? enterspeedSiteConfigSection.Add("API Base Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedApiBaseUrlFieldID);
 
             using (new EditContext(apiBaseUrlField))
             {
@@ -127,8 +173,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 }
             }
 
-            Item apiKeyField = enterspeedConfigSection.Children["API Key"]
-                ?? enterspeedConfigSection.Add("API Key", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedApiKeyFieldID);
+            Item apiKeyField = enterspeedSiteConfigSection.Children["API Key"]
+                ?? enterspeedSiteConfigSection.Add("API Key", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedApiKeyFieldID);
 
             using (new EditContext(apiKeyField))
             {
@@ -159,8 +205,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 }
             }
 
-            Item enabledSitesField = enterspeedConfigSection.Children["Enabled Sites"]
-                ?? enterspeedConfigSection.Add("Enabled Sites", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnabledSitesFieldID);
+            Item enabledSitesField = enterspeedSiteConfigSection.Children["Enabled Sites"]
+                ?? enterspeedSiteConfigSection.Add("Enabled Sites", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnabledSitesFieldID);
 
             using (new EditContext(enabledSitesField))
             {
@@ -194,14 +240,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
             }
         }
 
-        private static void EnsureEnterspeedConfigurationItem(Item systemRoot)
-        {
-            if (systemRoot.Children["Enterspeed Configuration"] == null)
-            {
-                systemRoot.Add("Enterspeed Configuration", new TemplateID(EnterspeedIDs.Templates.EnterspeedConfigurationID), EnterspeedIDs.Items.EnterspeedConfigurationID);
-            }
-        }
-
         private void Init()
         {
             using (new SecurityDisabler())
@@ -225,10 +263,16 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 throw new InvalidOperationException("Unable to find System Root (/sitecore/templates/System) in Sitecore (master database) with the language \"en\".");
             }
 
+            Item enterspeedSiteConfigTemplateItem = EnsureEnterspeedSiteConfigurationTemplate(EnsureEnterspeedTemplatesFolder(templatesSystemRoot));
+
+            EnsureEnterspeedSiteConfigurationTemplateFields(enterspeedSiteConfigTemplateItem);
+            Item enterspeedSiteConfigSection = EnsureEnterspeedSiteConfigurationTemplateDataSection(enterspeedSiteConfigTemplateItem);
+
+            EnsureEnterspeedSiteConfigurationDataSectionFields(enterspeedSiteConfigSection);
+
             Item enterspeedConfigTemplateItem = EnsureEnterspeedConfigurationTemplate(EnsureEnterspeedTemplatesFolder(templatesSystemRoot));
 
             EnsureEnterspeedConfigurationTemplateFields(enterspeedConfigTemplateItem);
-
             Item enterspeedConfigSection = EnsureEnterspeedConfigurationTemplateDataSection(enterspeedConfigTemplateItem);
 
             EnsureEnterspeedConfigurationDataSectionFields(enterspeedConfigSection);
