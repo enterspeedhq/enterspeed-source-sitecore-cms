@@ -9,6 +9,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services.DataProperties.DefaultFieldC
 {
     public class DefaultImageFieldValueConverter : IEnterspeedFieldValueConverter
     {
+        private const string PropertyAlt = "alt";
+        private const string PropertyUrl = "url";
+
         private readonly IEnterspeedSitecoreFieldService _fieldService;
         private readonly IEnterspeedUrlService _urlService;
 
@@ -33,13 +36,22 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services.DataProperties.DefaultFieldC
                 return null;
             }
 
+            var properties = new Dictionary<string, IEnterspeedProperty>();
+
+            if (!string.IsNullOrEmpty(imageField.Alt))
+            {
+                properties.Add(PropertyAlt, new StringEnterspeedProperty(PropertyAlt, imageField.Alt));
+            }
+
+            
             string mediaUrl = _urlService.GetMediaUrl(imageField.MediaItem);
             if (string.IsNullOrEmpty(mediaUrl))
             {
                 return null;
             }
+            properties.Add(PropertyUrl, new StringEnterspeedProperty(PropertyUrl, mediaUrl));
+            return new ObjectEnterspeedProperty(_fieldService.GetFieldName(field), properties);
 
-            return new StringEnterspeedProperty(_fieldService.GetFieldName(field), mediaUrl);
         }
     }
 }

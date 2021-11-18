@@ -48,12 +48,19 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 SiteContext siteContext = _siteContextFactory.GetSiteContext(siteInfo.Name);
 
                 urlBuilderOptions.Site = siteContext;
+                urlBuilderOptions.AlwaysIncludeServerUrl = string.IsNullOrEmpty(siteInfo.BaseUrl);
             }
 
-            return _linkManager.GetItemUrl(item, urlBuilderOptions);
+            var itemUrl = _linkManager.GetItemUrl(item, urlBuilderOptions);
+            if (!string.IsNullOrEmpty(siteInfo.BaseUrl))
+            {
+                itemUrl = siteInfo.BaseUrl + itemUrl;
+            }
+
+            return itemUrl;
         }
 
-        public string GetMediaUrl(MediaItem mediaItem)
+        public string GetMediaUrl(MediaItem mediaItem, EnterspeedSiteInfo siteInfo)
         {
             if (mediaItem == null)
             {
@@ -63,7 +70,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             var urlBuilderOptions = new MediaUrlBuilderOptions
             {
                 AbsolutePath = true,
-                AlwaysIncludeServerUrl = true,
+                AlwaysIncludeServerUrl = string.IsNullOrEmpty(siteInfo.MediaBaseUrl),
                 LanguageEmbedding = LanguageEmbedding.Never
             };
 
@@ -71,6 +78,11 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             if (string.IsNullOrEmpty(mediaUrl))
             {
                 return null;
+            }
+
+            if (!string.IsNullOrEmpty(siteInfo.MediaBaseUrl))
+            {
+                mediaUrl = siteInfo.MediaBaseUrl + mediaUrl;
             }
 
             if (mediaUrl.EndsWith(".ashx") &&

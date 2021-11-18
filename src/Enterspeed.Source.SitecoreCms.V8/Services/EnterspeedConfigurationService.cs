@@ -102,15 +102,21 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                         }
 
                         string name = siteContext.SiteInfo.Name;
-                        var options = LinkManager.GetDefaultUrlOptions();
-                        string startPathUrl = _linkManager.GetItemUrl(homeItem, new UrlOptions
+                        string startPathUrl;
+                        using (var siteContextSwitcher = new SiteContextSwitcher(siteContext))
                         {
-                            SiteResolving = true,
-                            Site = siteContext,
-                            AlwaysIncludeServerUrl = true,
-                            LowercaseUrls = true,
-                            LanguageEmbedding = LanguageEmbedding.Never
-                        });
+                             startPathUrl = _linkManager.GetItemUrl(homeItem, new UrlOptions
+                            {
+                                SiteResolving = true,
+                                Site = siteContext,
+                                AlwaysIncludeServerUrl = true,
+                                LowercaseUrls = true,
+                                LanguageEmbedding = LanguageEmbedding.Never
+                            });
+                        }
+                        if (siteContext.Properties["scheme"] == null) {
+                            startPathUrl = "http" + startPathUrl;
+                        }
 
                         var enterspeedSiteInfo = new EnterspeedSiteInfo
                         {

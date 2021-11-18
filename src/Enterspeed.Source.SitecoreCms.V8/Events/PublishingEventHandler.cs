@@ -242,10 +242,10 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                 return;
             }
 
-            if (!IsItemReferencedFromEnabledContent(item, configuration))
-            {
-                return;
-            }
+            //if (!IsItemReferencedFromEnabledContent(item, configuration))
+            //{
+            //    return;
+            //}
 
             SitecoreDictionaryEntity sitecoreDictionaryEntity = _sitecoreDictionaryEntityModelMapper.Map(item, configuration);
             if (sitecoreDictionaryEntity == null)

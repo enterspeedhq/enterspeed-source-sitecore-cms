@@ -61,6 +61,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             if (item.IsDictionaryItem())
             {
                 IDictionary<string, IEnterspeedProperty> dictionaryProperties = _fieldConverter.ConvertFields(item, null, _fieldValueConverters.ToList(), configuration);
+                dictionaryProperties.Add(MetaData, CreateDictionaryMetaData(item));
 
                 return dictionaryProperties;
             }
@@ -103,6 +104,23 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 .ToList();
 
             return ids;
+        }
+
+        private IEnterspeedProperty CreateDictionaryMetaData(Item item)
+        {
+            int level = GetContentPathIds(item).IndexOf(item.ID.Guid);
+
+            var metaData = new Dictionary<string, IEnterspeedProperty>
+            {
+                ["language"] = new StringEnterspeedProperty("language", item.Language.Name),
+                ["createDate"] = new StringEnterspeedProperty("createDate", _dateFormatter.FormatDate(item.Statistics.Created)),
+                ["updateDate"] = new StringEnterspeedProperty("updateDate", _dateFormatter.FormatDate(item.Statistics.Updated)),
+                ["updatedBy"] = new StringEnterspeedProperty("updatedBy", item.Statistics.UpdatedBy),
+                ["fullPath"] = new ArrayEnterspeedProperty("fullPath", GetItemFullPath(item)),
+                ["languages"] = new ArrayEnterspeedProperty("languages", GetAvailableLanguagesOfItem(item)),
+            };
+
+            return new ObjectEnterspeedProperty(MetaData, metaData);
         }
 
         private IEnterspeedProperty CreateMetaData(Item item)
@@ -165,8 +183,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
                 var renderingProperties = new Dictionary<string, IEnterspeedProperty>
                 {
-                    ["name"] = new StringEnterspeedProperty("name", renderingReference.RenderingItem.Name),
-                    ["placeholder"] = new StringEnterspeedProperty("placeholder", placeholder)
+                    ["name"] = new StringEnterspeedProperty("name", renderingReference.RenderingItem.Name.Replace(" ", string.Empty)),
+                    ["placeholder"] = new StringEnterspeedProperty("placeholder", placeholder.Replace(" ", string.Empty))
                 };
 
                 if (!string.IsNullOrEmpty(renderingReference.Settings.Parameters))

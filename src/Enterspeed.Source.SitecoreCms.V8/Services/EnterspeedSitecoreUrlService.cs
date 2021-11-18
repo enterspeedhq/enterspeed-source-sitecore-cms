@@ -35,7 +35,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
             EnterspeedSiteInfo siteInfo = configuration.GetSite(item);
 
-            var options = new UrlOptions
+                var options = new UrlOptions
             {
                 SiteResolving = true,
                 AlwaysIncludeServerUrl = true,
@@ -49,8 +49,10 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
                 options.Site = siteContext;
             }
-
-            return LinkManager.GetItemUrl(item, options);
+            using (var siteContextSwitcher = new SiteContextSwitcher(options.Site))
+            {
+                return options.Site.Properties["scheme"]??"http"+ LinkManager.GetItemUrl(item, options);
+            }
         }
 
         public string GetMediaUrl(MediaItem mediaItem)
@@ -63,7 +65,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             var urlBuilderOptions = new MediaUrlOptions
             {
                 AbsolutePath = true,
-                AlwaysIncludeServerUrl = true
+                AlwaysIncludeServerUrl = false
             };
 
             string mediaUrl = MediaManager.GetMediaUrl(mediaItem, urlBuilderOptions);

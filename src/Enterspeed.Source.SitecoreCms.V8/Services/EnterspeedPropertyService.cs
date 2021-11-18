@@ -165,8 +165,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
                 var renderingProperties = new Dictionary<string, IEnterspeedProperty>
                 {
-                    ["name"] = new StringEnterspeedProperty("name", renderingReference.RenderingItem.Name),
-                    ["placeholder"] = new StringEnterspeedProperty("placeholder", placeholder)
+                    ["name"] = new StringEnterspeedProperty("name", renderingReference.RenderingItem.Name.Replace(" ", string.Empty)),
+                    ["placeholder"] = new StringEnterspeedProperty("placeholder", placeholder.Replace(" ", string.Empty))
                 };
 
                 if (!string.IsNullOrEmpty(renderingReference.Settings.Parameters))

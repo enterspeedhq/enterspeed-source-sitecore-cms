@@ -7,6 +7,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
     {
         string GetItemUrl(Item item,  EnterspeedSitecoreConfiguration configuration, bool enableLanguageEmbedding = false);
 
-        string GetMediaUrl(MediaItem mediaItem);
+        string GetMediaUrl(MediaItem mediaItem, EnterspeedSiteInfo siteInfo);
     }
 }

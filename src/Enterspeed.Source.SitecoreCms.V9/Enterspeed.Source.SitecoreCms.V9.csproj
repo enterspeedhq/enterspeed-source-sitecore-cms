@@ -46,8 +46,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Enterspeed.Source.Sdk, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\lib\packages\Enterspeed.Source.Sdk.0.4.0\lib\netstandard2.0\Enterspeed.Source.Sdk.dll</HintPath>
+    <Reference Include="Enterspeed.Source.Sdk, Version=0.4.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\lib\packages\Enterspeed.Source.Sdk.0.4.1\lib\netstandard2.0\Enterspeed.Source.Sdk.dll</HintPath>
     </Reference>
     <Reference Include="HtmlAgilityPack, Version=1.4.9.5, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\..\lib\packages\HtmlAgilityPack.1.4.9.5\lib\Net45\HtmlAgilityPack.dll</HintPath>
@@ -269,6 +269,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\EnterspeedController.cs" />
+    <Compile Include="Events\PublishEndEventHandler.cs" />
     <Compile Include="Extensions\ItemExtensions.cs" />
     <Compile Include="Models\Configuration\EnterspeedIDs.cs" />
     <Compile Include="Models\Configuration\EnterspeedSiteInfo.cs" />
@@ -323,6 +324,7 @@
     <Compile Include="Services\IEnterspeedSitecoreLoggingService.cs" />
     <Compile Include="Services\IEnterspeedUrlService.cs" />
     <Compile Include="Services\EnterspeedSitecoreIdentityService.cs" />
+    <Compile Include="Services\SitecoreEnterspeedConnection.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\lib\settings\stylecop.json">

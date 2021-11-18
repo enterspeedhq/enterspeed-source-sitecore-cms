@@ -78,7 +78,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 
             if (linkField.LinkType == "media")
             {
-                url = _urlService.GetMediaUrl(linkField.TargetItem);
+                url = _urlService.GetMediaUrl(linkField.TargetItem, siteInfo);
             }
             else if (linkField.LinkType == "internal")
             {

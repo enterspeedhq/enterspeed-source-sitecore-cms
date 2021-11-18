@@ -29,7 +29,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
             var output = new SitecoreContentEntity
             {
                 Id = _enterspeedIdentityService.GetId(input),
-                Type = input.TemplateName,
+                Type = input.TemplateName.Replace(" ", string.Empty),
                 Properties = _enterspeedPropertyService.GetProperties(input, configuration)
             };
 

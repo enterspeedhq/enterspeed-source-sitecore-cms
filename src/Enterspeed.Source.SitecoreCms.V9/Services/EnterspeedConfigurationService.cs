@@ -88,48 +88,70 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
                     foreach (Item enabledSite in enabledSites)
                     {
-                        SiteInfo matchingSite = allSiteInfos.FirstOrDefault(x => x.RootPath.Equals(enabledSite.Paths.FullPath, StringComparison.OrdinalIgnoreCase));
-                        if (matchingSite == null)
+                        var matchingSites = allSiteInfos.Where(x => x.RootPath.Equals(enabledSite.Paths.FullPath, StringComparison.OrdinalIgnoreCase));
+                        if (matchingSites.Count() == 0)
                         {
                             continue;
                         }
 
-                        SiteContext siteContext = _siteContextFactory.GetSiteContext(matchingSite.Name);
-
-                        Language siteLanguage = _languageManager.GetLanguage(siteContext.Language);
-
-                        Item homeItem = _itemManager.GetItem(siteContext.StartPath, siteLanguage, Version.Latest, siteContext.Database);
-                        if (homeItem == null || homeItem.Versions.Count == 0)
+                        foreach (var matchingSite in matchingSites)
                         {
-                            // TODO - KEK: throw exception here?
-                            continue;
+                            SiteContext siteContext = _siteContextFactory.GetSiteContext(matchingSite.Name);
+
+                            Language siteLanguage = _languageManager.GetLanguage(siteContext.Language);
+
+                            var languageEnterspeedSiteConfigurationItem = enterspeedSiteConfigurationItem.Database.GetItem(enterspeedSiteConfigurationItem.ID, siteLanguage);
+                            if (languageEnterspeedSiteConfigurationItem.Versions.Count == 0)
+                            {
+                                languageEnterspeedSiteConfigurationItem = enterspeedSiteConfigurationItem;
+                            }
+
+                            Item homeItem = _itemManager.GetItem(siteContext.StartPath, siteLanguage, Version.Latest, siteContext.Database);
+
+                            if (homeItem == null || homeItem.Versions.Count == 0)
+                            {
+                                // TODO - KEK: throw exception here?
+                                continue;
+                            }
+
+                            string siteBaseUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedSiteBaseUrlFieldID];
+                            string siteMediaBaseUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedMediaBaseUrlFieldID];
+                            string publishHookUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedpublishHookUrlFieldID];
+
+                            string name = siteContext.SiteInfo.Name;
+                            string startPathUrl = _linkManager.GetItemUrl(homeItem, new ItemUrlBuilderOptions
+                            {
+                                SiteResolving = true,
+                                Site = siteContext,
+                                AlwaysIncludeServerUrl = string.IsNullOrEmpty(siteBaseUrl),
+                                LowercaseUrls = true,
+                                LanguageEmbedding = LanguageEmbedding.Never
+                            });
+
+                            if (!string.IsNullOrEmpty(siteBaseUrl))
+                            {
+                                startPathUrl = siteBaseUrl;
+                            }
+
+                            var enterspeedSiteInfo = new EnterspeedSiteInfo
+                            {
+                                Name = name,
+                                BaseUrl = startPathUrl,
+                                MediaBaseUrl = siteMediaBaseUrl,
+                                PublishHookUrl = publishHookUrl,
+                                HomeItemPath = siteContext.StartPath,
+                                SiteItemPath = siteContext.RootPath,
+                                Language = siteLanguage.Name
+                            };
+
+                            if (siteContext.Properties["scheme"] != null &&
+                                siteContext.Properties["scheme"].Equals("https", StringComparison.OrdinalIgnoreCase))
+                            {
+                                enterspeedSiteInfo.IsHttpsEnabled = true;
+                            }
+
+                            config.SiteInfos.Add(enterspeedSiteInfo);
                         }
-
-                        string name = siteContext.SiteInfo.Name;
-                        string startPathUrl = _linkManager.GetItemUrl(homeItem, new ItemUrlBuilderOptions
-                        {
-                            SiteResolving = true,
-                            Site = siteContext,
-                            AlwaysIncludeServerUrl = true,
-                            LowercaseUrls = true,
-                            LanguageEmbedding = LanguageEmbedding.Never
-                        });
-
-                        var enterspeedSiteInfo = new EnterspeedSiteInfo
-                        {
-                            Name = name,
-                            BaseUrl = startPathUrl,
-                            HomeItemPath = siteContext.StartPath,
-                            SiteItemPath = siteContext.RootPath
-                        };
-
-                        if (siteContext.Properties["scheme"] != null &&
-                            siteContext.Properties["scheme"].Equals("https", StringComparison.OrdinalIgnoreCase))
-                        {
-                            enterspeedSiteInfo.IsHttpsEnabled = true;
-                        }
-
-                        config.SiteInfos.Add(enterspeedSiteInfo);
                     }
                 }
 

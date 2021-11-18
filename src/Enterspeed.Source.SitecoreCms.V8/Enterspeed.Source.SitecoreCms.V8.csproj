@@ -131,7 +131,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\EnterspeedStart.cs" />
-    <Compile Include="App_Start\RazorGeneratorMvcStart.cs" />
     <Compile Include="Extensions\ItemExtensions.cs" />
     <Compile Include="Models\Configuration\EnterspeedIDs.cs" />
     <Compile Include="Models\Configuration\EnterspeedSiteInfo.cs" />
