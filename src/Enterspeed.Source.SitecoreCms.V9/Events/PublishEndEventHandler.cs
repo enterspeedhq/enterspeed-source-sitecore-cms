@@ -56,6 +56,11 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                         continue;
                     }
 
+                if (string.IsNullOrEmpty(siteOfItem.PublishHookUrl))
+                {
+                    continue;
+                }
+
                 var result = CallHookAsync(siteOfItem.PublishHookUrl);
                 }
             }

@@ -131,6 +131,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             {
                 ["name"] = new StringEnterspeedProperty("name", item.Name),
                 ["displayName"] = new StringEnterspeedProperty("displayName", item.DisplayName),
+                ["sitecoreId"] = new StringEnterspeedProperty("name", item.ID.ToString()),
                 ["language"] = new StringEnterspeedProperty("language", item.Language.Name),
                 ["sortOrder"] = new NumberEnterspeedProperty("sortOrder", item.Appearance.Sortorder),
                 ["level"] = new NumberEnterspeedProperty("level", level),
