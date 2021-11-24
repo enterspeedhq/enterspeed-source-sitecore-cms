@@ -131,6 +131,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\EnterspeedStart.cs" />
+    <Compile Include="Controllers\EnterspeedController.cs" />
+    <Compile Include="Events\PublishEndEventHandler.cs" />
     <Compile Include="Extensions\ItemExtensions.cs" />
     <Compile Include="Models\Configuration\EnterspeedIDs.cs" />
     <Compile Include="Models\Configuration\EnterspeedSiteInfo.cs" />
@@ -186,6 +188,7 @@
     <Compile Include="Services\IEnterspeedUrlService.cs" />
     <Compile Include="Services\EnterspeedSitecoreIdentityService.cs" />
     <Compile Include="Services\Serializers\NewtonsoftJsonSerializer.cs" />
+    <Compile Include="Services\SitecoreEnterspeedConnection.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\lib\settings\stylecop.json">
@@ -199,9 +202,7 @@
     <Content Include="_content\App_Config\Include\Enterspeed\Enterspeed.SitecoreCms.V8.config" />
     <Content Include="_nuget\Enterspeed.Source.SitecoreCms.V8.nuspec" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

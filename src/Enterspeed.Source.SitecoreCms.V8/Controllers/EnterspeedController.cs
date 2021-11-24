@@ -13,20 +13,18 @@ using Sitecore.Abstractions;
 using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
-using Sitecore.Mvc.Controllers;
 using Version = Sitecore.Data.Version;
-
 
 namespace Enterspeed.Source.SitecoreCms.V8.Controllers
 {
-    public class EnterspeedController : SitecoreController
+    public class EnterspeedController : Controller
     {
         private readonly IEnterspeedIdentityService _enterspeedIdentityService;
         private readonly BaseItemManager _itemManager;
         private readonly IEntityModelMapper<Item, SitecoreContentEntity> _itemMapper;
         private readonly IEntityModelMapper<RenderingItem, SitecoreRenderingEntity> _renderingMapper;
         private readonly IEntityModelMapper<Item, SitecoreDictionaryEntity> _dictionaryMapper;
-        private readonly Enterspeed.Source.Sdk.Api.Services.IJsonSerializer _jsonSerializer;
+        private readonly IJsonSerializer _jsonSerializer;
 
         private readonly Database _webDatabase;
         private readonly List<Language> _allLanguages;

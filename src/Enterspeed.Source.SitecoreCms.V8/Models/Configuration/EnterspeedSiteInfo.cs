@@ -11,11 +11,15 @@ namespace Enterspeed.Source.SitecoreCms.V8.Models.Configuration
 
         public string MediaBaseUrl { get; set; }
 
+        public string PublishHookUrl { get; set; }
+
         public string HomeItemPath { get; set; }
 
         public string SiteItemPath { get; set; }
 
         public bool IsHttpsEnabled { get; set; }
+
+        public string Language { get; set; }
 
         public bool IsItemOfSite(Item item)
         {
@@ -29,7 +33,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Models.Configuration
                 return false;
             }
 
-            return item.Paths.FullPath.StartsWith(SiteItemPath, StringComparison.OrdinalIgnoreCase);
+            return item.Paths.FullPath.StartsWith(SiteItemPath, StringComparison.OrdinalIgnoreCase) && item.Language.Name == Language;
         }
     }
 }

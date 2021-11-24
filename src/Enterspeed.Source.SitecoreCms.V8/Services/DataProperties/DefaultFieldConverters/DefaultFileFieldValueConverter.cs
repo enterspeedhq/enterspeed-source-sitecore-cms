@@ -9,6 +9,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services.DataProperties.DefaultFieldC
 {
     public class DefaultFileFieldValueConverter : IEnterspeedFieldValueConverter
     {
+        private const string PropertyExtension = "extension";
+        private const string PropertyUrl = "url";
         private readonly IEnterspeedSitecoreFieldService _fieldService;
         private readonly IEnterspeedUrlService _urlService;
 
@@ -28,18 +30,27 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services.DataProperties.DefaultFieldC
         public IEnterspeedProperty Convert(Item item, Field field, EnterspeedSiteInfo siteInfo, List<IEnterspeedFieldValueConverter> fieldValueConverters, EnterspeedSitecoreConfiguration configuration)
         {
             FileField fileField = field;
+
+            var properties = new Dictionary<string, IEnterspeedProperty>();
             if (fileField?.MediaItem == null)
             {
                 return null;
             }
 
-            string mediaUrl = _urlService.GetMediaUrl(fileField.MediaItem);
+            if (!string.IsNullOrEmpty(fileField.MediaItem.Fields["Extension"].Value))
+            {
+                properties.Add(PropertyExtension, new StringEnterspeedProperty(PropertyExtension, fileField.MediaItem.Fields["Extension"].Value));
+            }
+
+            string mediaUrl = _urlService.GetMediaUrl(fileField.MediaItem, siteInfo);
             if (string.IsNullOrEmpty(mediaUrl))
             {
                 return null;
             }
 
-            return new StringEnterspeedProperty(_fieldService.GetFieldName(field), mediaUrl);
+            properties.Add(PropertyUrl, new StringEnterspeedProperty(PropertyUrl, mediaUrl));
+
+            return new ObjectEnterspeedProperty(_fieldService.GetFieldName(field), properties);
         }
     }
 }

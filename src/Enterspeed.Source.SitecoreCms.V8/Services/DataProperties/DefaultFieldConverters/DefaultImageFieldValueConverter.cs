@@ -11,7 +11,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services.DataProperties.DefaultFieldC
     {
         private const string PropertyAlt = "alt";
         private const string PropertyUrl = "url";
-
+        private const string PropertyExtension = "extension";
+        private const string PropertySize = "size";
         private readonly IEnterspeedSitecoreFieldService _fieldService;
         private readonly IEnterspeedUrlService _urlService;
 
@@ -43,15 +44,24 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services.DataProperties.DefaultFieldC
                 properties.Add(PropertyAlt, new StringEnterspeedProperty(PropertyAlt, imageField.Alt));
             }
 
-            
-            string mediaUrl = _urlService.GetMediaUrl(imageField.MediaItem);
+            if (!string.IsNullOrEmpty(imageField.MediaItem.Fields["Size"].Value))
+            {
+                properties.Add(PropertySize, new StringEnterspeedProperty(PropertySize, imageField.MediaItem.Fields["Size"].Value));
+            }
+
+            if (!string.IsNullOrEmpty(imageField.MediaItem.Fields["Extension"].Value))
+            {
+                properties.Add(PropertyExtension, new StringEnterspeedProperty(PropertyExtension, imageField.MediaItem.Fields["Extension"].Value));
+            }
+
+            string mediaUrl = _urlService.GetMediaUrl(imageField.MediaItem, siteInfo);
             if (string.IsNullOrEmpty(mediaUrl))
             {
                 return null;
             }
+
             properties.Add(PropertyUrl, new StringEnterspeedProperty(PropertyUrl, mediaUrl));
             return new ObjectEnterspeedProperty(_fieldService.GetFieldName(field), properties);
-
         }
     }
 }

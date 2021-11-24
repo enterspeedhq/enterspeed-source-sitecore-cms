@@ -3,6 +3,7 @@ using Enterspeed.Source.Sdk.Api.Providers;
 using Enterspeed.Source.Sdk.Api.Services;
 using Enterspeed.Source.Sdk.Domain.Connection;
 using Enterspeed.Source.Sdk.Domain.Services;
+using Enterspeed.Source.SitecoreCms.V8.Controllers;
 using Enterspeed.Source.SitecoreCms.V8.Models;
 using Enterspeed.Source.SitecoreCms.V8.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V8.Providers;
@@ -10,10 +11,10 @@ using Enterspeed.Source.SitecoreCms.V8.Services;
 using Enterspeed.Source.SitecoreCms.V8.Services.DataProperties;
 using Enterspeed.Source.SitecoreCms.V8.Services.DataProperties.DefaultFieldConverters;
 using Enterspeed.Source.SitecoreCms.V8.Services.DataProperties.Formatters;
-using Enterspeed.Source.SitecoreCms.V8.Services.Serializers;
 using Microsoft.Extensions.DependencyInjection;
 using Sitecore.Data.Items;
 using Sitecore.DependencyInjection;
+
 
 namespace Enterspeed.Source.SitecoreCms.V8.DependencyInjection
 {
@@ -29,7 +30,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.DependencyInjection
             services.AddSingleton<IEntityModelMapper<Item, SitecoreContentEntity>, SitecoreContentEntityModelMapper>();
             services.AddSingleton<IEntityModelMapper<RenderingItem, SitecoreRenderingEntity>, SitecoreRenderingEntityModelMapper>();
             services.AddSingleton<IEntityModelMapper<Item, SitecoreDictionaryEntity>, SitecoreDictionaryEntityModelMapper>();
-            services.AddSingleton<IJsonSerializer, NewtonsoftJsonSerializer>();
+            services.AddSingleton<IJsonSerializer, SystemTextJsonSerializer>();
             services.AddSingleton<IEnterspeedIngestService, EnterspeedIngestService>();
             services.AddSingleton<IEnterspeedConfigurationService, EnterspeedConfigurationService>();
             services.AddSingleton<IEnterspeedConfigurationProvider, EnterspeedSitecoreConfigurationProvider>();
@@ -44,7 +45,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.DependencyInjection
 
             RegisterFieldConverters(services);
 
-            //RegisterControllers(services);
+            RegisterControllers(services);
         }
 
         private static void RegisterFieldConverters(IServiceCollection services)
@@ -76,9 +77,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.DependencyInjection
             services.AddSingleton<IEnterspeedFieldValueConverter, DefaultGeneralLinkFieldValueConverter>();
         }
 
-        //private static void RegisterControllers(IServiceCollection services)
-        //{
-        //    services.AddTransient<EnterspeedController>();
-        //}
+        private static void RegisterControllers(IServiceCollection services)
+        {
+            services.AddTransient<EnterspeedController>();
+        }
     }
 }

@@ -3,10 +3,12 @@ using System.Diagnostics;
 using System.Linq;
 using Enterspeed.Source.Sdk.Api.Services;
 using Enterspeed.Source.Sdk.Domain.Connection;
+using Enterspeed.Source.Sdk.Domain.Services;
 using Enterspeed.Source.SitecoreCms.V8.Extensions;
 using Enterspeed.Source.SitecoreCms.V8.Models;
 using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V8.Models.Mappers;
+using Enterspeed.Source.SitecoreCms.V8.Providers;
 using Enterspeed.Source.SitecoreCms.V8.Services;
 using Sitecore.Abstractions;
 using Sitecore.Data.Items;
@@ -27,7 +29,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
         private readonly IEntityModelMapper<RenderingItem, SitecoreRenderingEntity> _sitecoreRenderingEntityModelMapper;
         private readonly IEntityModelMapper<Item, SitecoreDictionaryEntity> _sitecoreDictionaryEntityModelMapper;
         private readonly IEnterspeedIdentityService _identityService;
-        private readonly IEnterspeedIngestService _enterspeedIngestService;
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
 
         public PublishingEventHandler(
@@ -48,7 +49,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             _sitecoreRenderingEntityModelMapper = sitecoreRenderingEntityModelMapper;
             _sitecoreDictionaryEntityModelMapper = sitecoreDictionaryEntityModelMapper;
             _identityService = identityService;
-            _enterspeedIngestService = enterspeedIngestService;
             _enterspeedConfigurationService = enterspeedConfigurationService;
         }
 
@@ -68,21 +68,22 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             {
                 if (!configuration.IsEnabled)
                 {
-                    return;
+                    continue;
                 }
 
+                EnterspeedIngestService enterspeedIngestService = new EnterspeedIngestService(new SitecoreEnterspeedConnection(configuration), new SystemTextJsonSerializer(), new EnterspeedSitecoreConfigurationProvider(_enterspeedConfigurationService));
                 Language language = context.PublishOptions.Language;
 
                 // Getting the source item first
                 Item sourceItem = _itemManager.GetItem(context.ItemId, language, Version.Latest, context.PublishHelper.Options.SourceDatabase);
                 if (sourceItem == null)
                 {
-                    return;
+                    continue;
                 }
 
                 if (!HasAllowedPath(sourceItem))
                 {
-                    return;
+                    continue;
                 }
 
                 // Handling if the item was deleted or unpublished
@@ -90,28 +91,28 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
 
                 if (itemIsDeleted)
                 {
-                    HandleContentItem(sourceItem, configuration, true, false);
-                    HandleRendering(sourceItem, configuration, true, false);
-                    HandleDictionary(sourceItem, configuration, true, false);
+                    HandleContentItem(sourceItem, enterspeedIngestService, configuration, true, false);
+                    HandleRendering(sourceItem, enterspeedIngestService, configuration, true, false);
+                    HandleDictionary(sourceItem, enterspeedIngestService, configuration, true, false);
 
-                    return;
+                    continue;
                 }
 
                 // Handling if the item was published
                 Item targetItem = _itemManager.GetItem(context.ItemId, language, Version.Latest, context.PublishHelper.Options.TargetDatabase);
                 if (targetItem == null || targetItem.Versions.Count == 0)
                 {
-                    return;
+                    continue;
                 }
 
                 if (!HasAllowedPath(targetItem))
                 {
-                    return;
+                    continue;
                 }
 
-                HandleContentItem(targetItem, configuration, false, true);
-                HandleRendering(targetItem, configuration, false, true);
-                HandleDictionary(targetItem, configuration, false, true);
+                HandleContentItem(targetItem, enterspeedIngestService, configuration, false, true);
+                HandleRendering(targetItem, enterspeedIngestService, configuration, false, true);
+                HandleDictionary(targetItem, enterspeedIngestService, configuration, false, true);
             }
         }
 
@@ -120,7 +121,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             return item.IsContentItem() || item.IsRenderingItem() || item.IsDictionaryItem();
         }
 
-        private void HandleContentItem(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished)
+        private void HandleContentItem(Item item, EnterspeedIngestService enterspeedIngestService, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished)
         {
             try
             {
@@ -138,6 +139,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                 EnterspeedSiteInfo siteOfItem = configuration.GetSite(item);
                 if (siteOfItem == null)
                 {
+                    //_loggingService.Warn($"No site config for  ({item.ID})");
                     // If no enabled site was found for this item, skip it
                     return;
                 }
@@ -152,7 +154,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                 {
                     string id = _identityService.GetId(item);
                     _loggingService.Info($"Beginning to delete content entity ({id}).");
-                    Response deleteResponse = _enterspeedIngestService.Delete(id);
+                    Response deleteResponse = enterspeedIngestService.Delete(id);
 
                     if (!deleteResponse.Success)
                     {
@@ -170,7 +172,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                 {
                     string id = _identityService.GetId(item);
                     _loggingService.Info($"Beginning to ingest content entity ({id}).");
-                    Response saveResponse = _enterspeedIngestService.Save(sitecoreContentEntity);
+                    Response saveResponse = enterspeedIngestService.Save(sitecoreContentEntity);
 
                     if (!saveResponse.Success)
                     {
@@ -188,7 +190,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             }
         }
 
-        private void HandleRendering(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished)
+        private void HandleRendering(Item item, EnterspeedIngestService enterspeedIngestService, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished)
         {
             try
             {
@@ -216,11 +218,11 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
 
                 if (itemIsDeleted)
                 {
-                    DeleteEntity(renderingItem);
+                    DeleteEntity(renderingItem, enterspeedIngestService);
                 }
                 else if (itemIsPublished)
                 {
-                    SaveEntity(renderingItem, configuration);
+                    SaveEntity(renderingItem, enterspeedIngestService, configuration);
                 }
             }
             catch (Exception exception)
@@ -229,7 +231,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             }
         }
 
-        private void HandleDictionary(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished)
+        private void HandleDictionary(Item item, EnterspeedIngestService enterspeedIngestService, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished)
         {
             if (item == null)
             {
@@ -242,11 +244,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                 return;
             }
 
-            //if (!IsItemReferencedFromEnabledContent(item, configuration))
-            //{
-            //    return;
-            //}
-
             SitecoreDictionaryEntity sitecoreDictionaryEntity = _sitecoreDictionaryEntityModelMapper.Map(item, configuration);
             if (sitecoreDictionaryEntity == null)
             {
@@ -257,7 +254,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             {
                 string id = _identityService.GetId(item);
                 _loggingService.Info($"Beginning to delete dictionary entity ({id}).");
-                Response deleteResponse = _enterspeedIngestService.Delete(id);
+                Response deleteResponse = enterspeedIngestService.Delete(id);
 
                 if (!deleteResponse.Success)
                 {
@@ -275,7 +272,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             {
                 string id = _identityService.GetId(item);
                 _loggingService.Info($"Beginning to ingest dictionary entity ({id}).");
-                Response saveResponse = _enterspeedIngestService.Save(sitecoreDictionaryEntity);
+                Response saveResponse = enterspeedIngestService.Save(sitecoreDictionaryEntity);
 
                 if (!saveResponse.Success)
                 {
@@ -318,11 +315,11 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             return false;
         }
 
-        private void DeleteEntity(RenderingItem renderingItem)
+        private void DeleteEntity(RenderingItem renderingItem, EnterspeedIngestService enterspeedIngestService)
         {
             string id = _identityService.GetId(renderingItem);
             _loggingService.Info($"Beginning to delete rendering entity ({id}).");
-            Response deleteResponse = _enterspeedIngestService.Delete(id);
+            Response deleteResponse = enterspeedIngestService.Delete(id);
 
             if (!deleteResponse.Success)
             {
@@ -334,13 +331,13 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             }
         }
 
-        private void SaveEntity(RenderingItem renderingItem, EnterspeedSitecoreConfiguration configuration)
+        private void SaveEntity(RenderingItem renderingItem, EnterspeedIngestService enterspeedIngestService, EnterspeedSitecoreConfiguration configuration)
         {
             SitecoreRenderingEntity sitecoreRenderingEntity = _sitecoreRenderingEntityModelMapper.Map(renderingItem, configuration);
 
             string id = _identityService.GetId(renderingItem);
             _loggingService.Info($"Beginning to ingest rendering entity ({id}).");
-            Response saveResponse = _enterspeedIngestService.Save(sitecoreRenderingEntity);
+            Response saveResponse = enterspeedIngestService.Save(sitecoreRenderingEntity);
 
             if (!saveResponse.Success)
             {

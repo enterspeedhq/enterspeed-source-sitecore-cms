@@ -238,6 +238,84 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
                     enabledSitesField.Help.ToolTip = EnabledSitesHelpText;
                 }
             }
+
+            Item siteBaseUrlField = enterspeedSiteConfigSection.Children["Site Base Url"]
+                ?? enterspeedSiteConfigSection.Add("Site Base Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedSiteBaseUrlFieldID);
+
+            using (new EditContext(siteBaseUrlField))
+            {
+                siteBaseUrlField.Appearance.Sortorder = 140;
+
+                string currentTypeValue = siteBaseUrlField[TemplateFieldIDs.Type];
+                if (!currentTypeValue.Equals("Single-Line Text", StringComparison.OrdinalIgnoreCase))
+                {
+                    siteBaseUrlField[TemplateFieldIDs.Type] = "Single-Line Text";
+                }
+
+                string currentSharedValue = siteBaseUrlField[TemplateFieldIDs.Shared];
+                if (currentSharedValue != "0")
+                {
+                    siteBaseUrlField[TemplateFieldIDs.Shared] = "0";
+                }
+
+                string currentUnversionedValue = siteBaseUrlField[TemplateFieldIDs.Unversioned];
+                if (currentUnversionedValue != "1")
+                {
+                    siteBaseUrlField[TemplateFieldIDs.Unversioned] = "1";
+                }
+            }
+
+            Item mediaBaseUrlField = enterspeedSiteConfigSection.Children["Media Base Url"]
+                ?? enterspeedSiteConfigSection.Add("Media Base Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedMediaBaseUrlFieldID);
+
+            using (new EditContext(mediaBaseUrlField))
+            {
+                mediaBaseUrlField.Appearance.Sortorder = 140;
+
+                string currentTypeValue = mediaBaseUrlField[TemplateFieldIDs.Type];
+                if (!currentTypeValue.Equals("Single-Line Text", StringComparison.OrdinalIgnoreCase))
+                {
+                    mediaBaseUrlField[TemplateFieldIDs.Type] = "Single-Line Text";
+                }
+
+                string currentSharedValue = mediaBaseUrlField[TemplateFieldIDs.Shared];
+                if (currentSharedValue != "0")
+                {
+                    mediaBaseUrlField[TemplateFieldIDs.Shared] = "0";
+                }
+
+                string currentUnversionedValue = mediaBaseUrlField[TemplateFieldIDs.Unversioned];
+                if (currentUnversionedValue != "1")
+                {
+                    mediaBaseUrlField[TemplateFieldIDs.Unversioned] = "1";
+                }
+            }
+
+            Item publishHookUrlField = enterspeedSiteConfigSection.Children["Publish Hook Url"]
+    ?? enterspeedSiteConfigSection.Add("Publish Hook Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedpublishHookUrlFieldID);
+
+            using (new EditContext(publishHookUrlField))
+            {
+                publishHookUrlField.Appearance.Sortorder = 150;
+
+                string currentTypeValue = publishHookUrlField[TemplateFieldIDs.Type];
+                if (!currentTypeValue.Equals("Single-Line Text", StringComparison.OrdinalIgnoreCase))
+                {
+                    publishHookUrlField[TemplateFieldIDs.Type] = "Single-Line Text";
+                }
+
+                string currentSharedValue = publishHookUrlField[TemplateFieldIDs.Shared];
+                if (currentSharedValue != "0")
+                {
+                    publishHookUrlField[TemplateFieldIDs.Shared] = "0";
+                }
+
+                string currentUnversionedValue = publishHookUrlField[TemplateFieldIDs.Unversioned];
+                if (currentUnversionedValue != "1")
+                {
+                    publishHookUrlField[TemplateFieldIDs.Unversioned] = "1";
+                }
+            }
         }
 
         private void Init()

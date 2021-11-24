@@ -13,7 +13,6 @@ using Sitecore.Abstractions;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
 using Sitecore.Layouts;
-using Sitecore.Security.AccessControl;
 using Sitecore.Security.Accounts;
 using Version = Sitecore.Data.Version;
 
@@ -61,6 +60,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             if (item.IsDictionaryItem())
             {
                 IDictionary<string, IEnterspeedProperty> dictionaryProperties = _fieldConverter.ConvertFields(item, null, _fieldValueConverters.ToList(), configuration);
+                dictionaryProperties.Add(MetaData, CreateDictionaryMetaData(item));
 
                 return dictionaryProperties;
             }
@@ -105,6 +105,23 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             return ids;
         }
 
+        private IEnterspeedProperty CreateDictionaryMetaData(Item item)
+        {
+            int level = GetContentPathIds(item).IndexOf(item.ID.Guid);
+
+            var metaData = new Dictionary<string, IEnterspeedProperty>
+            {
+                ["language"] = new StringEnterspeedProperty("language", item.Language.Name),
+                ["createDate"] = new StringEnterspeedProperty("createDate", _dateFormatter.FormatDate(item.Statistics.Created)),
+                ["updateDate"] = new StringEnterspeedProperty("updateDate", _dateFormatter.FormatDate(item.Statistics.Updated)),
+                ["updatedBy"] = new StringEnterspeedProperty("updatedBy", item.Statistics.UpdatedBy),
+                ["fullPath"] = new ArrayEnterspeedProperty("fullPath", GetItemFullPath(item)),
+                ["languages"] = new ArrayEnterspeedProperty("languages", GetAvailableLanguagesOfItem(item)),
+            };
+
+            return new ObjectEnterspeedProperty(MetaData, metaData);
+        }
+
         private IEnterspeedProperty CreateMetaData(Item item)
         {
             int level = GetContentPathIds(item).IndexOf(item.ID.Guid);
@@ -113,6 +130,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             {
                 ["name"] = new StringEnterspeedProperty("name", item.Name),
                 ["displayName"] = new StringEnterspeedProperty("displayName", item.DisplayName),
+                ["sitecoreId"] = new StringEnterspeedProperty("name", item.ID.ToString()),
                 ["language"] = new StringEnterspeedProperty("language", item.Language.Name),
                 ["sortOrder"] = new NumberEnterspeedProperty("sortOrder", item.Appearance.Sortorder),
                 ["level"] = new NumberEnterspeedProperty("level", level),

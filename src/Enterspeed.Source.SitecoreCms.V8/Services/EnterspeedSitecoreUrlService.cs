@@ -2,7 +2,6 @@
 using Sitecore.Abstractions;
 using Sitecore.Data.Items;
 using Sitecore.Links;
-using Sitecore.Resources.Media;
 using Sitecore.Sites;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Services
@@ -35,7 +34,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
             EnterspeedSiteInfo siteInfo = configuration.GetSite(item);
 
-                var options = new UrlOptions
+            var urlBuilderOptions = new ItemUrlBuilderOptions
             {
                 SiteResolving = true,
                 AlwaysIncludeServerUrl = true,
@@ -47,32 +46,42 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             {
                 SiteContext siteContext = _siteContextFactory.GetSiteContext(siteInfo.Name);
 
-                options.Site = siteContext;
+                urlBuilderOptions.Site = siteContext;
+                urlBuilderOptions.AlwaysIncludeServerUrl = string.IsNullOrEmpty(siteInfo.BaseUrl);
             }
-            using (var siteContextSwitcher = new SiteContextSwitcher(options.Site))
+
+            var itemUrl = _linkManager.GetItemUrl(item, urlBuilderOptions);
+            if (!string.IsNullOrEmpty(siteInfo.BaseUrl))
             {
-                return options.Site.Properties["scheme"]??"http"+ LinkManager.GetItemUrl(item, options);
+                itemUrl = siteInfo.BaseUrl + itemUrl;
             }
+
+            return itemUrl;
         }
 
-        public string GetMediaUrl(MediaItem mediaItem)
+        public string GetMediaUrl(MediaItem mediaItem, EnterspeedSiteInfo siteInfo)
         {
             if (mediaItem == null)
             {
                 return null;
             }
 
-            var urlBuilderOptions = new MediaUrlOptions
+            var urlBuilderOptions = new MediaUrlBuilderOptions
             {
                 AbsolutePath = true,
-                AlwaysIncludeServerUrl = false
+                AlwaysIncludeServerUrl = string.IsNullOrEmpty(siteInfo.MediaBaseUrl),
+                LanguageEmbedding = LanguageEmbedding.Never
             };
 
-            string mediaUrl = MediaManager.GetMediaUrl(mediaItem, urlBuilderOptions);
-
+            string mediaUrl = _mediaManager.GetMediaUrl(mediaItem, urlBuilderOptions);
             if (string.IsNullOrEmpty(mediaUrl))
             {
                 return null;
+            }
+
+            if (!string.IsNullOrEmpty(siteInfo.MediaBaseUrl))
+            {
+                mediaUrl = siteInfo.MediaBaseUrl + mediaUrl;
             }
 
             if (mediaUrl.EndsWith(".ashx") &&
