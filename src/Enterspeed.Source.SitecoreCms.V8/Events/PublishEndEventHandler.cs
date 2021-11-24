@@ -42,15 +42,15 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                 }
 
                 if (!HasAllowedPath(rootItem))
-                    {
-                        continue;
-                    }
+                {
+                    continue;
+                }
 
                 EnterspeedSiteInfo siteOfItem = configuration.GetSite(rootItem);
                 if (siteOfItem == null)
-                    {
-                        continue;
-                    }
+                {
+                    continue;
+                }
 
                 if (string.IsNullOrEmpty(siteOfItem.PublishHookUrl))
                 {
@@ -58,8 +58,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                 }
 
                 var result = CallHookAsync(siteOfItem.PublishHookUrl);
-                }
             }
+        }
 
         private static bool HasAllowedPath(Item item)
         {
@@ -72,7 +72,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             HttpResponseMessage response = await client.PostAsync(path, null);
             if (response.IsSuccessStatusCode)
             {
-                result = await response.Content.ReadAsAsync<string>();
+                result = await response.Content.ReadAsStringAsync();
             }
 
             return result;

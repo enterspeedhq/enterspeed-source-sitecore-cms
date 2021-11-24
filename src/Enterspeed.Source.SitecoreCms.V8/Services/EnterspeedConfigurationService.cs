@@ -4,6 +4,7 @@ using System.Linq;
 using Enterspeed.Source.SitecoreCms.V8.Exceptions;
 using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
 using Sitecore.Abstractions;
+using Sitecore.Configuration;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
@@ -16,7 +17,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 {
     public class EnterspeedConfigurationService : IEnterspeedConfigurationService
     {
-        private readonly BaseSettings _settings;
         private readonly BaseLanguageManager _languageManager;
         private readonly BaseItemManager _itemManager;
         private readonly BaseLinkManager _linkManager;
@@ -27,14 +27,12 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
         private Guid _configurationRevisionId = Guid.Empty;
 
         public EnterspeedConfigurationService(
-            BaseSettings settings,
             BaseLanguageManager languageManager,
             BaseItemManager itemManager,
             BaseLinkManager linkManager,
             BaseFactory factory,
             BaseSiteContextFactory siteContextFactory)
         {
-            _settings = settings;
             _languageManager = languageManager;
             _itemManager = itemManager;
             _linkManager = linkManager;
@@ -76,7 +74,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 string configApiKey = enterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedApiKeyFieldID];
                 config.ApiKey = (configApiKey ?? string.Empty).Trim();
 
-                config.ItemNotFoundUrl = GetItemNotFoundUrl(_settings);
+                config.ItemNotFoundUrl = GetItemNotFoundUrl();
 
                 MultilistField enabledSitesField = enterspeedSiteConfigurationItem.Fields[EnterspeedIDs.Fields.EnterspeedEnabledSitesFieldID];
 
@@ -118,7 +116,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                             string publishHookUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedpublishHookUrlFieldID];
 
                             string name = siteContext.SiteInfo.Name;
-                            string startPathUrl = _linkManager.GetItemUrl(homeItem, new ItemUrlBuilderOptions
+                            string startPathUrl = _linkManager.GetItemUrl(homeItem, new UrlOptions()
                             {
                                 SiteResolving = true,
                                 Site = siteContext,
@@ -162,9 +160,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             return _configuration;
         }
 
-        private static string GetItemNotFoundUrl(BaseSettings settings)
+        private static string GetItemNotFoundUrl( )
         {
-            string url = settings.GetSetting("ItemNotFoundUrl", null);
+            string url = Settings.ItemNotFoundUrl;
             if (string.IsNullOrEmpty(url))
             {
                 throw new EnterspeedSitecoreException(

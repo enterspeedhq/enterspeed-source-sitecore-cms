@@ -11,6 +11,7 @@ using Enterspeed.Source.SitecoreCms.V8.Services;
 using Enterspeed.Source.SitecoreCms.V8.Services.DataProperties;
 using Enterspeed.Source.SitecoreCms.V8.Services.DataProperties.DefaultFieldConverters;
 using Enterspeed.Source.SitecoreCms.V8.Services.DataProperties.Formatters;
+using Enterspeed.Source.SitecoreCms.V8.Services.Serializers;
 using Microsoft.Extensions.DependencyInjection;
 using Sitecore.Data.Items;
 using Sitecore.DependencyInjection;
@@ -30,7 +31,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.DependencyInjection
             services.AddSingleton<IEntityModelMapper<Item, SitecoreContentEntity>, SitecoreContentEntityModelMapper>();
             services.AddSingleton<IEntityModelMapper<RenderingItem, SitecoreRenderingEntity>, SitecoreRenderingEntityModelMapper>();
             services.AddSingleton<IEntityModelMapper<Item, SitecoreDictionaryEntity>, SitecoreDictionaryEntityModelMapper>();
-            services.AddSingleton<IJsonSerializer, SystemTextJsonSerializer>();
+            services.AddSingleton<IJsonSerializer, NewtonsoftJsonSerializer>();
             services.AddSingleton<IEnterspeedIngestService, EnterspeedIngestService>();
             services.AddSingleton<IEnterspeedConfigurationService, EnterspeedConfigurationService>();
             services.AddSingleton<IEnterspeedConfigurationProvider, EnterspeedSitecoreConfigurationProvider>();

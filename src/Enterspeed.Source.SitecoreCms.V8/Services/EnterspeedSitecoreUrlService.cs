@@ -1,7 +1,9 @@
 ﻿using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
 using Sitecore.Abstractions;
 using Sitecore.Data.Items;
+using Sitecore.Globalization;
 using Sitecore.Links;
+using Sitecore.Resources.Media;
 using Sitecore.Sites;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Services
@@ -34,7 +36,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
             EnterspeedSiteInfo siteInfo = configuration.GetSite(item);
 
-            var urlBuilderOptions = new ItemUrlBuilderOptions
+            var urlBuilderOptions = new UrlOptions()
             {
                 SiteResolving = true,
                 AlwaysIncludeServerUrl = true,
@@ -66,11 +68,11 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 return null;
             }
 
-            var urlBuilderOptions = new MediaUrlBuilderOptions
+            var urlBuilderOptions = new MediaUrlOptions()
             {
                 AbsolutePath = true,
                 AlwaysIncludeServerUrl = string.IsNullOrEmpty(siteInfo.MediaBaseUrl),
-                LanguageEmbedding = LanguageEmbedding.Never
+                Language = Language.Invariant
             };
 
             string mediaUrl = _mediaManager.GetMediaUrl(mediaItem, urlBuilderOptions);
