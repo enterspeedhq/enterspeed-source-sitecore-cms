@@ -40,7 +40,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                 return null;
             }
 
-            var referenceIds = items.Select(x => new StringEnterspeedProperty(null, _enterspeedIdentityService.GetId(x))).ToArray();
+            var referenceIds = items.Select(x => new StringEnterspeedProperty(null, _enterspeedIdentityService.GetId(x.ID.ToGuid(), item.Language))).ToArray();
 
             return new ArrayEnterspeedProperty(_fieldService.GetFieldName(field), referenceIds);
         }

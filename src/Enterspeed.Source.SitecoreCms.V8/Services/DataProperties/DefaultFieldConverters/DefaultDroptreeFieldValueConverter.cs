@@ -33,7 +33,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services.DataProperties.DefaultFieldC
                 return null;
             }
 
-            return new StringEnterspeedProperty(_fieldService.GetFieldName(field), _enterspeedIdentityService.GetId(referenceField.TargetItem));
+            return new StringEnterspeedProperty(_fieldService.GetFieldName(field), _enterspeedIdentityService.GetId(referenceField.TargetID.ToGuid(), item.Language));
         }
     }
 }

@@ -82,12 +82,12 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services.DataProperties.DefaultFieldC
             }
             else if (linkField.LinkType == "internal")
             {
-                url = _urlService.GetItemUrl(linkField.TargetItem, configuration);
+                url = _urlService.GetItemUrl(linkField.TargetItem, siteInfo);
 
                 if (linkField.TargetItem != null)
                 {
                     properties.Add(PropertyTargetType, new StringEnterspeedProperty(PropertyTargetType, linkField.TargetItem.TemplateName));
-                    properties.Add(PropertyTargetId, new StringEnterspeedProperty(PropertyTargetId, _enterspeedIdentityService.GetId(linkField.TargetItem)));
+                    properties.Add(PropertyTargetId, new StringEnterspeedProperty(PropertyTargetId, _enterspeedIdentityService.GetId(linkField.TargetID.ToGuid(), item.Language)));
                 }
             }
             else if (linkField.LinkType == "external" ||

@@ -39,7 +39,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
                 if (input.Paths.FullPath.StartsWith(siteInfo.HomeItemPath, StringComparison.OrdinalIgnoreCase))
                 {
                     // Routable content resides on or below the Home item path.
-                    output.Url = _urlService.GetItemUrl(input, configuration);
+                    output.Url = _urlService.GetItemUrl(input, siteInfo);
                 }
 
                 if (!input.Paths.FullPath.Equals(siteInfo.SiteItemPath, StringComparison.OrdinalIgnoreCase))
