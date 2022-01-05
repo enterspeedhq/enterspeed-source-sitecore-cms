@@ -7,6 +7,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Models.Configuration
     {
         public string Name { get; set; }
 
+        public string StartPathUrl { get; set; }
+
         public string BaseUrl { get; set; }
 
         public string MediaBaseUrl { get; set; }
