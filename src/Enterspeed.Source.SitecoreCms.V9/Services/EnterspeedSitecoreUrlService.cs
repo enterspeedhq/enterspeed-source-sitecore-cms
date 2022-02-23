@@ -46,16 +46,23 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 SiteContext siteContext = _siteContextFactory.GetSiteContext(siteInfo.Name);
 
                 urlBuilderOptions.Site = siteContext;
+                urlBuilderOptions.SiteResolving = string.IsNullOrEmpty(siteInfo.BaseUrl);
                 urlBuilderOptions.AlwaysIncludeServerUrl = string.IsNullOrEmpty(siteInfo.BaseUrl);
             }
 
-            var itemUrl = _linkManager.GetItemUrl(item, urlBuilderOptions);
-            if (!string.IsNullOrEmpty(siteInfo.BaseUrl))
-            {
-                itemUrl = siteInfo.BaseUrl + itemUrl;
-            }
+            var itemUrl = string.Empty;
 
-            return itemUrl;
+            using (var siteContextSwitcher = new SiteContextSwitcher(urlBuilderOptions.Site))
+            {
+                itemUrl = _linkManager.GetItemUrl(item, urlBuilderOptions);
+                //itemUrl = urlBuilderOptions.Site.Properties["scheme"] ?? "http" + LinkManager.GetItemUrl(item, urlBuilderOptions);
+                if (!string.IsNullOrEmpty(siteInfo.BaseUrl))
+                {
+                    itemUrl = siteInfo.BaseUrl + itemUrl.Replace(siteInfo.StartPathUrl, "/");
+                }
+
+                return itemUrl;
+            }
         }
 
         public string GetMediaUrl(MediaItem mediaItem, EnterspeedSiteInfo siteInfo)

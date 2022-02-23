@@ -8,6 +8,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Models.Configuration
     public class EnterspeedSitecoreConfiguration : EnterspeedConfiguration
     {
         public bool IsEnabled { get; set; }
+        public bool IsPreview { get; set; }
 
         public string ItemNotFoundUrl { get; set; }
 

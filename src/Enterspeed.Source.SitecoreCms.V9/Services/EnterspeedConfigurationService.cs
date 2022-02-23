@@ -27,6 +27,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
         private List<EnterspeedSitecoreConfiguration> _configuration;
         private Guid _configurationRevisionId = Guid.Empty;
 
+        private DateTime _lastUpdatedDate = DateTime.MinValue;
+
         public EnterspeedConfigurationService(
             BaseSettings settings,
             BaseLanguageManager languageManager,
@@ -56,7 +58,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             //{
             //    return new List<EnterspeedSitecoreConfiguration>();
             //}
-            if (!IsConfigurationUpdated(enterspeedConfigurationItem, out Guid currentRevisionId))
+            if (!IsConfigurationUpdated(enterspeedConfigurationItem, out DateTime updatedDate))
             {
                 return _configuration;
             }
@@ -69,6 +71,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 {
                     IsEnabled = true
                 };
+
+                config.IsPreview = enterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedEnablePreviewFieldID] == "1";
 
                 string configApiBaseUrl = enterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedApiBaseUrlFieldID];
 
@@ -119,24 +123,30 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                             string publishHookUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedpublishHookUrlFieldID];
 
                             string name = siteContext.SiteInfo.Name;
-                            string startPathUrl = _linkManager.GetItemUrl(homeItem, new ItemUrlBuilderOptions
-                            {
-                                SiteResolving = true,
-                                Site = siteContext,
-                                AlwaysIncludeServerUrl = string.IsNullOrEmpty(siteBaseUrl),
-                                LowercaseUrls = true,
-                                LanguageEmbedding = LanguageEmbedding.Never
-                            });
 
-                            if (!string.IsNullOrEmpty(siteBaseUrl))
+                            string startPathUrl;
+                            using (var siteContextSwitcher = new SiteContextSwitcher(siteContext))
                             {
-                                startPathUrl = siteBaseUrl;
+                                startPathUrl = _linkManager.GetItemUrl(homeItem, new ItemUrlBuilderOptions
+                                {
+                                    SiteResolving = true,
+                                    Site = siteContext,
+                                    AlwaysIncludeServerUrl = true,
+                                    LowercaseUrls = true,
+                                    LanguageEmbedding = LanguageEmbedding.Never
+                                });
                             }
+
+                            ////if (siteContext.Properties["scheme"] == null)
+                            ////{
+                            ////    startPathUrl = "http" + startPathUrl;
+                            ////}
 
                             var enterspeedSiteInfo = new EnterspeedSiteInfo
                             {
                                 Name = name,
-                                BaseUrl = startPathUrl,
+                                StartPathUrl = startPathUrl,
+                                BaseUrl = siteBaseUrl,
                                 MediaBaseUrl = siteMediaBaseUrl,
                                 PublishHookUrl = publishHookUrl,
                                 HomeItemPath = siteContext.StartPath,
@@ -157,7 +167,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
                 // Settings caching values
                 _configuration.Add(config);
-                _configurationRevisionId = currentRevisionId;
+                _lastUpdatedDate = updatedDate;
             }
 
             return _configuration;
@@ -180,6 +190,19 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             currentRevisionId = Guid.Parse(item.Statistics.Revision);
 
             if (_configurationRevisionId == currentRevisionId &&
+                _configuration != null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsConfigurationUpdated(Item item, out DateTime currentUpdatedDate)
+        {
+            currentUpdatedDate = item.Children.Max(i => i.Statistics.Updated);
+
+            if (_lastUpdatedDate >= currentUpdatedDate &&
                 _configuration != null)
             {
                 return false;

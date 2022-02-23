@@ -69,6 +69,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                     IsEnabled = true
                 };
 
+                config.IsPreview = enterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedEnablePreviewFieldID] == "1";
+
                 string configApiBaseUrl = enterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedApiBaseUrlFieldID];
 
                 config.BaseUrl = (configApiBaseUrl ?? string.Empty).Trim();

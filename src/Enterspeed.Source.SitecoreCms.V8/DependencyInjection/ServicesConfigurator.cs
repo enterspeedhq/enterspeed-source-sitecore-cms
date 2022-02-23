@@ -36,6 +36,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.DependencyInjection
             services.AddSingleton<IEnterspeedConfigurationService, EnterspeedConfigurationService>();
             services.AddSingleton<IEnterspeedConfigurationProvider, EnterspeedSitecoreConfigurationProvider>();
             services.AddSingleton<IEnterspeedUrlService, EnterspeedSitecoreUrlService>();
+            services.AddSingleton<IEnterspeedSitecoreIngestService, EnterspeedSitecoreIngestService>();
             services.AddSingleton<EnterspeedDateFormatter>();
 
             services.AddSingleton<IEnterspeedConnection>(provider =>

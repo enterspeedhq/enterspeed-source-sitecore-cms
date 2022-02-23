@@ -13,21 +13,24 @@ using Enterspeed.Source.SitecoreCms.V9.Providers;
 using Enterspeed.Source.SitecoreCms.V9.Services;
 using Sitecore.Abstractions;
 using Sitecore.Data.Items;
+using Sitecore.Diagnostics;
+using Sitecore.Events;
 using Sitecore.Globalization;
 using Sitecore.Links;
+using Sitecore.Pipelines.Save;
 using Sitecore.Publishing;
 using Sitecore.Publishing.Pipelines.PublishItem;
 using Version = Sitecore.Data.Version;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Events
 {
-    public class PublishingEventHandler
+    public class SaveEventHandler
     {
         private readonly BaseItemManager _itemManager;
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
         private readonly IEnterspeedSitecoreIngestService _enterspeedSitecoreIngestService;
 
-        public PublishingEventHandler(
+        public SaveEventHandler(
             BaseItemManager itemManager,
             IEnterspeedConfigurationService enterspeedConfigurationService,
             IEnterspeedSitecoreIngestService enterspeedSitecoreIngestService)
@@ -37,13 +40,13 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
             _enterspeedSitecoreIngestService = enterspeedSitecoreIngestService;
         }
 
-        public void OnItemProcessed(object sender, EventArgs args)
-        {
-            PublishItemContext context = args is ItemProcessedEventArgs itemProcessedEventArgs
-                ? itemProcessedEventArgs.Context
-                : null;
+        public void OnItemSaved(object sender, EventArgs args)
+            {
+            SitecoreEventArgs eventArgs = args as SitecoreEventArgs;
 
-            if (context == null)
+            Item sourceItem = eventArgs.Parameters[0] as Item;
+
+            if (sourceItem == null)
             {
                 return;
             }
@@ -56,11 +59,15 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                     continue;
                 }
 
+                if (!configuration.IsPreview)
+                {
+                    continue;
+                }
+
                 EnterspeedIngestService enterspeedIngestService = new EnterspeedIngestService(new SitecoreEnterspeedConnection(configuration), new SystemTextJsonSerializer(), new EnterspeedSitecoreConfigurationProvider(_enterspeedConfigurationService));
-                Language language = context.PublishOptions.Language;
+                Language language = sourceItem.Language;
 
                 // Getting the source item first
-                Item sourceItem = _itemManager.GetItem(context.ItemId, language, Version.Latest, context.PublishHelper.Options.SourceDatabase);
                 if (sourceItem == null)
                 {
                     continue;
@@ -71,33 +78,20 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                     continue;
                 }
 
-                // Handling if the item was deleted or unpublished
-                bool itemIsDeleted = context.Action == PublishAction.DeleteTargetItem;
-
-                if (itemIsDeleted)
-                {
-                    _enterspeedSitecoreIngestService.HandleContentItem(sourceItem, enterspeedIngestService, configuration, true, false, false);
-                    _enterspeedSitecoreIngestService.HandleRendering(sourceItem, enterspeedIngestService, configuration, true, false, false);
-                    _enterspeedSitecoreIngestService.HandleDictionary(sourceItem, enterspeedIngestService, configuration, true, false, false);
-
-                    continue;
-                }
-
                 // Handling if the item was published
-                Item targetItem = _itemManager.GetItem(context.ItemId, language, Version.Latest, context.PublishHelper.Options.TargetDatabase);
-                if (targetItem == null || targetItem.Versions.Count == 0)
+                if (sourceItem == null || sourceItem.Versions.Count == 0)
                 {
                     continue;
                 }
 
-                if (!_enterspeedSitecoreIngestService.HasAllowedPath(targetItem))
+                if (!_enterspeedSitecoreIngestService.HasAllowedPath(sourceItem))
                 {
                     continue;
                 }
 
-                _enterspeedSitecoreIngestService.HandleContentItem(targetItem, enterspeedIngestService, configuration, false, true, false);
-                _enterspeedSitecoreIngestService.HandleRendering(targetItem, enterspeedIngestService, configuration, false, true, false);
-                _enterspeedSitecoreIngestService.HandleDictionary(targetItem, enterspeedIngestService, configuration, false, true, false);
+                _enterspeedSitecoreIngestService.HandleContentItem(sourceItem, enterspeedIngestService, configuration, false, true, true);
+                _enterspeedSitecoreIngestService.HandleRendering(sourceItem, enterspeedIngestService, configuration, false, true, true);
+                _enterspeedSitecoreIngestService.HandleDictionary(sourceItem, enterspeedIngestService, configuration, false, true, true);
             }
         }
     }

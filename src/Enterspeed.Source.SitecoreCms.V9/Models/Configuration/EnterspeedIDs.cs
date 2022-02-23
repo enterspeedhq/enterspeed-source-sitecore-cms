@@ -23,6 +23,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Configuration
             public static readonly ID EnterspeedSiteBaseUrlFieldID = new ID(Guid.Parse("{a5c257ad-5c76-40e4-9411-8a9cc98cbeb6}"));
             public static readonly ID EnterspeedMediaBaseUrlFieldID = new ID(Guid.Parse("{33ec5722-c98e-46dd-9c33-88d75cae8000}"));
             public static readonly ID EnterspeedpublishHookUrlFieldID = new ID(Guid.Parse("{37ec5722-c98e-46dd-9c33-88d75cbe8000}"));
+            public static readonly ID EnterspeedEnablePreviewFieldID = new ID(Guid.Parse("{091f5494-317d-451e-9177-86527599dfd8}"));
+            public static readonly ID EnterspeedPreviewBaseUrlFieldID = new ID(Guid.Parse("{92ee7860-ed9d-4803-b488-1494fd6395ab}"));
         }
 
         public static class Items

@@ -9,6 +9,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Configuration
 
         public string BaseUrl { get; set; }
 
+        public string StartPathUrl { get; set; }
+
         public string MediaBaseUrl { get; set; }
 
         public string PublishHookUrl { get; set; }

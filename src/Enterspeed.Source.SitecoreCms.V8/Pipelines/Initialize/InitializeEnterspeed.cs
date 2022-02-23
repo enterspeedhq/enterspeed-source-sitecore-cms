@@ -316,6 +316,33 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
                     publishHookUrlField[TemplateFieldIDs.Unversioned] = "1";
                 }
             }
+
+            Item enablePreviewField = enterspeedSiteConfigSection.Children["Enable Preview"]
+?? enterspeedSiteConfigSection.Add("Enable Preview", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnablePreviewFieldID);
+
+            using (new EditContext(enablePreviewField))
+            {
+                enablePreviewField.Appearance.Sortorder = 160;
+
+                string currentTypeValue = enablePreviewField[TemplateFieldIDs.Type];
+                if (!currentTypeValue.Equals("Checkbox", StringComparison.OrdinalIgnoreCase))
+                {
+                    enablePreviewField[TemplateFieldIDs.Type] = "Checkbox";
+                }
+
+                string currentSharedValue = enablePreviewField[TemplateFieldIDs.Shared];
+                if (currentSharedValue != "0")
+                {
+                    enablePreviewField[TemplateFieldIDs.Shared] = "0";
+                }
+
+                string currentUnversionedValue = enablePreviewField[TemplateFieldIDs.Unversioned];
+                if (currentUnversionedValue != "1")
+                {
+                    enablePreviewField[TemplateFieldIDs.Unversioned] = "1";
+                }
+            }
+
         }
 
         private void Init()
