@@ -53,11 +53,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 return new List<EnterspeedSitecoreConfiguration>();
             }
 
-            //string enabled = enterspeedConfigurationItem[EnterspeedIDs.Fields.EnterspeedEnabledFieldID] ?? string.Empty;
-            //if (enabled != "1")
-            //{
-            //    return new List<EnterspeedSitecoreConfiguration>();
-            //}
             if (!IsConfigurationUpdated(enterspeedConfigurationItem, out DateTime updatedDate))
             {
                 return _configuration;
@@ -92,8 +87,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
                     foreach (Item enabledSite in enabledSites)
                     {
-                        var matchingSites = allSiteInfos.Where(x => x.RootPath.Equals(enabledSite.Paths.FullPath, StringComparison.OrdinalIgnoreCase));
-                        if (matchingSites.Count() == 0)
+                        var matchingSites = allSiteInfos.Where(x => x.RootPath.Equals(enabledSite.Paths.FullPath, StringComparison.OrdinalIgnoreCase)).ToList();
+                        if (matchingSites.Any())
                         {
                             continue;
                         }
@@ -104,7 +99,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
                             Language siteLanguage = _languageManager.GetLanguage(siteContext.Language);
 
-                            var languageEnterspeedSiteConfigurationItem = enterspeedSiteConfigurationItem.Database.GetItem(enterspeedSiteConfigurationItem.ID, siteLanguage);
+                            var languageEnterspeedSiteConfigurationItem =
+                                enterspeedSiteConfigurationItem.Database.GetItem(enterspeedSiteConfigurationItem.ID, siteLanguage);
                             if (languageEnterspeedSiteConfigurationItem.Versions.Count == 0)
                             {
                                 languageEnterspeedSiteConfigurationItem = enterspeedSiteConfigurationItem;
@@ -114,8 +110,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
                             if (homeItem == null || homeItem.Versions.Count == 0)
                             {
-                                // TODO - KEK: throw exception here?
-                                continue;
+                                throw new EnterspeedSitecoreException("HomeItem is null for site being configured");
                             }
 
                             string siteBaseUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedSiteBaseUrlFieldID];
@@ -136,11 +131,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                                     LanguageEmbedding = LanguageEmbedding.Never
                                 });
                             }
-
-                            ////if (siteContext.Properties["scheme"] == null)
-                            ////{
-                            ////    startPathUrl = "http" + startPathUrl;
-                            ////}
 
                             var enterspeedSiteInfo = new EnterspeedSiteInfo
                             {
