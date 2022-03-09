@@ -1,4 +1,6 @@
-﻿using Enterspeed.Source.Sdk.Api.Providers;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Enterspeed.Source.Sdk.Api.Providers;
 using Enterspeed.Source.Sdk.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Services;
 
@@ -14,6 +16,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Providers
             _enterspeedConfigurationService = enterspeedConfigurationService;
         }
 
-        public EnterspeedConfiguration Configuration => _enterspeedConfigurationService.GetConfiguration();
+        public EnterspeedConfiguration Configuration => _enterspeedConfigurationService.GetConfiguration().Any() ? _enterspeedConfigurationService.GetConfiguration().First() : new EnterspeedConfiguration();
     }
 }

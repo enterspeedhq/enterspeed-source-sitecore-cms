@@ -21,7 +21,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             _fieldService = fieldService;
         }
 
-        public IDictionary<string, IEnterspeedProperty> ConvertFields(Item item, EnterspeedSiteInfo siteInfo, List<IEnterspeedFieldValueConverter> fieldValueConverters)
+        public IDictionary<string, IEnterspeedProperty> ConvertFields(Item item, EnterspeedSiteInfo siteInfo, List<IEnterspeedFieldValueConverter> fieldValueConverters, EnterspeedSitecoreConfiguration configuration)
         {
             var output = new Dictionary<string, IEnterspeedProperty>();
 
@@ -65,7 +65,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
                 IEnterspeedFieldValueConverter converter = fieldValueConverters.FirstOrDefault(x => x.CanConvert(field));
 
-                var value = converter?.Convert(item, field, siteInfo, fieldValueConverters);
+                var value = converter?.Convert(item, field, siteInfo, fieldValueConverters, configuration);
                 if (value == null)
                 {
                     continue;

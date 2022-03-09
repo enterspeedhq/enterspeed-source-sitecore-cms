@@ -1,11 +1,12 @@
-﻿using Sitecore.Data.Items;
+﻿using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
+using Sitecore.Data.Items;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Services
 {
     public interface IEnterspeedUrlService
     {
-        string GetItemUrl(Item item, bool enableLanguageEmbedding = false);
+        string GetItemUrl(Item item, EnterspeedSiteInfo siteInfo, bool enableLanguageEmbedding = false);
 
-        string GetMediaUrl(MediaItem mediaItem);
+        string GetMediaUrl(MediaItem mediaItem, EnterspeedSiteInfo siteInfo);
     }
 }

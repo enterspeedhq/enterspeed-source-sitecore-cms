@@ -24,22 +24,22 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
             _enterspeedConfigurationService = enterspeedConfigurationService;
         }
 
-        public SitecoreContentEntity Map(Item input)
+        public SitecoreContentEntity Map(Item input, EnterspeedSitecoreConfiguration configuration)
         {
             var output = new SitecoreContentEntity
             {
                 Id = _enterspeedIdentityService.GetId(input),
-                Type = input.TemplateName,
-                Properties = _enterspeedPropertyService.GetProperties(input)
+                Type = input.TemplateName.Replace(" ", string.Empty),
+                Properties = _enterspeedPropertyService.GetProperties(input, configuration)
             };
 
-            EnterspeedSiteInfo siteInfo = _enterspeedConfigurationService.GetConfiguration().GetSite(input);
+            EnterspeedSiteInfo siteInfo = configuration.GetSite(input);
             if (siteInfo != null)
             {
                 if (input.Paths.FullPath.StartsWith(siteInfo.HomeItemPath, StringComparison.OrdinalIgnoreCase))
                 {
                     // Routable content resides on or below the Home item path.
-                    output.Url = _urlService.GetItemUrl(input);
+                    output.Url = _urlService.GetItemUrl(input, siteInfo);
                 }
 
                 if (!input.Paths.FullPath.Equals(siteInfo.SiteItemPath, StringComparison.OrdinalIgnoreCase))
@@ -50,6 +50,11 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
             }
 
             return output;
+        }
+
+        public SitecoreContentEntity Map(Item input)
+        {
+            throw new NotImplementedException();
         }
     }
 }

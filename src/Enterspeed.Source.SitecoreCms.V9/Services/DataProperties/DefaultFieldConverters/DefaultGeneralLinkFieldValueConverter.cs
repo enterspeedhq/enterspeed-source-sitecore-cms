@@ -39,7 +39,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                     field.TypeKey.Equals("general link with search", StringComparison.OrdinalIgnoreCase));
         }
 
-        public IEnterspeedProperty Convert(Item item, Field field, EnterspeedSiteInfo siteInfo, List<IEnterspeedFieldValueConverter> fieldValueConverters)
+        public IEnterspeedProperty Convert(Item item, Field field, EnterspeedSiteInfo siteInfo, List<IEnterspeedFieldValueConverter> fieldValueConverters, EnterspeedSitecoreConfiguration configuration)
         {
             LinkField linkField = field;
             if (linkField == null)
@@ -78,16 +78,16 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 
             if (linkField.LinkType == "media")
             {
-                url = _urlService.GetMediaUrl(linkField.TargetItem);
+                url = _urlService.GetMediaUrl(linkField.TargetItem, siteInfo);
             }
             else if (linkField.LinkType == "internal")
             {
-                url = _urlService.GetItemUrl(linkField.TargetItem);
+                url = _urlService.GetItemUrl(linkField.TargetItem, siteInfo);
 
                 if (linkField.TargetItem != null)
                 {
                     properties.Add(PropertyTargetType, new StringEnterspeedProperty(PropertyTargetType, linkField.TargetItem.TemplateName));
-                    properties.Add(PropertyTargetId, new StringEnterspeedProperty(PropertyTargetId, _enterspeedIdentityService.GetId(linkField.TargetItem)));
+                    properties.Add(PropertyTargetId, new StringEnterspeedProperty(PropertyTargetId, _enterspeedIdentityService.GetId(linkField.TargetID.ToGuid(), item.Language)));
                 }
             }
             else if (linkField.LinkType == "external" ||

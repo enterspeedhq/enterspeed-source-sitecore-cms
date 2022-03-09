@@ -56,25 +56,24 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             _rolesInRolesManager = rolesInRolesManager;
         }
 
-        public IDictionary<string, IEnterspeedProperty> GetProperties(Item item)
+        public IDictionary<string, IEnterspeedProperty> GetProperties(Item item,  EnterspeedSitecoreConfiguration configuration)
         {
             if (item.IsDictionaryItem())
             {
-                IDictionary<string, IEnterspeedProperty> dictionaryProperties = _fieldConverter.ConvertFields(item, null, _fieldValueConverters.ToList());
+                IDictionary<string, IEnterspeedProperty> dictionaryProperties = _fieldConverter.ConvertFields(item, null, _fieldValueConverters.ToList(), configuration);
+                dictionaryProperties.Add(MetaData, CreateDictionaryMetaData(item));
 
                 return dictionaryProperties;
             }
 
-            EnterspeedSiteInfo siteOfItem = _enterspeedConfigurationService
-                .GetConfiguration()
-                .GetSite(item);
+            EnterspeedSiteInfo siteOfItem = configuration.GetSite(item);
 
             if (siteOfItem == null)
             {
                 return null;
             }
 
-            IDictionary<string, IEnterspeedProperty> properties = _fieldConverter.ConvertFields(item, siteOfItem, _fieldValueConverters.ToList());
+            IDictionary<string, IEnterspeedProperty> properties = _fieldConverter.ConvertFields(item, siteOfItem, _fieldValueConverters.ToList(), configuration);
 
             properties.Add(MetaData, CreateMetaData(item));
 
@@ -87,9 +86,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             return properties;
         }
 
-        public IDictionary<string, IEnterspeedProperty> GetProperties(RenderingItem item)
+        public IDictionary<string, IEnterspeedProperty> GetProperties(RenderingItem item, EnterspeedSitecoreConfiguration configuration)
         {
-            IDictionary<string, IEnterspeedProperty> properties = _fieldConverter.ConvertFields(item.InnerItem, null, _fieldValueConverters.ToList());
+            IDictionary<string, IEnterspeedProperty> properties = _fieldConverter.ConvertFields(item.InnerItem, null, _fieldValueConverters.ToList(), configuration);
 
             return properties;
         }
@@ -107,6 +106,23 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             return ids;
         }
 
+        private IEnterspeedProperty CreateDictionaryMetaData(Item item)
+        {
+            int level = GetContentPathIds(item).IndexOf(item.ID.Guid);
+
+            var metaData = new Dictionary<string, IEnterspeedProperty>
+            {
+                ["language"] = new StringEnterspeedProperty("language", item.Language.Name),
+                ["createDate"] = new StringEnterspeedProperty("createDate", _dateFormatter.FormatDate(item.Statistics.Created)),
+                ["updateDate"] = new StringEnterspeedProperty("updateDate", _dateFormatter.FormatDate(item.Statistics.Updated)),
+                ["updatedBy"] = new StringEnterspeedProperty("updatedBy", item.Statistics.UpdatedBy),
+                ["fullPath"] = new ArrayEnterspeedProperty("fullPath", GetItemFullPath(item)),
+                ["languages"] = new ArrayEnterspeedProperty("languages", GetAvailableLanguagesOfItem(item)),
+            };
+
+            return new ObjectEnterspeedProperty(MetaData, metaData);
+        }
+
         private IEnterspeedProperty CreateMetaData(Item item)
         {
             int level = GetContentPathIds(item).IndexOf(item.ID.Guid);
@@ -115,6 +131,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             {
                 ["name"] = new StringEnterspeedProperty("name", item.Name),
                 ["displayName"] = new StringEnterspeedProperty("displayName", item.DisplayName),
+                ["sitecoreId"] = new StringEnterspeedProperty("name", item.ID.ToString()),
                 ["language"] = new StringEnterspeedProperty("language", item.Language.Name),
                 ["sortOrder"] = new NumberEnterspeedProperty("sortOrder", item.Appearance.Sortorder),
                 ["level"] = new NumberEnterspeedProperty("level", level),
@@ -167,8 +184,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
                 var renderingProperties = new Dictionary<string, IEnterspeedProperty>
                 {
-                    ["name"] = new StringEnterspeedProperty("name", renderingReference.RenderingItem.Name),
-                    ["placeholder"] = new StringEnterspeedProperty("placeholder", placeholder)
+                    ["name"] = new StringEnterspeedProperty("name", renderingReference.RenderingItem.Name.Replace(" ", string.Empty)),
+                    ["placeholder"] = new StringEnterspeedProperty("placeholder", placeholder.Replace(" ", string.Empty))
                 };
 
                 if (!string.IsNullOrEmpty(renderingReference.Settings.Parameters))

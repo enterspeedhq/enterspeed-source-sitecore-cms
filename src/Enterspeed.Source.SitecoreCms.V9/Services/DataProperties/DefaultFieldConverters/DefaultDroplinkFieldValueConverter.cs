@@ -25,7 +25,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
             return field != null && field.TypeKey.Equals("droplink", StringComparison.OrdinalIgnoreCase);
         }
 
-        public IEnterspeedProperty Convert(Item item, Field field, EnterspeedSiteInfo siteInfo, List<IEnterspeedFieldValueConverter> fieldValueConverters)
+        public IEnterspeedProperty Convert(Item item, Field field, EnterspeedSiteInfo siteInfo, List<IEnterspeedFieldValueConverter> fieldValueConverters, EnterspeedSitecoreConfiguration configuration)
         {
             ReferenceField referenceField = field;
             if (referenceField?.TargetItem == null)
@@ -33,7 +33,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                 return null;
             }
 
-            return new StringEnterspeedProperty(_fieldService.GetFieldName(field), _enterspeedIdentityService.GetId(referenceField.TargetItem));
+            return new StringEnterspeedProperty(_fieldService.GetFieldName(field), _enterspeedIdentityService.GetId(referenceField.TargetID.ToGuid(), item.Language));
         }
     }
 }

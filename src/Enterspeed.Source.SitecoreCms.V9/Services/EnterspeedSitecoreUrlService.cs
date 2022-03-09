@@ -26,15 +26,12 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             _mediaManager = mediaManager;
         }
 
-        public string GetItemUrl(Item item, bool enableLanguageEmbedding = false)
+        public string GetItemUrl(Item item, EnterspeedSiteInfo siteInfo, bool enableLanguageEmbedding = false)
         {
             if (item == null)
             {
                 return null;
             }
-
-            EnterspeedSitecoreConfiguration configuration = _enterspeedConfigurationService.GetConfiguration();
-            EnterspeedSiteInfo siteInfo = configuration.GetSite(item);
 
             var urlBuilderOptions = new ItemUrlBuilderOptions
             {
@@ -49,12 +46,26 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 SiteContext siteContext = _siteContextFactory.GetSiteContext(siteInfo.Name);
 
                 urlBuilderOptions.Site = siteContext;
+                urlBuilderOptions.SiteResolving = string.IsNullOrEmpty(siteInfo.BaseUrl);
+                urlBuilderOptions.AlwaysIncludeServerUrl = string.IsNullOrEmpty(siteInfo.BaseUrl);
             }
 
-            return _linkManager.GetItemUrl(item, urlBuilderOptions);
+            var itemUrl = string.Empty;
+
+            using (var siteContextSwitcher = new SiteContextSwitcher(urlBuilderOptions.Site))
+            {
+                itemUrl = _linkManager.GetItemUrl(item, urlBuilderOptions);
+                //itemUrl = urlBuilderOptions.Site.Properties["scheme"] ?? "http" + LinkManager.GetItemUrl(item, urlBuilderOptions);
+                if (!string.IsNullOrEmpty(siteInfo.BaseUrl))
+                {
+                    itemUrl = siteInfo.BaseUrl + itemUrl.Replace(siteInfo.StartPathUrl, "/");
+                }
+
+                return itemUrl;
+            }
         }
 
-        public string GetMediaUrl(MediaItem mediaItem)
+        public string GetMediaUrl(MediaItem mediaItem, EnterspeedSiteInfo siteInfo)
         {
             if (mediaItem == null)
             {
@@ -64,7 +75,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             var urlBuilderOptions = new MediaUrlBuilderOptions
             {
                 AbsolutePath = true,
-                AlwaysIncludeServerUrl = true,
+                AlwaysIncludeServerUrl = string.IsNullOrEmpty(siteInfo.MediaBaseUrl),
                 LanguageEmbedding = LanguageEmbedding.Never
             };
 
@@ -72,6 +83,11 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             if (string.IsNullOrEmpty(mediaUrl))
             {
                 return null;
+            }
+
+            if (!string.IsNullOrEmpty(siteInfo.MediaBaseUrl))
+            {
+                mediaUrl = siteInfo.MediaBaseUrl + mediaUrl;
             }
 
             if (mediaUrl.EndsWith(".ashx") &&

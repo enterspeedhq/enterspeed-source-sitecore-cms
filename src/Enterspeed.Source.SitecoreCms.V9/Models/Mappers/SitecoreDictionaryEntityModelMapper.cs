@@ -1,4 +1,5 @@
-﻿using Enterspeed.Source.SitecoreCms.V9.Services;
+﻿using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
+using Enterspeed.Source.SitecoreCms.V9.Services;
 using Sitecore.Data.Items;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
@@ -16,16 +17,21 @@ namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers
             _enterspeedPropertyService = enterspeedPropertyService;
         }
 
-        public SitecoreDictionaryEntity Map(Item input)
+        public SitecoreDictionaryEntity Map(Item input, EnterspeedSitecoreConfiguration configuration)
         {
             var output = new SitecoreDictionaryEntity
             {
                 Id = _enterspeedIdentityService.GetId(input),
                 Type = "dictionaryEntry",
-                Properties = _enterspeedPropertyService.GetProperties(input)
+                Properties = _enterspeedPropertyService.GetProperties(input, configuration)
             };
 
             return output;
+        }
+
+        public SitecoreDictionaryEntity MapWithUrl(Item input, EnterspeedSitecoreConfiguration configuration)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

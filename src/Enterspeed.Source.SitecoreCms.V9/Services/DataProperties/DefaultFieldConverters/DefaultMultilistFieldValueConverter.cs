@@ -28,7 +28,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                     field.TypeKey.Equals("multilist with search", StringComparison.OrdinalIgnoreCase));
         }
 
-        public IEnterspeedProperty Convert(Item item, Field field, EnterspeedSiteInfo siteInfo, List<IEnterspeedFieldValueConverter> fieldValueConverters)
+        public IEnterspeedProperty Convert(Item item, Field field, EnterspeedSiteInfo siteInfo, List<IEnterspeedFieldValueConverter> fieldValueConverters, EnterspeedSitecoreConfiguration configuration)
         {
             MultilistField multilistField = field;
             if (multilistField == null)
@@ -36,13 +36,13 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
                 return null;
             }
 
-            var items = multilistField.GetItems()?.ToList() ?? new List<Item>();
-            if (!items.Any())
+            var itemIDs = multilistField.TargetIDs.ToList();
+            if (!itemIDs.Any())
             {
                 return null;
             }
 
-            var referenceIds = items.Select(x => new StringEnterspeedProperty(null, _enterspeedIdentityService.GetId(x))).ToArray();
+            var referenceIds = itemIDs.Select(x => new StringEnterspeedProperty(null, _enterspeedIdentityService.GetId(x.ToGuid(), item.Language))).ToArray();
 
             return new ArrayEnterspeedProperty(_fieldService.GetFieldName(field), referenceIds);
         }
