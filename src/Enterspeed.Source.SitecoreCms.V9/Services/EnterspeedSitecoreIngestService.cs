@@ -72,7 +72,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 EnterspeedSiteInfo siteOfItem = configuration.GetSite(item);
                 if (siteOfItem == null)
                 {
-                    //_loggingService.Warn($"No site config for  ({item.ID})");
+                    _loggingService.Warn($"No site config for  ({item.ID})");
                     // If no enabled site was found for this item, skip it
                     return;
                 }
@@ -119,7 +119,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             }
             catch (Exception exception)
             {
-                Debug.WriteLine(exception.ToString());
+                _loggingService.Error("An error happened: ", exception);
+                throw;
             }
         }
 
