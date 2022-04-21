@@ -46,15 +46,15 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 }
 
                 if (!HasAllowedPath(rootItem))
-                    {
-                        continue;
-                    }
+                {
+                    continue;
+                }
 
                 EnterspeedSiteInfo siteOfItem = configuration.GetSite(rootItem);
                 if (siteOfItem == null)
-                    {
-                        continue;
-                    }
+                {
+                    continue;
+                }
 
                 if (string.IsNullOrEmpty(siteOfItem.PublishHookUrl))
                 {
@@ -62,8 +62,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 }
 
                 var result = CallHookAsync(siteOfItem.PublishHookUrl);
-                }
             }
+        }
 
         private static bool HasAllowedPath(Item item)
         {

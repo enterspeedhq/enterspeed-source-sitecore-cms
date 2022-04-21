@@ -85,7 +85,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                     foreach (Item enabledSite in enabledSites)
                     {
                         var matchingSites = allSiteInfos.Where(x => x.RootPath.Equals(enabledSite.Paths.FullPath, StringComparison.OrdinalIgnoreCase)).ToList();
-                        if (matchingSites.Any())
+                        if (!matchingSites.Any())
                         {
                             continue;
                         }
