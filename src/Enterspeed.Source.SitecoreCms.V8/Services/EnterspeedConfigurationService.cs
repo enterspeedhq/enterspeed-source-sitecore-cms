@@ -131,7 +131,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                                 startPathUrl = "http" + startPathUrl;
                             }
 
-
                             var enterspeedSiteInfo = new EnterspeedSiteInfo
                             {
                                 Name = name,

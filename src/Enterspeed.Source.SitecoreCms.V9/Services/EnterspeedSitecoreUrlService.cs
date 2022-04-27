@@ -50,12 +50,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 urlBuilderOptions.AlwaysIncludeServerUrl = string.IsNullOrEmpty(siteInfo.BaseUrl);
             }
 
-            var itemUrl = string.Empty;
-
             using (var siteContextSwitcher = new SiteContextSwitcher(urlBuilderOptions.Site))
             {
-                itemUrl = _linkManager.GetItemUrl(item, urlBuilderOptions);
-                //itemUrl = urlBuilderOptions.Site.Properties["scheme"] ?? "http" + LinkManager.GetItemUrl(item, urlBuilderOptions);
+                var itemUrl = _linkManager.GetItemUrl(item, urlBuilderOptions);
                 if (!string.IsNullOrEmpty(siteInfo.BaseUrl))
                 {
                     itemUrl = siteInfo.BaseUrl + itemUrl.Replace(siteInfo.StartPathUrl, "/");
