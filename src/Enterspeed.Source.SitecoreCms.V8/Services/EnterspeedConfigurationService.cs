@@ -22,6 +22,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
         private readonly BaseLinkManager _linkManager;
         private readonly BaseFactory _factory;
         private readonly BaseSiteContextFactory _siteContextFactory;
+        private readonly IEnterspeedSitecoreLoggingService _loggingService;
 
         private List<EnterspeedSitecoreConfiguration> _configuration;
         private Guid _configurationRevisionId = Guid.Empty;
@@ -33,18 +34,20 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             BaseItemManager itemManager,
             BaseLinkManager linkManager,
             BaseFactory factory,
-            BaseSiteContextFactory siteContextFactory)
+            BaseSiteContextFactory siteContextFactory, 
+            IEnterspeedSitecoreLoggingService loggingService)
         {
             _languageManager = languageManager;
             _itemManager = itemManager;
             _linkManager = linkManager;
             _factory = factory;
             _siteContextFactory = siteContextFactory;
+            _loggingService = loggingService;
         }
 
         public List<EnterspeedSitecoreConfiguration> GetConfiguration()
         {
-            Item enterspeedConfigurationItem = _itemManager.GetItem(EnterspeedIDs.Items.EnterspeedConfigurationID, Language.Parse("en"), Version.Latest, _factory.GetDatabase("web"));
+            var enterspeedConfigurationItem = _itemManager.GetItem(EnterspeedIDs.Items.EnterspeedConfigurationID, Language.Parse("en"), Version.Latest, _factory.GetDatabase("web"));
             if (enterspeedConfigurationItem == null || enterspeedConfigurationItem.Versions.Count == 0)
             {
                 return new List<EnterspeedSitecoreConfiguration>();
@@ -66,11 +69,11 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
                 config.IsPreview = enterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedEnablePreviewFieldID] == "1";
 
-                string configApiBaseUrl = enterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedApiBaseUrlFieldID];
+                var configApiBaseUrl = enterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedApiBaseUrlFieldID];
 
                 config.BaseUrl = (configApiBaseUrl ?? string.Empty).Trim();
 
-                string configApiKey = enterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedApiKeyFieldID];
+                var configApiKey = enterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedApiKeyFieldID];
                 config.ApiKey = (configApiKey ?? string.Empty).Trim();
 
                 config.ItemNotFoundUrl = GetItemNotFoundUrl();
@@ -80,9 +83,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 var enabledSites = enabledSitesField?.GetItems()?.ToList() ?? new List<Item>();
                 if (enabledSites.Any())
                 {
-                    List<SiteInfo> allSiteInfos = _siteContextFactory.GetSites();
+                    var allSiteInfos = _siteContextFactory.GetSites();
 
-                    foreach (Item enabledSite in enabledSites)
+                    foreach (var enabledSite in enabledSites)
                     {
                         var matchingSites = allSiteInfos.Where(x => x.RootPath.Equals(enabledSite.Paths.FullPath, StringComparison.OrdinalIgnoreCase)).ToList();
                         if (!matchingSites.Any())
@@ -92,9 +95,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
                         foreach (var matchingSite in matchingSites)
                         {
-                            SiteContext siteContext = _siteContextFactory.GetSiteContext(matchingSite.Name);
-
-                            Language siteLanguage = _languageManager.GetLanguage(siteContext.Language);
+                            var siteContext = _siteContextFactory.GetSiteContext(matchingSite.Name);
+                            var siteLanguage = _languageManager.GetLanguage(siteContext.Language);
 
                             var languageEnterspeedSiteConfigurationItem = enterspeedSiteConfigurationItem.Database.GetItem(enterspeedSiteConfigurationItem.ID, siteLanguage);
                             if (languageEnterspeedSiteConfigurationItem.Versions.Count == 0)
@@ -102,18 +104,17 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                                 languageEnterspeedSiteConfigurationItem = enterspeedSiteConfigurationItem;
                             }
 
-                            Item homeItem = _itemManager.GetItem(siteContext.StartPath, siteLanguage, Version.Latest, siteContext.Database);
-
+                            var homeItem = _itemManager.GetItem(siteContext.StartPath, siteLanguage, Version.Latest, siteContext.Database);
                             if (homeItem == null || homeItem.Versions.Count == 0)
                             {
-                                throw new EnterspeedSitecoreException("HomeItem is null for site being configured");
+                                _loggingService.Error($"HomeItem is null for site being configured. Site with start path {siteContext.StartPath} and language {siteLanguage}");
                             }
 
-                            string siteBaseUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedSiteBaseUrlFieldID];
-                            string siteMediaBaseUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedMediaBaseUrlFieldID];
-                            string publishHookUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedpublishHookUrlFieldID];
+                            var siteBaseUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedSiteBaseUrlFieldID];
+                            var siteMediaBaseUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedMediaBaseUrlFieldID];
+                            var publishHookUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedpublishHookUrlFieldID];
 
-                            string name = siteContext.SiteInfo.Name;
+                            var name = siteContext.SiteInfo.Name;
                             string startPathUrl;
                             using (var siteContextSwitcher = new SiteContextSwitcher(siteContext))
                             {
@@ -164,7 +165,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
         private static string GetItemNotFoundUrl( )
         {
-            string url = Settings.ItemNotFoundUrl;
+            var url = Settings.ItemNotFoundUrl;
             if (string.IsNullOrEmpty(url))
             {
                 throw new EnterspeedSitecoreException(

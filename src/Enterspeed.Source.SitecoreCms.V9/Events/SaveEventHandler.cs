@@ -1,26 +1,13 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using Enterspeed.Source.Sdk.Api.Services;
-using Enterspeed.Source.Sdk.Domain.Connection;
 using Enterspeed.Source.Sdk.Domain.Services;
 using Enterspeed.Source.Sdk.Domain.SystemTextJson;
-using Enterspeed.Source.SitecoreCms.V9.Extensions;
-using Enterspeed.Source.SitecoreCms.V9.Models;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
-using Enterspeed.Source.SitecoreCms.V9.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V9.Providers;
 using Enterspeed.Source.SitecoreCms.V9.Services;
 using Sitecore.Abstractions;
 using Sitecore.Data.Items;
-using Sitecore.Diagnostics;
 using Sitecore.Events;
 using Sitecore.Globalization;
-using Sitecore.Links;
-using Sitecore.Pipelines.Save;
-using Sitecore.Publishing;
-using Sitecore.Publishing.Pipelines.PublishItem;
-using Version = Sitecore.Data.Version;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Events
 {
