@@ -1,28 +1,15 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Linq;
-using Enterspeed.Source.Sdk.Api.Services;
-using Enterspeed.Source.Sdk.Domain.Connection;
 using Enterspeed.Source.Sdk.Domain.Services;
-using Enterspeed.Source.SitecoreCms.V8.Extensions;
-using Enterspeed.Source.SitecoreCms.V8.Models;
 using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
-using Enterspeed.Source.SitecoreCms.V8.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V8.Providers;
 using Enterspeed.Source.SitecoreCms.V8.Services;
 using Enterspeed.Source.SitecoreCms.V8.Services.Serializers;
 using Sitecore.Abstractions;
 using Sitecore.Data.Items;
-using Sitecore.Diagnostics;
 using Sitecore.Events;
 using Sitecore.Globalization;
-using Sitecore.Links;
-using Sitecore.Pipelines.Save;
-using Sitecore.Publishing;
-using Sitecore.Publishing.Pipelines.PublishItem;
-using Version = Sitecore.Data.Version;
 
-namespace Enterspeed.Source.SitecoreCms.V9.Events
+namespace Enterspeed.Source.SitecoreCms.V8.Events
 {
     public class SaveEventHandler
     {
@@ -77,18 +64,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 {
                     continue;
                 }
-
-                //// Handling if the item was deleted or unpublished
-                //bool itemIsDeleted = context.Action == PublishAction.DeleteTargetItem;
-
-                //if (itemIsDeleted)
-                //{
-                //    _enterspeedSitecoreIngestService.HandleContentItem(sourceItem, enterspeedIngestService, configuration, true, false, true);
-                //    _enterspeedSitecoreIngestService.HandleRendering(sourceItem, enterspeedIngestService, configuration, true, false,true);
-                //    _enterspeedSitecoreIngestService.HandleDictionary(sourceItem, enterspeedIngestService, configuration, true, false,true);
-
-                //    continue;
-                //}
 
                 // Handling if the item was published
                 if (sourceItem == null || sourceItem.Versions.Count == 0)
