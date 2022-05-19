@@ -10,7 +10,6 @@ using Sitecore.Data.Items;
 using Sitecore.Globalization;
 using Sitecore.Links;
 using Sitecore.Sites;
-using Sitecore.Web;
 using Version = Sitecore.Data.Version;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Services
@@ -34,7 +33,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             BaseItemManager itemManager,
             BaseLinkManager linkManager,
             BaseFactory factory,
-            BaseSiteContextFactory siteContextFactory, 
+            BaseSiteContextFactory siteContextFactory,
             IEnterspeedSitecoreLoggingService loggingService)
         {
             _languageManager = languageManager;
@@ -163,7 +162,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             return _configuration;
         }
 
-        private static string GetItemNotFoundUrl( )
+        private static string GetItemNotFoundUrl()
         {
             var url = Settings.ItemNotFoundUrl;
             if (string.IsNullOrEmpty(url))
@@ -190,8 +189,14 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
         private bool IsConfigurationUpdated(Item item, out DateTime currentUpdatedDate)
         {
-            currentUpdatedDate = item.Children.Max(i=> i.Statistics.Updated);
-
+            if (item.Children != null && item.Children.Any())
+            {
+                currentUpdatedDate = item.Children.Max(i => i.Statistics.Updated);
+            }
+            else
+            {
+                currentUpdatedDate = DateTime.UtcNow;
+            }
             if (_lastUpdatedDate >= currentUpdatedDate &&
                 _configuration != null)
             {

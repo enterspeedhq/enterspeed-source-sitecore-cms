@@ -192,7 +192,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
         private bool IsConfigurationUpdated(Item item, out DateTime currentUpdatedDate)
         {
-            currentUpdatedDate = item.Children.Max(i => i.Statistics.Updated);
+            if (item.Children != null && item.Children.Any())
+            {
+                currentUpdatedDate = item.Children.Max(i => i.Statistics.Updated);
+            }
+            else
+            {
+                currentUpdatedDate = DateTime.UtcNow;
+            }
 
             if (_lastUpdatedDate >= currentUpdatedDate &&
                 _configuration != null)
