@@ -47,7 +47,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
         public List<EnterspeedSitecoreConfiguration> GetConfiguration()
         {
             var enterspeedConfigurationItem = _itemManager.GetItem(EnterspeedIDs.Items.EnterspeedConfigurationID, Language.Parse("en"), Version.Latest, _factory.GetDatabase("web"));
-            if (enterspeedConfigurationItem == null || enterspeedConfigurationItem.Versions.Count == 0)
+            if (HasNoConfigurationSetUp(enterspeedConfigurationItem))
             {
                 return new List<EnterspeedSitecoreConfiguration>();
             }
@@ -173,6 +173,13 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
             return url;
         }
+        private bool HasNoConfigurationSetUp(Item enterspeedConfigurationItem)
+        {
+            return enterspeedConfigurationItem == null
+                || enterspeedConfigurationItem.Versions.Count == 0
+                || enterspeedConfigurationItem.Children == null
+                || !enterspeedConfigurationItem.Children.Any();
+        }
 
         private bool IsConfigurationUpdated(Item item, out Guid currentRevisionId)
         {
@@ -189,14 +196,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
         private bool IsConfigurationUpdated(Item item, out DateTime currentUpdatedDate)
         {
-            if (item.Children != null && item.Children.Any())
-            {
-                currentUpdatedDate = item.Children.Max(i => i.Statistics.Updated);
-            }
-            else
-            {
-                currentUpdatedDate = DateTime.UtcNow;
-            }
+            currentUpdatedDate = item.Children.Max(i => i.Statistics.Updated);
+
             if (_lastUpdatedDate >= currentUpdatedDate &&
                 _configuration != null)
             {
