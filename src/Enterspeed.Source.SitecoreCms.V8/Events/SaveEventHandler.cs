@@ -28,7 +28,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
         }
 
         public void OnItemSaved(object sender, EventArgs args)
-            {
+        {
             SitecoreEventArgs eventArgs = args as SitecoreEventArgs;
 
             Item sourceItem = eventArgs.Parameters[0] as Item;

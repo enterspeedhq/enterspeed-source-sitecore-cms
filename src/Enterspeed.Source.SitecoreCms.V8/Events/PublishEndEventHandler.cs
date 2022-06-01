@@ -47,7 +47,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                 }
 
                 EnterspeedSiteInfo siteOfItem = configuration.GetSite(rootItem);
-                if (siteOfItem == null)
+                if (siteOfItem == null) 
                 {
                     continue;
                 }

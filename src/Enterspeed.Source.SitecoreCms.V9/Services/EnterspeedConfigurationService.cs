@@ -164,6 +164,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
             return _configuration;
         }
+
         private static string GetItemNotFoundUrl(BaseSettings settings)
         {
             var url = settings.GetSetting("ItemNotFoundUrl", null);
