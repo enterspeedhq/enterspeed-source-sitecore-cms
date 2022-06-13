@@ -10,7 +10,6 @@ using Sitecore.Data.Items;
 using Sitecore.Globalization;
 using Sitecore.Links;
 using Sitecore.Sites;
-using Sitecore.Web;
 using Version = Sitecore.Data.Version;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Services
@@ -34,7 +33,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             BaseItemManager itemManager,
             BaseLinkManager linkManager,
             BaseFactory factory,
-            BaseSiteContextFactory siteContextFactory, 
+            BaseSiteContextFactory siteContextFactory,
             IEnterspeedSitecoreLoggingService loggingService)
         {
             _languageManager = languageManager;
@@ -48,7 +47,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
         public List<EnterspeedSitecoreConfiguration> GetConfiguration()
         {
             var enterspeedConfigurationItem = _itemManager.GetItem(EnterspeedIDs.Items.EnterspeedConfigurationID, Language.Parse("en"), Version.Latest, _factory.GetDatabase("web"));
-            if (enterspeedConfigurationItem == null || enterspeedConfigurationItem.Versions.Count == 0)
+            if (HasNoConfigurationSetUp(enterspeedConfigurationItem))
             {
                 return new List<EnterspeedSitecoreConfiguration>();
             }
@@ -127,10 +126,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                                     LanguageEmbedding = LanguageEmbedding.Never
                                 });
                             }
-                            if (siteContext.Properties["scheme"] == null)
-                            {
-                                startPathUrl = "http" + startPathUrl;
-                            }
 
                             var enterspeedSiteInfo = new EnterspeedSiteInfo
                             {
@@ -163,7 +158,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             return _configuration;
         }
 
-        private static string GetItemNotFoundUrl( )
+        private static string GetItemNotFoundUrl()
         {
             var url = Settings.ItemNotFoundUrl;
             if (string.IsNullOrEmpty(url))
@@ -173,6 +168,13 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             }
 
             return url;
+        }
+        private bool HasNoConfigurationSetUp(Item enterspeedConfigurationItem)
+        {
+            return enterspeedConfigurationItem == null
+                || enterspeedConfigurationItem.Versions.Count == 0
+                || enterspeedConfigurationItem.Children == null
+                || !enterspeedConfigurationItem.Children.Any();
         }
 
         private bool IsConfigurationUpdated(Item item, out Guid currentRevisionId)
@@ -190,7 +192,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
         private bool IsConfigurationUpdated(Item item, out DateTime currentUpdatedDate)
         {
-            currentUpdatedDate = item.Children.Max(i=> i.Statistics.Updated);
+            currentUpdatedDate = item.Children.Max(i => i.Statistics.Updated);
 
             if (_lastUpdatedDate >= currentUpdatedDate &&
                 _configuration != null)
