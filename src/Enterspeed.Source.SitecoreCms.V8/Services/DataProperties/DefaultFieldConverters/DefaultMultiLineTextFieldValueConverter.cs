@@ -25,7 +25,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services.DataProperties.DefaultFieldC
 
         public IEnterspeedProperty Convert(Item item, Field field, EnterspeedSiteInfo siteInfo, List<IEnterspeedFieldValueConverter> fieldValueConverters, EnterspeedSitecoreConfiguration configuration)
         {
-            return new StringEnterspeedProperty(_fieldService.GetFieldName(field), field.Value);
+            string value = FieldRenderer.Render(item, field.Name);
+
+            return new StringEnterspeedProperty(_fieldService.GetFieldName(field), value);
         }
     }
 }
