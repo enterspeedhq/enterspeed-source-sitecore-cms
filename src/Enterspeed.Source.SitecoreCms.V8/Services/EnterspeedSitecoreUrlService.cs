@@ -34,13 +34,11 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 return null;
             }
 
-            var urlBuilderOptions = new UrlOptions()
-            {
-                SiteResolving = true,
-                AlwaysIncludeServerUrl = true,
-                LowercaseUrls = true,
-                LanguageEmbedding = enableLanguageEmbedding ? LanguageEmbedding.Always : LanguageEmbedding.Never
-            };
+            var urlBuilderOptions = UrlOptions.DefaultOptions;
+            urlBuilderOptions.SiteResolving = true;
+            urlBuilderOptions.AlwaysIncludeServerUrl = true;
+            urlBuilderOptions.LowercaseUrls = true;
+            urlBuilderOptions.LanguageEmbedding = enableLanguageEmbedding ? LanguageEmbedding.Always : LanguageEmbedding.Never;
 
             if (siteInfo != null)
             {
