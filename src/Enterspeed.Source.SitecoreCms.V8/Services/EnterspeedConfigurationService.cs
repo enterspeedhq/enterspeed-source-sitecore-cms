@@ -112,6 +112,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                             var siteBaseUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedSiteBaseUrlFieldID];
                             var siteMediaBaseUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedMediaBaseUrlFieldID];
                             var publishHookUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedpublishHookUrlFieldID];
+                            MultilistField enabledDictionaries = languageEnterspeedSiteConfigurationItem.Fields[EnterspeedIDs.Fields.EnterspeedEnabledDictionariesFieldID];
 
                             var name = siteContext.SiteInfo.Name;
                             string startPathUrl;
@@ -136,7 +137,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                                 PublishHookUrl = publishHookUrl,
                                 HomeItemPath = siteContext.StartPath,
                                 SiteItemPath = siteContext.RootPath,
-                                Language = siteLanguage.Name
+                                Language = siteLanguage.Name,
+                                DictionariesItemPaths = enabledDictionaries.GetItems()?.Select(d => d.Paths.FullPath)?.ToList()
                             };
 
                             if (siteContext.Properties["scheme"] != null &&
