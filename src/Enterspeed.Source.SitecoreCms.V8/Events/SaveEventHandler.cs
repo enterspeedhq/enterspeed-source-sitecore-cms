@@ -7,13 +7,11 @@ using Enterspeed.Source.SitecoreCms.V8.Services.Serializers;
 using Sitecore.Abstractions;
 using Sitecore.Data.Items;
 using Sitecore.Events;
-using Sitecore.Globalization;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Events
 {
     public class SaveEventHandler
     {
-        private readonly BaseItemManager _itemManager;
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
         private readonly IEnterspeedSitecoreIngestService _enterspeedSitecoreIngestService;
 
@@ -22,7 +20,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             IEnterspeedConfigurationService enterspeedConfigurationService,
             IEnterspeedSitecoreIngestService enterspeedSitecoreIngestService)
         {
-            _itemManager = itemManager;
             _enterspeedConfigurationService = enterspeedConfigurationService;
             _enterspeedSitecoreIngestService = enterspeedSitecoreIngestService;
         }
@@ -52,7 +49,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                 }
 
                 EnterspeedIngestService enterspeedIngestService = new EnterspeedIngestService(new SitecoreEnterspeedConnection(configuration), new NewtonsoftJsonSerializer(), new EnterspeedSitecoreConfigurationProvider(_enterspeedConfigurationService));
-                Language language = sourceItem.Language;
 
                 // Getting the source item first
                 if (sourceItem == null)
