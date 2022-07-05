@@ -115,7 +115,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                             var siteBaseUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedSiteBaseUrlFieldID];
                             var siteMediaBaseUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedMediaBaseUrlFieldID];
                             var publishHookUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedpublishHookUrlFieldID];
-                            MultilistField enabledDictionaries = languageEnterspeedSiteConfigurationItem.Fields[EnterspeedIDs.Fields.EnterspeedEnabledDictionariesFieldID];
 
                             var name = siteContext.SiteInfo.Name;
                             string startPathUrl;
