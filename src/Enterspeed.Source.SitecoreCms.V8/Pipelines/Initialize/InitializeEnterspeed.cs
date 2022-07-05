@@ -111,9 +111,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
                 enterspeedRootTemplatesFolder.Add("Site Configuration", new TemplateID(TemplateIDs.Template), EnterspeedIDs.Templates.EnterspeedSiteConfigurationID);
         }
 
-        private static void EnsureEnterspeedConfigurationItem(Item systemRoot, out Item enterspeedConfigurationItem)
+        private static void EnsureEnterspeedConfigurationItem(Item systemRoot, out Item newEnterspeedConfigurationItem)
         {
-            enterspeedConfigurationItem = null;
+            newEnterspeedConfigurationItem = null;
 
             if (systemRoot.Children["Enterspeed Configuration"] == null)
             {
@@ -122,7 +122,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
                 settingsItem.Fields["__Masters"].Value = EnterspeedIDs.Templates.EnterspeedSiteConfigurationID.ToString();
                 settingsItem.Editing.EndEdit();
 
-                enterspeedConfigurationItem = settingsItem;
+                newEnterspeedConfigurationItem = settingsItem;
             }
         }
 
@@ -432,11 +432,11 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
                 throw new InvalidOperationException("Unable to find System Root (/sitecore/system) in Sitecore (master database) with the language \"en\".");
             }
 
-            EnsureEnterspeedConfigurationItem(systemRoot, out var enterspeedConfigurationItem);
+            EnsureEnterspeedConfigurationItem(systemRoot, out var newEnterspeedConfigurationItem);
 
-            if (enterspeedConfigurationItem != null)
+            if (newEnterspeedConfigurationItem != null)
             {
-                _publishManager.PublishItem(enterspeedConfigurationItem, new[] { webDb }, new[] { language }, true, false, true);
+                _publishManager.PublishItem(newEnterspeedConfigurationItem, new[] { webDb }, new[] { language }, true, false, true);
             }
         }
     }

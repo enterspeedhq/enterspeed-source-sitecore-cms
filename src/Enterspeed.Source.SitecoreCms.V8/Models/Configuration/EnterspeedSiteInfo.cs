@@ -29,7 +29,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Models.Configuration
 
         public bool IsDictionaryOfSite(Item item)
         {
-            if (DictionariesItemPaths == null && !DictionariesItemPaths.Any() || item == null)
+            if (DictionariesItemPaths == null || !DictionariesItemPaths.Any() || item == null)
             {
                 return false;
             }
