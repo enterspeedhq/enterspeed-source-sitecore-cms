@@ -35,6 +35,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             }
 
             var urlBuilderOptions = UrlOptions.DefaultOptions;
+            urlBuilderOptions.Language = item.Language;
             urlBuilderOptions.SiteResolving = true;
             urlBuilderOptions.AlwaysIncludeServerUrl = true;
             urlBuilderOptions.LowercaseUrls = true;
