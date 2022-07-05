@@ -114,6 +114,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                             if (homeItem == null || homeItem.Versions.Count == 0)
                             {
                                 _loggingService.Error($"HomeItem is null for site being configured. Site with start path {siteContext.StartPath} and language {siteLanguage}");
+                                continue;
                             }
 
                             var siteBaseUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedSiteBaseUrlFieldID];
