@@ -111,14 +111,18 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
                 enterspeedRootTemplatesFolder.Add("Site Configuration", new TemplateID(TemplateIDs.Template), EnterspeedIDs.Templates.EnterspeedSiteConfigurationID);
         }
 
-        private static void EnsureEnterspeedConfigurationItem(Item systemRoot)
+        private static void EnsureEnterspeedConfigurationItem(Item systemRoot, out Item enterspeedConfigurationItem)
         {
+            enterspeedConfigurationItem = null;
+
             if (systemRoot.Children["Enterspeed Configuration"] == null)
             {
                 var settingsItem = systemRoot.Add("Enterspeed Configuration", new TemplateID(EnterspeedIDs.Templates.EnterspeedConfigurationID), EnterspeedIDs.Items.EnterspeedConfigurationID);
                 settingsItem.Editing.BeginEdit();
                 settingsItem.Fields["__Masters"].Value = EnterspeedIDs.Templates.EnterspeedSiteConfigurationID.ToString();
                 settingsItem.Editing.EndEdit();
+
+                enterspeedConfigurationItem = settingsItem;
             }
         }
 
@@ -353,7 +357,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
             }
 
             Item enablePreviewField = enterspeedSiteConfigSection.Children["Enable Preview"]
-?? enterspeedSiteConfigSection.Add("Enable Preview", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnablePreviewFieldID);
+                ?? enterspeedSiteConfigSection.Add("Enable Preview", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnablePreviewFieldID);
 
             using (new EditContext(enablePreviewField))
             {
@@ -428,9 +432,12 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
                 throw new InvalidOperationException("Unable to find System Root (/sitecore/system) in Sitecore (master database) with the language \"en\".");
             }
 
-            EnsureEnterspeedConfigurationItem(systemRoot);
+            EnsureEnterspeedConfigurationItem(systemRoot, out var enterspeedConfigurationItem);
 
-            _publishManager.PublishItem(systemRoot, new[] { webDb }, new[] { language }, true, false, true);
+            if (enterspeedConfigurationItem != null)
+            {
+                _publishManager.PublishItem(enterspeedConfigurationItem, new[] { webDb }, new[] { language }, true, false, true);
+            }
         }
     }
 }

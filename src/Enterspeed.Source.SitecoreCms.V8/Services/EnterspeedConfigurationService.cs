@@ -138,7 +138,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                                 HomeItemPath = siteContext.StartPath,
                                 SiteItemPath = siteContext.RootPath,
                                 Language = siteLanguage.Name,
-                                DictionariesItemPaths = enabledDictionaries.GetItems()?.Select(d => d.Paths.FullPath)?.ToList()
+                                DictionariesItemPaths = enabledDictionaries.GetItems()?.Select(d => d.Paths.FullPath).ToList()
                             };
 
                             if (siteContext.Properties["scheme"] != null &&
