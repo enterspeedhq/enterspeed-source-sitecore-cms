@@ -132,6 +132,10 @@
   <ItemGroup>
     <Compile Include="App_Start\EnterspeedStart.cs" />
     <Compile Include="Controllers\EnterspeedController.cs" />
+    <Compile Include="Data\EnterspeedMigrationService.cs" />
+    <Compile Include="Data\IEnterspeedMigrationService.cs" />
+    <Compile Include="Data\Models\EnterspeedJobState.cs" />
+    <Compile Include="Data\Schemas\EnterspeedJobSchema.cs" />
     <Compile Include="Events\PublishEndEventHandler.cs" />
     <Compile Include="Events\SaveEventHandler.cs" />
     <Compile Include="Extensions\ItemExtensions.cs" />

@@ -30,7 +30,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             }
 
             var publisher = sitecoreArgs.Parameters[0] as Publisher;
-
             var rootItem = publisher.Options.RootItem;
 
             var siteConfigurations = _enterspeedConfigurationService.GetConfiguration();

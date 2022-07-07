@@ -4,6 +4,7 @@ using Enterspeed.Source.Sdk.Api.Services;
 using Enterspeed.Source.Sdk.Domain.Connection;
 using Enterspeed.Source.Sdk.Domain.Services;
 using Enterspeed.Source.SitecoreCms.V8.Controllers;
+using Enterspeed.Source.SitecoreCms.V8.Data;
 using Enterspeed.Source.SitecoreCms.V8.Models;
 using Enterspeed.Source.SitecoreCms.V8.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V8.Providers;
@@ -37,6 +38,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.DependencyInjection
             services.AddSingleton<IEnterspeedConfigurationProvider, EnterspeedSitecoreConfigurationProvider>();
             services.AddSingleton<IEnterspeedUrlService, EnterspeedSitecoreUrlService>();
             services.AddSingleton<IEnterspeedSitecoreIngestService, EnterspeedSitecoreIngestService>();
+            services.AddTransient<IEnterspeedMigrationService, EnterspeedEnterspeedMigrationService>();
             services.AddSingleton<EnterspeedDateFormatter>();
 
             services.AddSingleton<IEnterspeedConnection>(provider =>
@@ -46,7 +48,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.DependencyInjection
             });
 
             RegisterFieldConverters(services);
-
             RegisterControllers(services);
         }
 

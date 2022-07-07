@@ -1,4 +1,5 @@
 ﻿using System;
+using Enterspeed.Source.SitecoreCms.V8.Data;
 using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
 using Sitecore;
 using Sitecore.Abstractions;
@@ -21,20 +22,24 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
         private readonly BaseItemManager _itemManager;
         private readonly BaseFactory _factory;
         private readonly BasePublishManager _publishManager;
+        private readonly IEnterspeedMigrationService _migrationService;
 
         public InitializeEnterspeed(
             BaseItemManager itemManager,
             BaseFactory factory,
-            BasePublishManager publishManager)
+            BasePublishManager publishManager,
+            IEnterspeedMigrationService migrationService)
         {
             _itemManager = itemManager;
             _factory = factory;
             _publishManager = publishManager;
+            _migrationService = migrationService;
         }
 
         public void Process(PipelineArgs args)
         {
             Init();
+            _migrationService.Init();
         }
 
         private static Item EnsureEnterspeedTemplatesFolder(Item templatesSystemRoot)
