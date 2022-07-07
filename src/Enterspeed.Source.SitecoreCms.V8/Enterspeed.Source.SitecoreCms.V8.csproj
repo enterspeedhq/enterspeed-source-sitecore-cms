@@ -139,6 +139,8 @@
     <Compile Include="Data\Models\EnterspeedJobState.cs" />
     <Compile Include="Data\Models\EnterspeedJobType.cs" />
     <Compile Include="Data\Models\EnterspeedContentState.cs" />
+    <Compile Include="Data\Repositories\EnterspeedJobRepository.cs" />
+    <Compile Include="Data\Repositories\IEnterspeedJobRepository.cs" />
     <Compile Include="Data\Schemas\EnterspeedJobSchema.cs" />
     <Compile Include="Events\PublishEndEventHandler.cs" />
     <Compile Include="Events\SaveEventHandler.cs" />
