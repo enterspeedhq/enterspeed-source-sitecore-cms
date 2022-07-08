@@ -7,12 +7,12 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data
 {
     public class EnterspeedEnterspeedMigrationService : IEnterspeedMigrationService
     {
-        private string _connectionstring;
+        private string _connectionString;
 
         public EnterspeedEnterspeedMigrationService()
         {
             var connectionstringName = ConfigurationManager.AppSettings["Enterspeed.QueueSQLConnectionstringName"] ?? "Master";
-            _connectionstring = Settings.GetConnectionString(connectionstringName);
+            _connectionString = Settings.GetConnectionString(connectionstringName);
         }
          
         public void Init()
@@ -25,7 +25,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data
 
         private bool TableCreated()
         {
-            using (var connection = new SqlConnection(_connectionstring))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
 
@@ -50,10 +50,10 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data
 
         private void CreateTable()
         {
-            using (var connection = new SqlConnection(_connectionstring))
+            using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                const string sql = "CREATE TABLE EnterspeedJobs ( Id int, EntityId varchar(255), JobType int, JobState int, Exception varchar(Max), " +
+                const string sql = "CREATE TABLE EnterspeedJobs ( Id int, EntityId int, JobType int, JobState int, Exception varchar(Max), " +
                                    "CreatedAt dateTime, UpdatedAt dateTime, EntityType int, ContentState int); ";
 
                 using (var command = new SqlCommand(sql, connection))
