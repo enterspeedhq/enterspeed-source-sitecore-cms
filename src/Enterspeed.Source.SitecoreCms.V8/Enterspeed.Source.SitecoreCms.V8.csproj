@@ -142,11 +142,13 @@
     <Compile Include="Data\Repositories\EnterspeedJobRepository.cs" />
     <Compile Include="Data\Repositories\IEnterspeedJobRepository.cs" />
     <Compile Include="Data\Schemas\EnterspeedJobSchema.cs" />
+    <Compile Include="Events\BaseEventHandler.cs" />
     <Compile Include="Events\PublishEndEventHandler.cs" />
     <Compile Include="Events\SaveEventHandler.cs" />
     <Compile Include="Extensions\ItemExtensions.cs" />
     <Compile Include="Factories\EnterspeedJobFactory.cs" />
     <Compile Include="Factories\IEnterspeedJobFactory.cs" />
+    <Compile Include="Handlers\IEnterspeedJobHandler.cs" />
     <Compile Include="Models\Configuration\EnterspeedIDs.cs" />
     <Compile Include="Models\Configuration\EnterspeedSiteInfo.cs" />
     <Compile Include="Models\EnterspeedSitecoreIdentity.cs" />
@@ -188,6 +190,8 @@
     <Compile Include="Services\DataProperties\IEnterspeedFieldValueConverter.cs" />
     <Compile Include="Services\EnterspeedConfigurationService.cs" />
     <Compile Include="Services\EnterspeedFieldConverter.cs" />
+    <Compile Include="Services\EnterspeedJobsHandler.cs" />
+    <Compile Include="Services\EnterspeedJobsHandlingService.cs" />
     <Compile Include="Services\EnterspeedPropertyService.cs" />
     <Compile Include="Services\EnterspeedSitecoreFieldService.cs" />
     <Compile Include="Services\EnterspeedSitecoreIngestService.cs" />
@@ -196,6 +200,8 @@
     <Compile Include="Services\IEnterspeedConfigurationService.cs" />
     <Compile Include="Services\IEnterspeedIdentityService.cs" />
     <Compile Include="Services\IEnterspeedFieldConverter.cs" />
+    <Compile Include="Services\IEnterspeedJobsHandler.cs" />
+    <Compile Include="Services\IEnterspeedJobsHandlingService.cs" />
     <Compile Include="Services\IEnterspeedPropertyService.cs" />
     <Compile Include="Services\IEnterspeedSitecoreFieldService.cs" />
     <Compile Include="Services\IEnterspeedSitecoreIngestService.cs" />

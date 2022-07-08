@@ -31,7 +31,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Factories
                 EntityType = EnterspeedJobEntityType.Content,
                 Culture = culture,
                 JobType = EnterspeedJobType.Delete,
-                JobState = EnterspeedJobState.Pending,
+                JobState = EnterspeedJobState.Pending,  
                 CreatedAt = now,
                 UpdatedAt = now,
                 ContentState = state

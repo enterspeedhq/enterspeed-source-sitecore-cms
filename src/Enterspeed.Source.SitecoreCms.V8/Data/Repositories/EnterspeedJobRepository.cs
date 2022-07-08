@@ -27,7 +27,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
             {
                 connection.Open();
 
-                var sql = $@"SELECT * FROM {_schemaName} WHERE  JobState = {EnterspeedJobState.Failed.GetHashCode()} ORDER BY CreatedAt DESC";
+                var sql = $@"SELECT * FROM {_schemaName} WHERE JobState = {EnterspeedJobState.Failed.GetHashCode()} ORDER BY CreatedAt DESC";
                 using (var command = new SqlCommand(sql, connection))
                 {
                     var reader = command.ExecuteReader();
