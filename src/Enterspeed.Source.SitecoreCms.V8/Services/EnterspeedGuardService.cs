@@ -20,15 +20,15 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
         }
 
         //TODO: Implement guards
-        public bool CanIngest(Item content, string culture)
+        public bool CanIngest(Item item, string culture)
         {
-            var blockingGuard = _itemHandlingGuards.FirstOrDefault(guard => !guard.CanIngest(content, culture));
+            var blockingGuard = _itemHandlingGuards.FirstOrDefault(guard => !guard.CanIngest(item, culture));
             if (blockingGuard == null)
             {
                 return true;
             }
 
-            _loggingService.Debug($@"Item {content.ID} with {culture} culture, ingest avoided by '{blockingGuard.GetType().Name}'.");
+            _loggingService.Debug($@"Item {item.ID} with {culture} culture, ingest avoided by '{blockingGuard.GetType().Name}'.");
             return false;
         }
     }

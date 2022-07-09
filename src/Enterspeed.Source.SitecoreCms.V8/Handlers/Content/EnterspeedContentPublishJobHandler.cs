@@ -19,18 +19,21 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
         private readonly IEntityModelMapper<Item, SitecoreContentEntity> _sitecoreContentEntityModelMapper;
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
         private readonly IEnterspeedIngestService _enterspeedIngestService;
+        private readonly IEnterspeedGuardService _enterspeedGuardService;
         private readonly BaseItemManager _itemManager;
 
         public EnterspeedContentPublishJobHandler(
             IEntityModelMapper<Item, SitecoreContentEntity> sitecoreContentEntityModelMapper,
             IEnterspeedConfigurationService enterspeedConfigurationService,
-            BaseItemManager itemManager, 
-            IEnterspeedIngestService enterspeedIngestService)
+            BaseItemManager itemManager,
+            IEnterspeedIngestService enterspeedIngestService,
+            IEnterspeedGuardService enterspeedGuardService)
         {
             _sitecoreContentEntityModelMapper = sitecoreContentEntityModelMapper;
             _enterspeedConfigurationService = enterspeedConfigurationService;
             _itemManager = itemManager;
             _enterspeedIngestService = enterspeedIngestService;
+            _enterspeedGuardService = enterspeedGuardService;
         }
 
         public virtual bool CanHandle(EnterspeedJob job)
@@ -42,7 +45,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
 
         public virtual void Handle(EnterspeedJob job)
         {
-            var item = GetContent(job);
+            var item = GetItem(job);
             if (!CanIngest(item, job))
             {
                 return;
@@ -55,7 +58,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
             }
         }
 
-        protected virtual Item GetContent(EnterspeedJob job)
+        protected virtual Item GetItem(EnterspeedJob job)
         {
             var isItemId = ID.TryParse(job.EntityId, out var itemId);
             var item = isItemId
@@ -71,12 +74,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
             return item;
         }
 
-        protected virtual bool CanIngest(Item content, EnterspeedJob job)
+        protected virtual bool CanIngest(Item item, EnterspeedJob job)
         {
-            // Check if any of guards are against it
-            // TODO: Implement guard service
-            return true;
-            //return _enterspeedGuardService.CanIngest(content, job.Culture);
+            return _enterspeedGuardService.CanIngest(item, job.Culture);
         }
 
         protected virtual List<SitecoreContentEntity> CreateSitecoreContentEntity(Item item, EnterspeedJob job)
