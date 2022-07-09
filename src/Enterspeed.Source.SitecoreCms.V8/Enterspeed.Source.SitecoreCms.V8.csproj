@@ -145,12 +145,16 @@
     <Compile Include="Events\BaseEventHandler.cs" />
     <Compile Include="Events\PublishEndEventHandler.cs" />
     <Compile Include="Events\SaveEventHandler.cs" />
+    <Compile Include="Exceptions\JobHandlingException.cs" />
+    <Compile Include="Extensions\EnterspeedConfigurationExtensions.cs" />
     <Compile Include="Extensions\ItemExtensions.cs" />
     <Compile Include="Factories\EnterspeedJobFactory.cs" />
     <Compile Include="Factories\IEnterspeedJobFactory.cs" />
+    <Compile Include="Handlers\Content\EnterspeedContentDeleteJobHandler.cs" />
     <Compile Include="Handlers\IEnterspeedJobHandler.cs" />
     <Compile Include="Models\Configuration\EnterspeedIDs.cs" />
     <Compile Include="Models\Configuration\EnterspeedSiteInfo.cs" />
+    <Compile Include="Models\ConnectionType.cs" />
     <Compile Include="Models\EnterspeedSitecoreIdentity.cs" />
     <Compile Include="Models\Mappers\IEntityModelMapper.cs" />
     <Compile Include="Models\Mappers\SitecoreContentEntityModelMapper.cs" />

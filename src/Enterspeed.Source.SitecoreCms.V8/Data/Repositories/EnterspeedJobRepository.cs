@@ -27,7 +27,34 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
             {
                 connection.Open();
 
-                var sql = $@"SELECT * FROM {_schemaName} WHERE JobState = {EnterspeedJobState.Failed.GetHashCode()} ORDER BY CreatedAt DESC";
+                var sql = $@"SELECT * FROM {_schemaName} WHERE State = {EnterspeedJobState.Failed.GetHashCode()} ORDER BY CreatedAt DESC";
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    var reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        foreach (var record in GetFromReader(reader))
+                        {
+                            result.Add(EnterspeedJob.Map(record));
+                        }
+                    }
+
+                    reader.Dispose();
+                }
+            }
+
+            return result;
+        }
+
+        public IList<EnterspeedJob> GetFailedJobs(List<string> entityIds)
+        {
+            var result = new List<EnterspeedJob>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                var sql = $@"SELECT * FROM {_schemaName} WHERE State = {EnterspeedJobState.Failed.GetHashCode()} ORDER BY CreatedAt DESC";
                 using (var command = new SqlCommand(sql, connection))
                 {
                     var reader = command.ExecuteReader();
@@ -54,7 +81,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
             {
                 connection.Open();
 
-                var sql = $@"SELECT TOP {count} * FROM {_schemaName} WHERE JobState = {EnterspeedJobState.Pending.GetHashCode()} ORDER BY CreatedAt DESC";
+                var sql = $@"SELECT TOP {count} * FROM {_schemaName} WHERE State = {EnterspeedJobState.Pending.GetHashCode()} ORDER BY CreatedAt DESC";
                 using (var command = new SqlCommand(sql, connection))
                 {
                     var reader = command.ExecuteReader();
@@ -82,7 +109,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
             {
                 connection.Open();
 
-                var sql = $@"SELECT * FROM {_schemaName} WHERE JobState = {EnterspeedJobState.Processing.GetHashCode()} && UpdatedAt <= {dateThreshhold}";
+                var sql = $@"SELECT * FROM {_schemaName} WHERE State = {EnterspeedJobState.Processing.GetHashCode()} && UpdatedAt <= {dateThreshhold}";
                 using (var command = new SqlCommand(sql, connection))
                 {
                     var reader = command.ExecuteReader();
@@ -110,8 +137,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
 
             foreach (var job in jobs)
             {
-                var sql = $@"INSERT INTO Id ( EntityId, Culture, JobType, JobState, Exception, CreatedAt, UpdatedAt, EntityType, ContentState) 
-                    VALUES('{job.EntityId}', '{job.Culture}', '{job.JobType}', '{job.JobState}', '{job.Exception}', '{job.CreatedAt}','{job.UpdatedAt}','{job.EntityType}','{job.ContentState}' ); ";
+                var sql = $@"INSERT INTO Id ( EntityId, Culture, JobType, State, Exception, CreatedAt, UpdatedAt, EntityType, ContentState) 
+                    VALUES('{job.EntityId}', '{job.Culture}', '{job.JobType}', '{job.State}', '{job.Exception}', '{job.CreatedAt}','{job.UpdatedAt}','{job.EntityType}','{job.ContentState}' ); ";
 
                 using (var connection = new SqlConnection(_connectionString))
                 {

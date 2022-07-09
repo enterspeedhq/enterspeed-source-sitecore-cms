@@ -55,10 +55,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 return null;
             }
 
-            Guid itemId;
             Language language = _languageManager.GetDefaultLanguage();
 
-            if (Guid.TryParse(id, out itemId))
+            if (Guid.TryParse(id, out var itemId))
             {
                 return new EnterspeedSitecoreIdentity
                 {

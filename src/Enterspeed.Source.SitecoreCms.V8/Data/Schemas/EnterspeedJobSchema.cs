@@ -19,7 +19,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Schemas
         [Column("JobType")]
         public int JobType { get; set; }
 
-        [Column("JobState")]
+        [Column("State")]
         public int JobState { get; set; }
 
         [Column("Exception")]

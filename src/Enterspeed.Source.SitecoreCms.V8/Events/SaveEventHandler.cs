@@ -1,19 +1,16 @@
 ﻿using System;
 using Enterspeed.Source.Sdk.Domain.Services;
-using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V8.Providers;
 using Enterspeed.Source.SitecoreCms.V8.Services;
 using Enterspeed.Source.SitecoreCms.V8.Services.Serializers;
 using Sitecore.Abstractions;
 using Sitecore.Data.Items;
 using Sitecore.Events;
-using Sitecore.Globalization;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Events
 {
     public class SaveEventHandler
     {
-        private readonly BaseItemManager _itemManager;
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
         private readonly IEnterspeedSitecoreIngestService _enterspeedSitecoreIngestService;
 
@@ -22,24 +19,21 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             IEnterspeedConfigurationService enterspeedConfigurationService,
             IEnterspeedSitecoreIngestService enterspeedSitecoreIngestService)
         {
-            _itemManager = itemManager;
             _enterspeedConfigurationService = enterspeedConfigurationService;
             _enterspeedSitecoreIngestService = enterspeedSitecoreIngestService;
         }
 
         public void OnItemSaved(object sender, EventArgs args)
         {
-            SitecoreEventArgs eventArgs = args as SitecoreEventArgs;
+            var eventArgs = args as SitecoreEventArgs;
 
-            Item sourceItem = eventArgs.Parameters[0] as Item;
-
-            if (sourceItem == null)
+            if (!(eventArgs.Parameters[0] is Item sourceItem))
             {
                 return;
             }
 
             var siteConfigurations = _enterspeedConfigurationService.GetConfiguration();
-            foreach (EnterspeedSitecoreConfiguration configuration in siteConfigurations)
+            foreach (var configuration in siteConfigurations)
             {
                 if (!configuration.IsEnabled)
                 {
@@ -51,14 +45,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                     continue;
                 }
 
-                EnterspeedIngestService enterspeedIngestService = new EnterspeedIngestService(new SitecoreEnterspeedConnection(configuration), new NewtonsoftJsonSerializer(), new EnterspeedSitecoreConfigurationProvider(_enterspeedConfigurationService));
-                Language language = sourceItem.Language;
-
-                // Getting the source item first
-                if (sourceItem == null)
-                {
-                    continue;
-                }
+                var enterspeedIngestService = new EnterspeedIngestService(new SitecoreEnterspeedConnection(configuration), new NewtonsoftJsonSerializer(), new EnterspeedSitecoreConfigurationProvider(_enterspeedConfigurationService));
 
                 if (!_enterspeedSitecoreIngestService.HasAllowedPath(sourceItem))
                 {
@@ -66,7 +53,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                 }
 
                 // Handling if the item was published
-                if (sourceItem == null || sourceItem.Versions.Count == 0)
+                if (sourceItem.Versions.Count == 0)
                 {
                     continue;
                 }

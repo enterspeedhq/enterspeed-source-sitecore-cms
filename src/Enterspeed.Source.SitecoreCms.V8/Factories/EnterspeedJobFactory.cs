@@ -15,7 +15,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Factories
                 EntityType = EnterspeedJobEntityType.Content,
                 Culture = culture,
                 JobType = EnterspeedJobType.Publish,
-                JobState = EnterspeedJobState.Pending,
+                State = EnterspeedJobState.Pending,
                 CreatedAt = now,
                 UpdatedAt = now,
                 ContentState = state
@@ -31,7 +31,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Factories
                 EntityType = EnterspeedJobEntityType.Content,
                 Culture = culture,
                 JobType = EnterspeedJobType.Delete,
-                JobState = EnterspeedJobState.Pending,  
+                State = EnterspeedJobState.Pending,  
                 CreatedAt = now,
                 UpdatedAt = now,
                 ContentState = state
@@ -48,7 +48,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Factories
                 CreatedAt = job.CreatedAt,
                 UpdatedAt = DateTime.UtcNow,
                 JobType = job.JobType,
-                JobState = EnterspeedJobState.Failed,
+                State = EnterspeedJobState.Failed,
                 ContentState = job.ContentState,
                 Exception = exception
             };

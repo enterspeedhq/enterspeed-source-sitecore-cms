@@ -1,6 +1,10 @@
-﻿namespace Enterspeed.Source.SitecoreCms.V8.Handlers
+﻿using Enterspeed.Source.SitecoreCms.V8.Data.Models;
+
+namespace Enterspeed.Source.SitecoreCms.V8.Handlers
 {
-    internal interface IEnterspeedJobHandler
+    public interface IEnterspeedJobHandler
     {
+        bool CanHandle(EnterspeedJob job);
+        bool Handle(EnterspeedJob job);
     }
 }

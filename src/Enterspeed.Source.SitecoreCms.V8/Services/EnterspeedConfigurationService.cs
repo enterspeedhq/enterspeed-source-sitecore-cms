@@ -24,8 +24,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
         private readonly IEnterspeedSitecoreLoggingService _loggingService;
 
         private List<EnterspeedSitecoreConfiguration> _configuration;
-        private Guid _configurationRevisionId = Guid.Empty;
-
         private DateTime _lastUpdatedDate = DateTime.MinValue;
 
         public EnterspeedConfigurationService(
@@ -175,19 +173,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 || enterspeedConfigurationItem.Versions.Count == 0
                 || enterspeedConfigurationItem.Children == null
                 || !enterspeedConfigurationItem.Children.Any();
-        }
-
-        private bool IsConfigurationUpdated(Item item, out Guid currentRevisionId)
-        {
-            currentRevisionId = Guid.Parse(item.Statistics.Revision);
-
-            if (_configurationRevisionId == currentRevisionId &&
-                _configuration != null)
-            {
-                return false;
-            }
-
-            return true;
         }
 
         private bool IsConfigurationUpdated(Item item, out DateTime currentUpdatedDate)
