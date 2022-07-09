@@ -3,9 +3,7 @@ using System.Net;
 using Enterspeed.Source.Sdk.Api.Services;
 using Enterspeed.Source.SitecoreCms.V8.Data.Models;
 using Enterspeed.Source.SitecoreCms.V8.Exceptions;
-using Enterspeed.Source.SitecoreCms.V8.Models;
-using Enterspeed.Source.SitecoreCms.V8.Providers;
-using Enterspeed.Source.SitecoreCms.V8.Services;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Globalization;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content

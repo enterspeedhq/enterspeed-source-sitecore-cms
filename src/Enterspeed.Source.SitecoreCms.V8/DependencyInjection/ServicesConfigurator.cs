@@ -9,6 +9,7 @@ using Enterspeed.Source.SitecoreCms.V8.Models;
 using Enterspeed.Source.SitecoreCms.V8.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V8.Providers;
 using Enterspeed.Source.SitecoreCms.V8.Services;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Enterspeed.Source.SitecoreCms.V8.Services.DataProperties;
 using Enterspeed.Source.SitecoreCms.V8.Services.DataProperties.DefaultFieldConverters;
 using Enterspeed.Source.SitecoreCms.V8.Services.DataProperties.Formatters;

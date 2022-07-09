@@ -2,8 +2,8 @@
 using Enterspeed.Source.Sdk.Domain.Services;
 using Enterspeed.Source.SitecoreCms.V8.Providers;
 using Enterspeed.Source.SitecoreCms.V8.Services;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Enterspeed.Source.SitecoreCms.V8.Services.Serializers;
-using Sitecore.Abstractions;
 using Sitecore.Data.Items;
 using Sitecore.Events;
 
@@ -15,7 +15,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
         private readonly IEnterspeedSitecoreIngestService _enterspeedSitecoreIngestService;
 
         public SaveEventHandler(
-            BaseItemManager itemManager,
             IEnterspeedConfigurationService enterspeedConfigurationService,
             IEnterspeedSitecoreIngestService enterspeedSitecoreIngestService)
         {
@@ -32,7 +31,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                 return;
             }
 
-            var siteConfigurations = _enterspeedConfigurationService.GetConfiguration();
+            var siteConfigurations = _enterspeedConfigurationService.GetConfigurations();
             foreach (var configuration in siteConfigurations)
             {
                 if (!configuration.IsEnabled)

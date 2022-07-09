@@ -1,29 +1,21 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using Enterspeed.Source.Sdk.Api.Services;
 using Enterspeed.Source.Sdk.Domain.Connection;
 using Enterspeed.Source.Sdk.Domain.Services;
-
 using Enterspeed.Source.SitecoreCms.V8.Extensions;
 using Enterspeed.Source.SitecoreCms.V8.Models;
 using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V8.Models.Mappers;
-using Enterspeed.Source.SitecoreCms.V8.Providers;
-using Enterspeed.Source.SitecoreCms.V8.Services;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Abstractions;
 using Sitecore.Data.Items;
-using Sitecore.Globalization;
 using Sitecore.Links;
-using Sitecore.Publishing;
-using Sitecore.Publishing.Pipelines.PublishItem;
-using Version = Sitecore.Data.Version;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Services
 {
     public class EnterspeedSitecoreIngestService : IEnterspeedSitecoreIngestService
     {
-        private readonly BaseItemManager _itemManager;
         private readonly BaseLinkStrategyFactory _linkStrategyFactory;
         private readonly IEnterspeedSitecoreLoggingService _loggingService;
         private readonly IEntityModelMapper<Item, SitecoreContentEntity> _sitecoreContentEntityModelMapper;
@@ -31,16 +23,13 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
         private readonly IEntityModelMapper<Item, SitecoreDictionaryEntity> _sitecoreDictionaryEntityModelMapper;
         private readonly IEnterspeedIdentityService _identityService;
         public EnterspeedSitecoreIngestService(
-    BaseItemManager itemManager,
-    BaseLinkStrategyFactory linkStrategyFactory,
-    IEnterspeedSitecoreLoggingService loggingService,
-    IEntityModelMapper<Item, SitecoreContentEntity> sitecoreContentEntityModelMapper,
-    IEntityModelMapper<RenderingItem, SitecoreRenderingEntity> sitecoreRenderingEntityModelMapper,
-    IEntityModelMapper<Item, SitecoreDictionaryEntity> sitecoreDictionaryEntityModelMapper,
-    IEnterspeedIdentityService identityService,
-    IEnterspeedIngestService enterspeedIngestService)
+            BaseLinkStrategyFactory linkStrategyFactory,
+            IEnterspeedSitecoreLoggingService loggingService,
+            IEntityModelMapper<Item, SitecoreContentEntity> sitecoreContentEntityModelMapper,
+            IEntityModelMapper<RenderingItem, SitecoreRenderingEntity> sitecoreRenderingEntityModelMapper,
+            IEntityModelMapper<Item, SitecoreDictionaryEntity> sitecoreDictionaryEntityModelMapper,
+            IEnterspeedIdentityService identityService)
         {
-            _itemManager = itemManager;
             _linkStrategyFactory = linkStrategyFactory;
             _loggingService = loggingService;
             _sitecoreContentEntityModelMapper = sitecoreContentEntityModelMapper;

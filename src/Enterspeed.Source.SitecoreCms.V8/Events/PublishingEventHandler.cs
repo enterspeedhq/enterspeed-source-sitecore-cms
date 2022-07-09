@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using Enterspeed.Source.Sdk.Api.Services;
 using Enterspeed.Source.Sdk.Domain.Connection;
 using Enterspeed.Source.Sdk.Domain.Services;
 using Enterspeed.Source.SitecoreCms.V8.Extensions;
@@ -10,6 +9,7 @@ using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V8.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V8.Providers;
 using Enterspeed.Source.SitecoreCms.V8.Services;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Enterspeed.Source.SitecoreCms.V8.Services.Serializers;
 using Sitecore.Abstractions;
 using Sitecore.Data.Items;
@@ -40,7 +40,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             IEntityModelMapper<RenderingItem, SitecoreRenderingEntity> sitecoreRenderingEntityModelMapper,
             IEntityModelMapper<Item, SitecoreDictionaryEntity> sitecoreDictionaryEntityModelMapper,
             IEnterspeedIdentityService identityService,
-            IEnterspeedIngestService enterspeedIngestService,
             IEnterspeedConfigurationService enterspeedConfigurationService)
         {
             _itemManager = itemManager;
@@ -64,7 +63,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                 return;
             }
 
-            var siteConfigurations = _enterspeedConfigurationService.GetConfiguration();
+            var siteConfigurations = _enterspeedConfigurationService.GetConfigurations();
             foreach (EnterspeedSitecoreConfiguration configuration in siteConfigurations)
             {
                 if (!configuration.IsEnabled)

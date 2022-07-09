@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Enterspeed.Source.SitecoreCms.V8.Exceptions;
 using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Abstractions;
 using Sitecore.Configuration;
 using Sitecore.Data.Fields;
@@ -42,7 +43,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             _loggingService = loggingService;
         }
 
-        public List<EnterspeedSitecoreConfiguration> GetConfiguration()
+        public List<EnterspeedSitecoreConfiguration> GetConfigurations()
         {
             var enterspeedConfigurationItem = _itemManager.GetItem(EnterspeedIDs.Items.EnterspeedConfigurationID, Language.Parse("en"), Version.Latest, _factory.GetDatabase("web"));
             if (HasNoConfigurationSetUp(enterspeedConfigurationItem))

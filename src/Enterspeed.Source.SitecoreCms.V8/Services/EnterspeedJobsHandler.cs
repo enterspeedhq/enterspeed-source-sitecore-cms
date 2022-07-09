@@ -5,6 +5,7 @@ using Enterspeed.Source.SitecoreCms.V8.Data.Models;
 using Enterspeed.Source.SitecoreCms.V8.Data.Repositories;
 using Enterspeed.Source.SitecoreCms.V8.Factories;
 using Enterspeed.Source.SitecoreCms.V8.Handlers;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Services
 {

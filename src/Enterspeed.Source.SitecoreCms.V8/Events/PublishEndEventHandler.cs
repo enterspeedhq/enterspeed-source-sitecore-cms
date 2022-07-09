@@ -3,8 +3,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Enterspeed.Source.SitecoreCms.V8.Extensions;
 using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
-using Enterspeed.Source.SitecoreCms.V8.Services;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Data.Items;
+using Sitecore.Events;
 using Sitecore.Publishing;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Events
@@ -23,8 +24,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
 
         public void PublishEnd(object sender, EventArgs args)
         {
-            var sitecoreArgs = args as Sitecore.Events.SitecoreEventArgs;
-            if (sitecoreArgs == null)
+            if (!(args is SitecoreEventArgs sitecoreArgs))
             {
                 return;
             }
@@ -32,7 +32,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             var publisher = sitecoreArgs.Parameters[0] as Publisher;
             var rootItem = publisher.Options.RootItem;
 
-            var siteConfigurations = _enterspeedConfigurationService.GetConfiguration();
+            var siteConfigurations = _enterspeedConfigurationService.GetConfigurations();
             foreach (EnterspeedSitecoreConfiguration configuration in siteConfigurations)
             {
                 if (!configuration.IsEnabled)
@@ -46,7 +46,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                 }
 
                 EnterspeedSiteInfo siteOfItem = configuration.GetSite(rootItem);
-                if (siteOfItem == null) 
+                if (siteOfItem == null)
                 {
                     continue;
                 }
@@ -56,6 +56,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                     continue;
                 }
 
+                // TODO: Task with no await? Any consequences to this?
                 var result = CallHookAsync(siteOfItem.PublishHookUrl);
             }
         }

@@ -1,4 +1,5 @@
-﻿using Sitecore.Data.Fields;
+﻿using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
+using Sitecore.Data.Fields;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Services
 {

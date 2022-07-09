@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Enterspeed.Source.SitecoreCms.V8.Models;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Abstractions;
 using Sitecore.Data;
 using Sitecore.Data.Items;

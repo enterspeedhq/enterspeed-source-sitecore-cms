@@ -2,7 +2,7 @@
 using System.Linq;
 using Enterspeed.Source.SitecoreCms.V8.Data.Models;
 using Enterspeed.Source.SitecoreCms.V8.Data.Repositories;
-using Enterspeed.Source.SitecoreCms.V8.Services;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Events
 {

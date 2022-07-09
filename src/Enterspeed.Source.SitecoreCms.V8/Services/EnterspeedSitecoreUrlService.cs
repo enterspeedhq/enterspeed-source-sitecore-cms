@@ -1,4 +1,5 @@
 ﻿using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Abstractions;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
@@ -10,20 +11,14 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 {
     public class EnterspeedSitecoreUrlService : IEnterspeedUrlService
     {
-        private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
         private readonly BaseSiteContextFactory _siteContextFactory;
-        private readonly BaseLinkManager _linkManager;
         private readonly BaseMediaManager _mediaManager;
 
         public EnterspeedSitecoreUrlService(
-            IEnterspeedConfigurationService enterspeedConfigurationService,
             BaseSiteContextFactory siteContextFactory,
-            BaseLinkManager linkManager,
             BaseMediaManager mediaManager)
         {
-            _enterspeedConfigurationService = enterspeedConfigurationService;
             _siteContextFactory = siteContextFactory;
-            _linkManager = linkManager;
             _mediaManager = mediaManager;
         }
 
@@ -55,11 +50,11 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 var itemUrl = LinkManager.GetItemUrl(item, urlBuilderOptions);
                 if (!string.IsNullOrEmpty(siteInfo.BaseUrl))
                 {
-                    itemUrl = siteInfo.BaseUrl + itemUrl.Replace(siteInfo.StartPathUrl,"/");
+                    itemUrl = siteInfo.BaseUrl + itemUrl.Replace(siteInfo.StartPathUrl, "/");
                 }
                 return itemUrl;
             }
- 
+
 
         }
 
