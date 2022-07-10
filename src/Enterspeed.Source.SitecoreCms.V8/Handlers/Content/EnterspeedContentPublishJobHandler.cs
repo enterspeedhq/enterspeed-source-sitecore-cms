@@ -14,7 +14,7 @@ using Sitecore.Globalization;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
 {
-    public class EnterspeedContentPublishJobHandler
+    public class EnterspeedContentPublishJobHandler : IEnterspeedJobHandler
     {
         private readonly IEntityModelMapper<Item, SitecoreContentEntity> _sitecoreContentEntityModelMapper;
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
@@ -62,8 +62,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
         {
             var isItemId = ID.TryParse(job.EntityId, out var itemId);
             var item = isItemId
-                ? _itemManager.GetItem(itemId, Language.Parse(job.Culture), Sitecore.Data.Version.Latest,
-                    Database.GetDatabase("Master"))
+                ? _itemManager.GetItem(itemId, Language.Parse(job.Culture), Sitecore.Data.Version.Latest, Database.GetDatabase("Master"))
                 : null;
 
             if (item == null)

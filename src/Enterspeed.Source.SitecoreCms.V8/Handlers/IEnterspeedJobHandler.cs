@@ -5,6 +5,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers
     public interface IEnterspeedJobHandler
     {
         bool CanHandle(EnterspeedJob job);
-        bool Handle(EnterspeedJob job);
+        void Handle(EnterspeedJob job);
     }
 }

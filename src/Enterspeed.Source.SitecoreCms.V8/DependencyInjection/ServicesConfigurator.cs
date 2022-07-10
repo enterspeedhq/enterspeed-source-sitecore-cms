@@ -5,6 +5,9 @@ using Enterspeed.Source.Sdk.Domain.Connection;
 using Enterspeed.Source.Sdk.Domain.Services;
 using Enterspeed.Source.SitecoreCms.V8.Controllers;
 using Enterspeed.Source.SitecoreCms.V8.Data;
+using Enterspeed.Source.SitecoreCms.V8.Handlers;
+using Enterspeed.Source.SitecoreCms.V8.Handlers.Content;
+using Enterspeed.Source.SitecoreCms.V8.Handlers.Dictionaries;
 using Enterspeed.Source.SitecoreCms.V8.Models;
 using Enterspeed.Source.SitecoreCms.V8.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V8.Providers;
@@ -17,6 +20,7 @@ using Enterspeed.Source.SitecoreCms.V8.Services.Serializers;
 using Microsoft.Extensions.DependencyInjection;
 using Sitecore.Data.Items;
 using Sitecore.DependencyInjection;
+using Sitecore.Layouts;
 
 
 namespace Enterspeed.Source.SitecoreCms.V8.DependencyInjection
@@ -39,7 +43,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.DependencyInjection
             services.AddSingleton<IEnterspeedConfigurationProvider, EnterspeedSitecoreConfigurationProvider>();
             services.AddSingleton<IEnterspeedUrlService, EnterspeedSitecoreUrlService>();
             services.AddSingleton<IEnterspeedSitecoreIngestService, EnterspeedSitecoreIngestService>();
-            services.AddTransient<IEnterspeedMigrationService, EnterspeedEnterspeedMigrationService>();
             services.AddSingleton<EnterspeedDateFormatter>();
 
             services.AddSingleton<IEnterspeedConnection>(provider =>
@@ -47,6 +50,15 @@ namespace Enterspeed.Source.SitecoreCms.V8.DependencyInjection
                 var configurationProvider = provider.GetService<IEnterspeedConfigurationProvider>();
                 return new EnterspeedConnection(configurationProvider);
             });
+
+            // Jobs
+            services.AddTransient<IEnterspeedMigrationService, EnterspeedMigrationService>();
+
+            // Job handlers
+            services.AddTransient<IEnterspeedJobHandler, EnterspeedContentDeleteJobHandler>();
+            services.AddTransient<IEnterspeedJobHandler, EnterspeedContentPublishJobHandler>();
+            services.AddTransient<IEnterspeedJobHandler, EnterspeedDictionaryItemDeleteJobHandler>();
+            services.AddTransient<IEnterspeedJobHandler, EnterspeedDictionaryItemPublishJobHandler>();
 
             RegisterFieldConverters(services);
             RegisterControllers(services);

@@ -6,14 +6,14 @@ using Enterspeed.Source.SitecoreCms.V8.Exceptions;
 using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Globalization;
 
-namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
+namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Dictionaries
 {
-    public class EnterspeedContentDeleteJobHandler : IEnterspeedJobHandler
+    public class EnterspeedDictionaryItemDeleteJobHandler : IEnterspeedJobHandler
     {
         private readonly IEnterspeedIngestService _enterspeedIngestService;
         private readonly IEnterspeedIdentityService _enterspeedIdentityService;
 
-        public EnterspeedContentDeleteJobHandler(
+        public EnterspeedDictionaryItemDeleteJobHandler(
             IEnterspeedIngestService enterspeedIngestService,
             IEnterspeedIdentityService enterspeedIdentityService)
         {
@@ -23,15 +23,15 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
 
         public bool CanHandle(EnterspeedJob job)
         {
-            return
-                job.ContentState == EnterspeedContentState.Publish
-                && job.EntityType == EnterspeedJobEntityType.Content
-                && job.JobType == EnterspeedJobType.Delete;
+            return job.EntityType == EnterspeedJobEntityType.Dictionary
+                   && job.JobType == EnterspeedJobType.Delete
+                   && job.ContentState == EnterspeedContentState.Publish;
         }
 
         public void Handle(EnterspeedJob job)
         {
             var id = _enterspeedIdentityService.GetId(Guid.Parse(job.EntityId), Language.Parse(job.Culture));
+
             var deleteResponse = _enterspeedIngestService.Delete(id);
             if (!deleteResponse.Success && deleteResponse.Status != HttpStatusCode.NotFound)
             {

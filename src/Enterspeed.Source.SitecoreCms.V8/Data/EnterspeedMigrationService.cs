@@ -5,19 +5,19 @@ using Sitecore.Configuration;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Data
 {
-    public class EnterspeedEnterspeedMigrationService : IEnterspeedMigrationService
+    public class EnterspeedMigrationService : IEnterspeedMigrationService
     {
-        private string _connectionString;
+        private readonly string _connectionString;
 
-        public EnterspeedEnterspeedMigrationService()
+        public EnterspeedMigrationService()
         {
             var connectionstringName = ConfigurationManager.AppSettings["Enterspeed.QueueSQLConnectionstringName"] ?? "Master";
             _connectionString = Settings.GetConnectionString(connectionstringName);
         }
-         
+
         public void Init()
         {
-            if (!TableCreated())    
+            if (!TableCreated())
             {
                 CreateTable();
             }
@@ -40,7 +40,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data
                     {
                         tableName = ReadSingleRow(reader);
                     }
-                        
+
                     reader.Dispose();
 
                     return !string.IsNullOrEmpty(tableName);

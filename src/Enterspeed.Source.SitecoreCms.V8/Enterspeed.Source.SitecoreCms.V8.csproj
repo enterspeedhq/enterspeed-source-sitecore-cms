@@ -153,6 +153,8 @@
     <Compile Include="Guards\IEnterspeedItemHandlingGuard.cs" />
     <Compile Include="Handlers\Content\EnterspeedContentDeleteJobHandler.cs" />
     <Compile Include="Handlers\Content\EnterspeedContentPublishJobHandler.cs" />
+    <Compile Include="Handlers\Dictionaries\EnterspeedDictionaryItemDeleteJobHandler.cs" />
+    <Compile Include="Handlers\Dictionaries\EnterspeedDictionaryItemPublishJobHandler.cs" />
     <Compile Include="Handlers\IEnterspeedJobHandler.cs" />
     <Compile Include="Models\Configuration\EnterspeedIDs.cs" />
     <Compile Include="Models\Configuration\EnterspeedSiteInfo.cs" />
