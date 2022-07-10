@@ -6,7 +6,7 @@ using Enterspeed.Source.SitecoreCms.V8.Exceptions;
 using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Globalization;
 
-namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
+namespace Enterspeed.Source.SitecoreCms.V8.Handlers.PreviewContent
 {
     public class EnterspeedPreviewContentDeleteJobHandler : IEnterspeedJobHandler
     {

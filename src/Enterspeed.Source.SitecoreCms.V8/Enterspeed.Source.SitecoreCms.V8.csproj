@@ -142,8 +142,6 @@
     <Compile Include="Data\Repositories\EnterspeedJobRepository.cs" />
     <Compile Include="Data\Repositories\IEnterspeedJobRepository.cs" />
     <Compile Include="Data\Schemas\EnterspeedJobSchema.cs" />
-    <Compile Include="Events\BaseEnterspeedEventHandler.cs" />
-    <Compile Include="Events\PublishEndEventHandler.cs" />
     <Compile Include="Events\SaveEventHandler.cs" />
     <Compile Include="Exceptions\JobHandlingException.cs" />
     <Compile Include="Extensions\EnterspeedConfigurationExtensions.cs" />
@@ -205,7 +203,7 @@
     <Compile Include="Services\EnterspeedJobsHandlingService.cs" />
     <Compile Include="Services\EnterspeedPropertyService.cs" />
     <Compile Include="Services\EnterspeedSitecoreFieldService.cs" />
-    <Compile Include="Services\EnterspeedSitecoreIngestService.cs" />
+    <Compile Include="Services\EnterspeedSitecoreJobSeederService.cs" />
     <Compile Include="Services\EnterspeedSitecoreLoggingService.cs" />
     <Compile Include="Services\EnterspeedSitecoreUrlService.cs" />
     <Compile Include="Services\Contracts\IEnterspeedConfigurationService.cs" />
@@ -216,7 +214,7 @@
     <Compile Include="Services\Contracts\IEnterspeedJobsHandlingService.cs" />
     <Compile Include="Services\Contracts\IEnterspeedPropertyService.cs" />
     <Compile Include="Services\Contracts\IEnterspeedSitecoreFieldService.cs" />
-    <Compile Include="Services\Contracts\IEnterspeedSitecoreIngestService.cs" />
+    <Compile Include="Services\Contracts\IEnterspeedSitecoreJobSeederService.cs" />
     <Compile Include="Services\Contracts\IEnterspeedSitecoreLoggingService.cs" />
     <Compile Include="Services\Contracts\IEnterspeedUrlService.cs" />
     <Compile Include="Services\EnterspeedSitecoreIdentityService.cs" />

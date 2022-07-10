@@ -5,9 +5,12 @@ using Enterspeed.Source.Sdk.Domain.Connection;
 using Enterspeed.Source.Sdk.Domain.Services;
 using Enterspeed.Source.SitecoreCms.V8.Controllers;
 using Enterspeed.Source.SitecoreCms.V8.Data;
+using Enterspeed.Source.SitecoreCms.V8.Data.Repositories;
+using Enterspeed.Source.SitecoreCms.V8.Factories;
 using Enterspeed.Source.SitecoreCms.V8.Handlers;
 using Enterspeed.Source.SitecoreCms.V8.Handlers.Content;
 using Enterspeed.Source.SitecoreCms.V8.Handlers.Dictionaries;
+using Enterspeed.Source.SitecoreCms.V8.Handlers.PreviewContent;
 using Enterspeed.Source.SitecoreCms.V8.Models;
 using Enterspeed.Source.SitecoreCms.V8.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V8.Providers;
@@ -41,7 +44,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.DependencyInjection
             services.AddSingleton<IEnterspeedConfigurationService, EnterspeedConfigurationService>();
             services.AddSingleton<IEnterspeedConfigurationProvider, EnterspeedSitecoreConfigurationProvider>();
             services.AddSingleton<IEnterspeedUrlService, EnterspeedSitecoreUrlService>();
-            services.AddTransient<IEnterspeedSitecoreIngestService, EnterspeedSitecoreIngestService>();
+            services.AddTransient<IEnterspeedSitecoreJobSeederService, EnterspeedSitecoreJobSeederService>();
             services.AddSingleton<EnterspeedDateFormatter>();
 
             services.AddSingleton<IEnterspeedConnection>(provider =>
@@ -50,17 +53,26 @@ namespace Enterspeed.Source.SitecoreCms.V8.DependencyInjection
                 return new EnterspeedConnection(configurationProvider);
             });
 
-            // Jobs
+            RegisterQueueImplementations(services);
+            RegisterFieldConverters(services);
+            RegisterControllers(services);
+        }
+
+        private static void RegisterQueueImplementations(IServiceCollection services)
+        {
+            // Queue implementation
             services.AddTransient<IEnterspeedMigrationService, EnterspeedMigrationService>();
+            services.AddTransient<IEnterspeedJobsHandlingService, EnterspeedJobsHandlingService>();
+            services.AddTransient<IEnterspeedJobRepository, EnterspeedJobRepository>();
+            services.AddTransient<IEnterspeedJobFactory, EnterspeedJobFactory>();
 
             // Job handlers
             services.AddTransient<IEnterspeedJobHandler, EnterspeedContentDeleteJobHandler>();
             services.AddTransient<IEnterspeedJobHandler, EnterspeedContentPublishJobHandler>();
+            services.AddTransient<IEnterspeedJobHandler, EnterspeedPreviewContentDeleteJobHandler>();
+            services.AddTransient<IEnterspeedJobHandler, EnterspeedPreviewContentPublishJobHandler>();
             services.AddTransient<IEnterspeedJobHandler, EnterspeedDictionaryItemDeleteJobHandler>();
             services.AddTransient<IEnterspeedJobHandler, EnterspeedDictionaryItemPublishJobHandler>();
-
-            RegisterFieldConverters(services);
-            RegisterControllers(services);
         }
 
         private static void RegisterFieldConverters(IServiceCollection services)

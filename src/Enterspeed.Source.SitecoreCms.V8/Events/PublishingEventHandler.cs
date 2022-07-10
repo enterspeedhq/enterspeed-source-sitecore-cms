@@ -13,16 +13,16 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
     {
         private readonly BaseItemManager _itemManager;
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
-        private readonly IEnterspeedSitecoreIngestService _enterspeedSitecoreIngestService;
+        private readonly IEnterspeedSitecoreJobSeederService _enterspeedSitecoreJobSeederService;
 
         public PublishingEventHandler(
             BaseItemManager itemManager,
             IEnterspeedConfigurationService enterspeedConfigurationService, 
-            IEnterspeedSitecoreIngestService enterspeedSitecoreIngestService)
+            IEnterspeedSitecoreJobSeederService enterspeedSitecoreJobSeederService)
         {
             _itemManager = itemManager;
             _enterspeedConfigurationService = enterspeedConfigurationService;
-            _enterspeedSitecoreIngestService = enterspeedSitecoreIngestService;
+            _enterspeedSitecoreJobSeederService = enterspeedSitecoreJobSeederService;
         }
 
         public void OnItemProcessed(object sender, EventArgs args)
@@ -63,9 +63,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
 
                 if (itemIsDeleted)
                 {
-                    _enterspeedSitecoreIngestService.HandleContentItem(sourceItem, configuration, true, false);
-                    _enterspeedSitecoreIngestService.HandleRendering(sourceItem, configuration, true, false);
-                    _enterspeedSitecoreIngestService.HandleDictionary(sourceItem, configuration, true, false);
+                    _enterspeedSitecoreJobSeederService.HandleContentItem(sourceItem, configuration, true, false);
+                    _enterspeedSitecoreJobSeederService.HandleRendering(sourceItem, configuration, true, false);
+                    _enterspeedSitecoreJobSeederService.HandleDictionary(sourceItem, configuration, true, false);
                     continue;
                 }
 
@@ -81,9 +81,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                     continue;
                 }
 
-                _enterspeedSitecoreIngestService.HandleContentItem(sourceItem, configuration, false, true);
-                _enterspeedSitecoreIngestService.HandleRendering(sourceItem, configuration, false, true);
-                _enterspeedSitecoreIngestService.HandleDictionary(sourceItem, configuration, false, true);
+                _enterspeedSitecoreJobSeederService.HandleContentItem(sourceItem, configuration, false, true);
+                _enterspeedSitecoreJobSeederService.HandleRendering(sourceItem, configuration, false, true);
+                _enterspeedSitecoreJobSeederService.HandleDictionary(sourceItem, configuration, false, true);
             }
         }
 

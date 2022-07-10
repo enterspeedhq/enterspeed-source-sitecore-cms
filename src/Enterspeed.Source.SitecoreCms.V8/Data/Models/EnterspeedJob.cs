@@ -30,6 +30,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Models
         [JsonConverter(typeof(StringEnumConverter))]
         public EnterspeedContentState ContentState { get; set; }
 
+        public string BuildHookUrls { get; set; }
+
         public static EnterspeedJob Map(IDataRecord record)
         {
             var contentStateParsed = Enum.TryParse(record["ContentState"].ToString(), out EnterspeedContentState contentState);
@@ -44,7 +46,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Models
                 Culture = record["Culture"].ToString(),
                 CreatedAt = DateTime.Parse(record["CreatedAt"].ToString()),
                 Exception = record["Exception"].ToString(),
-                UpdatedAt = DateTime.Parse(record["UpdatedAt"].ToString())
+                UpdatedAt = DateTime.Parse(record["UpdatedAt"].ToString()),
+                BuildHookUrls = record["BuildHookUrls"].ToString()
             };
 
             if (contentStateParsed)

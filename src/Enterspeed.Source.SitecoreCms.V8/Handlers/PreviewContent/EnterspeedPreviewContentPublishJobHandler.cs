@@ -12,7 +12,7 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
 
-namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
+namespace Enterspeed.Source.SitecoreCms.V8.Handlers.PreviewContent
 {
     public class EnterspeedPreviewContentPublishJobHandler : IEnterspeedJobHandler
     {

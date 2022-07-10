@@ -3,7 +3,7 @@ using Sitecore.Data.Items;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Services.Contracts
 {
-    public interface IEnterspeedSitecoreIngestService
+    public interface IEnterspeedSitecoreJobSeederService
     {
         bool HasAllowedPath(Item item);
         void HandleContentItem(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished);

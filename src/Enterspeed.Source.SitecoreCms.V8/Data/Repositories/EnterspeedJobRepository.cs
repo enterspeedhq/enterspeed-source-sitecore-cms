@@ -137,8 +137,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
 
             foreach (var job in jobs)
             {
-                var sql = $@"INSERT INTO Id ( EntityId, Culture, JobType, State, Exception, CreatedAt, UpdatedAt, EntityType, ContentState) 
-                    VALUES('{job.EntityId}', '{job.Culture}', '{job.JobType}', '{job.State}', '{job.Exception}', '{job.CreatedAt}','{job.UpdatedAt}','{job.EntityType}','{job.ContentState}' ); ";
+                var sql = $@"INSERT INTO Id ( EntityId, Culture, JobType, State, Exception, CreatedAt, UpdatedAt, EntityType, ContentState, BuildHookUrls) 
+                    VALUES('{job.EntityId}', '{job.Culture}', '{job.JobType}', '{job.State}', '{job.Exception}', '{job.CreatedAt}','{job.UpdatedAt}','{job.EntityType}','{job.ContentState}', '{job.BuildHookUrls}'); ";
 
                 using (var connection = new SqlConnection(_connectionString))
                 {

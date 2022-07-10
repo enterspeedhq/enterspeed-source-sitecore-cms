@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Enterspeed.Source.SitecoreCms.V8.Data.Models;
 using Enterspeed.Source.SitecoreCms.V8.Data.Repositories;
 using Enterspeed.Source.SitecoreCms.V8.Factories;
@@ -12,18 +14,19 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
     public class EnterspeedJobsHandler : IEnterspeedJobsHandler
     {
         private readonly IEnterspeedJobRepository _enterspeedJobRepository;
-        private readonly IEnterspeedSitecoreLoggingService _enterspeedSitecoreLoggingService;
+        private readonly IEnterspeedSitecoreLoggingService _loggingService;
         private readonly IEnterspeedJobFactory _enterspeedJobFactory;
         private readonly List<IEnterspeedJobHandler> _jobHandlers;
+        private readonly HttpClient _client = new HttpClient();
 
         public EnterspeedJobsHandler(
             IEnterspeedJobFactory enterspeedJobFactory,
-            IEnterspeedSitecoreLoggingService enterspeedSitecoreLoggingService,
+            IEnterspeedSitecoreLoggingService loggingService,
             IEnterspeedJobRepository enterspeedJobRepository,
             List<IEnterspeedJobHandler> jobHandlers)
         {
             _enterspeedJobFactory = enterspeedJobFactory;
-            _enterspeedSitecoreLoggingService = enterspeedSitecoreLoggingService;
+            _loggingService = loggingService;
             _enterspeedJobRepository = enterspeedJobRepository;
             _jobHandlers = jobHandlers;
         }
@@ -37,6 +40,10 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             // Fetch all failed jobs for these content ids. We need to do this to delete the failed jobs if they no longer fails
             var failedJobsToHandle = _enterspeedJobRepository.GetFailedJobs(jobs.Select(x => x.EntityId).Distinct().ToList());
             var jobsByEntityIdAndContentState = jobs.GroupBy(x => new { x.EntityId, x.ContentState, x.Culture });
+          
+            // Creating a list for hooks that we have to call after data has been ingested.
+            var buildHookUrls = new List<string>();
+
             foreach (var jobInfo in jobsByEntityIdAndContentState)
             {
                 var newestJob = jobInfo
@@ -50,27 +57,37 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 }
 
                 // Get the failed jobs and add it to the batch of jobs that needs to be handled, so we can delete them afterwards
-                failedJobsToDelete.AddRange(
-                    failedJobsToHandle.Where(x => x.EntityId == jobInfo.Key.EntityId && x.Culture == jobInfo.Key.Culture && x.ContentState == jobInfo.Key.ContentState));
+                failedJobsToDelete.AddRange(failedJobsToHandle.Where(x => x.EntityId == jobInfo.Key.EntityId && x.Culture == jobInfo.Key.Culture && x.ContentState == jobInfo.Key.ContentState));
 
                 var handler = _jobHandlers.FirstOrDefault(f => f.CanHandle(newestJob));
                 if (handler == null)
                 {
                     var message = $"No job handler available for {newestJob.EntityId} {newestJob.EntityType}";
                     failedJobs.Add(_enterspeedJobFactory.GetFailedJob(newestJob, message));
-                    _enterspeedSitecoreLoggingService.Warn(message);
+                    _loggingService.Warn(message);
                     continue;
                 }
 
                 try
                 {
                     handler.Handle(newestJob);
+                    buildHookUrls.AddRange(newestJob.BuildHookUrls.Split(','));
                 }
                 catch (Exception exception)
                 {
                     var message = exception?.Message ?? "Failed to handle the job";
                     failedJobs.Add(_enterspeedJobFactory.GetFailedJob(newestJob, message));
-                    _enterspeedSitecoreLoggingService.Warn(message);
+                    _loggingService.Warn(message);
+                }
+
+               
+            }
+
+            if (buildHookUrls.Any())
+            {
+                foreach (var buildHookUrl in buildHookUrls.Distinct())
+                {
+                    var task = CallHookAsync(buildHookUrl);
                 }
             }
 
@@ -86,6 +103,19 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 var failedJobExceptions = string.Join(Environment.NewLine, failedJobs.Select(x => x.Exception));
                 throw new Exception(failedJobExceptions);
             }
+        }
+
+        private async Task<string> CallHookAsync(string path)
+        {
+            var result = string.Empty;
+
+            var response = await _client.PostAsync(path, null);
+            if (response.IsSuccessStatusCode)
+            {
+                result = await response.Content.ReadAsStringAsync();
+            }
+
+            return result;
         }
     }
 }
