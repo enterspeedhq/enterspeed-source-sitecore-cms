@@ -9,13 +9,10 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
     public class BaseEnterspeedEventHandler
     {
         private readonly IEnterspeedJobRepository _enterspeedJobRepository;
-        private readonly IEnterspeedJobsHandlingService _enterspeedJobsHandlingService;
 
-        public BaseEnterspeedEventHandler(IEnterspeedJobRepository enterspeedJobRepository,
-            IEnterspeedJobsHandlingService enterspeedJobsHandlingService)
+        public BaseEnterspeedEventHandler(IEnterspeedJobRepository enterspeedJobRepository)
         {
             _enterspeedJobRepository = enterspeedJobRepository;
-            _enterspeedJobsHandlingService = enterspeedJobsHandlingService;
         }
 
         public void EnqueueJobs(IList<EnterspeedJob> jobs)
@@ -26,11 +23,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             }
 
             _enterspeedJobRepository.Save(jobs);
-        }
-
-        protected void HandleJobs(IList<EnterspeedJob> jobs)
-        {
-            _enterspeedJobsHandlingService.HandleJobs(jobs);
         }
     }
 }

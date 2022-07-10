@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Linq;
-using Enterspeed.Source.Sdk.Domain.Connection;
-using Enterspeed.Source.Sdk.Domain.Services;
+using Enterspeed.Source.SitecoreCms.V8.Data.Models;
+using Enterspeed.Source.SitecoreCms.V8.Data.Repositories;
 using Enterspeed.Source.SitecoreCms.V8.Extensions;
+using Enterspeed.Source.SitecoreCms.V8.Factories;
 using Enterspeed.Source.SitecoreCms.V8.Models;
 using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V8.Models.Mappers;
@@ -19,23 +20,22 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
         private readonly BaseLinkStrategyFactory _linkStrategyFactory;
         private readonly IEnterspeedSitecoreLoggingService _loggingService;
         private readonly IEntityModelMapper<Item, SitecoreContentEntity> _sitecoreContentEntityModelMapper;
-        private readonly IEntityModelMapper<RenderingItem, SitecoreRenderingEntity> _sitecoreRenderingEntityModelMapper;
-        private readonly IEntityModelMapper<Item, SitecoreDictionaryEntity> _sitecoreDictionaryEntityModelMapper;
-        private readonly IEnterspeedIdentityService _identityService;
+        private readonly IEnterspeedJobFactory _enterspeedJobFactory;
+        private readonly IEnterspeedJobRepository _enterspeedJobRepository;
+        public readonly List<EnterspeedJob> Jobs = new List<EnterspeedJob>();
+
         public EnterspeedSitecoreIngestService(
             BaseLinkStrategyFactory linkStrategyFactory,
             IEnterspeedSitecoreLoggingService loggingService,
             IEntityModelMapper<Item, SitecoreContentEntity> sitecoreContentEntityModelMapper,
-            IEntityModelMapper<RenderingItem, SitecoreRenderingEntity> sitecoreRenderingEntityModelMapper,
-            IEntityModelMapper<Item, SitecoreDictionaryEntity> sitecoreDictionaryEntityModelMapper,
-            IEnterspeedIdentityService identityService)
+            IEnterspeedJobFactory enterspeedJobFactory,
+            IEnterspeedJobRepository enterspeedJobRepository)
         {
             _linkStrategyFactory = linkStrategyFactory;
             _loggingService = loggingService;
             _sitecoreContentEntityModelMapper = sitecoreContentEntityModelMapper;
-            _sitecoreRenderingEntityModelMapper = sitecoreRenderingEntityModelMapper;
-            _sitecoreDictionaryEntityModelMapper = sitecoreDictionaryEntityModelMapper;
-            _identityService = identityService;
+            _enterspeedJobFactory = enterspeedJobFactory;
+            _enterspeedJobRepository = enterspeedJobRepository;
         }
 
         public bool HasAllowedPath(Item item)
@@ -43,7 +43,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             return item.IsContentItem() || item.IsRenderingItem() || item.IsDictionaryItem();
         }
 
-        public void HandleContentItem(Item item, EnterspeedIngestService enterspeedIngestService, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished, bool itemIsPreview)
+        public void HandleContentItem(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished)
         {
             try
             {
@@ -58,15 +58,13 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                     return;
                 }
 
-                EnterspeedSiteInfo siteOfItem = configuration.GetSite(item);
+                var siteOfItem = configuration.GetSite(item);
                 if (siteOfItem == null)
                 {
-                    //_loggingService.Warn($"No site config for  ({item.ID})");
-                    // If no enabled site was found for this item, skip it
                     return;
                 }
 
-                SitecoreContentEntity sitecoreContentEntity = _sitecoreContentEntityModelMapper.Map(item, configuration);
+                var sitecoreContentEntity = _sitecoreContentEntityModelMapper.Map(item, configuration);
                 if (sitecoreContentEntity == null)
                 {
                     return;
@@ -74,45 +72,25 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
                 if (itemIsDeleted)
                 {
-                    string id = _identityService.GetId(item);
-                    _loggingService.Info($"Beginning to delete content entity ({id}).");
-                    Response deleteResponse = enterspeedIngestService.Delete(id);
-
-                    if (!deleteResponse.Success)
-                    {
-                        _loggingService.Warn($"Failed deleting content entity ({id}). Message: {deleteResponse.Message}", deleteResponse.Exception);
-                    }
-                    else
-                    {
-                        _loggingService.Debug($"Successfully deleting content entity ({id})");
-                    }
-
-                    return;
+                    var job = _enterspeedJobFactory.GetDeleteJob(item, item.Language.Name, EnterspeedContentState.Publish);
+                    Jobs.Add(job);
                 }
 
                 if (itemIsPublished)
                 {
-                    string id = _identityService.GetId(item);
-                    _loggingService.Info($"Beginning to ingest content entity ({id}).");
-                    Response saveResponse = enterspeedIngestService.Save(sitecoreContentEntity);
-
-                    if (!saveResponse.Success)
-                    {
-                        _loggingService.Warn($"Failed ingesting content entity ({id}). Message: {saveResponse.Message}", saveResponse.Exception);
-                    }
-                    else
-                    {
-                        _loggingService.Debug($"Successfully ingested content entity ({id})");
-                    }
+                    var job = _enterspeedJobFactory.GetPublishJob(item, item.Language.Name, EnterspeedContentState.Publish);
+                    Jobs.Add(job);
                 }
+
+                EnqueueJobs(Jobs);
             }
-            catch (Exception exception)
+            catch (Exception e)
             {
-                Debug.WriteLine(exception.ToString());
+                _loggingService.Error("Something went wrong when handling content item: ", e);
             }
         }
 
-        public void HandleRendering(Item item, EnterspeedIngestService enterspeedIngestService, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished, bool itemIsPreview)
+        public void HandleRendering(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished)
         {
             try
             {
@@ -127,6 +105,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                     return;
                 }
 
+                // Parsing to check if we are dealing with a renderingitem.
                 RenderingItem renderingItem = item;
                 if (renderingItem?.InnerItem == null)
                 {
@@ -140,20 +119,24 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
                 if (itemIsDeleted)
                 {
-                    DeleteEntity(renderingItem, enterspeedIngestService);
+                    var job = _enterspeedJobFactory.GetDeleteJob(item, item.Language.Name, EnterspeedContentState.Publish);
+                    Jobs.Add(job);
                 }
                 else if (itemIsPublished)
                 {
-                    SaveEntity(renderingItem, enterspeedIngestService, configuration);
+                    var job = _enterspeedJobFactory.GetPublishJob(item, item.Language.Name, EnterspeedContentState.Publish);
+                    Jobs.Add(job);
                 }
+
+                EnqueueJobs(Jobs);
             }
-            catch (Exception exception)
+            catch (Exception e)
             {
-                Debug.WriteLine(exception.ToString());
+                _loggingService.Error("Something went wrong when handling rendering item: ", e);
             }
         }
 
-        public void HandleDictionary(Item item, EnterspeedIngestService enterspeedIngestService, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished, bool itemIsPreview)
+        public void HandleDictionary(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished)
         {
             if (item == null)
             {
@@ -166,50 +149,24 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 return;
             }
 
-            SitecoreDictionaryEntity sitecoreDictionaryEntity = _sitecoreDictionaryEntityModelMapper.Map(item, configuration);
-            if (sitecoreDictionaryEntity == null)
-            {
-                return;
-            }
-
             if (itemIsDeleted)
             {
-                string id = _identityService.GetId(item);
-                _loggingService.Info($"Beginning to delete dictionary entity ({id}).");
-                Response deleteResponse = enterspeedIngestService.Delete(id);
-
-                if (!deleteResponse.Success)
-                {
-                    _loggingService.Warn($"Failed deleting dictionary entity ({id}). Message: {deleteResponse.Message}", deleteResponse.Exception);
-                }
-                else
-                {
-                    _loggingService.Debug($"Successfully deleting dictionary entity ({id})");
-                }
-
-                return;
+                var job = _enterspeedJobFactory.GetDeleteJob(item, item.Language.Name, EnterspeedContentState.Publish, EnterspeedJobEntityType.Dictionary);
+                Jobs.Add(job);
             }
 
             if (itemIsPublished)
             {
-                string id = _identityService.GetId(item);
-                _loggingService.Info($"Beginning to ingest dictionary entity ({id}).");
-                Response saveResponse = enterspeedIngestService.Save(sitecoreDictionaryEntity);
-
-                if (!saveResponse.Success)
-                {
-                    _loggingService.Warn($"Failed ingesting dictionary entity ({id}). Message: {saveResponse.Message}", saveResponse.Exception);
-                }
-                else
-                {
-                    _loggingService.Debug($"Successfully ingested dictionary entity ({id})");
-                }
+                var job = _enterspeedJobFactory.GetPublishJob(item, item.Language.Name, EnterspeedContentState.Publish, EnterspeedJobEntityType.Dictionary);
+                Jobs.Add(job);
             }
+
+            EnqueueJobs(Jobs);
         }
 
-        public bool IsItemReferencedFromEnabledContent(Item item, EnterspeedSitecoreConfiguration configuration)
+        private bool IsItemReferencedFromEnabledContent(Item item, EnterspeedSitecoreConfiguration configuration)
         {
-            GetLinksStrategy linksStrategy = _linkStrategyFactory.Resolve(item);
+            var linksStrategy = _linkStrategyFactory.Resolve(item);
 
             var strategyContextArgs = new StrategyContextArgs(item);
             linksStrategy.ProcessReferrers(strategyContextArgs);
@@ -217,15 +174,15 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             if (strategyContextArgs.Result != null &&
                 strategyContextArgs.Result.Any())
             {
-                foreach (ItemLink itemLink in strategyContextArgs.Result)
+                foreach (var itemLink in strategyContextArgs.Result)
                 {
-                    Item sourceItem = itemLink?.GetSourceItem();
+                    var sourceItem = itemLink?.GetSourceItem();
                     if (sourceItem == null)
                     {
                         continue;
                     }
 
-                    EnterspeedSiteInfo site = configuration.GetSite(sourceItem);
+                    var site = configuration.GetSite(sourceItem);
                     if (site != null)
                     {
                         // This rendering is referenced on content from an enabled site
@@ -237,38 +194,15 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             return false;
         }
 
-        public void DeleteEntity(RenderingItem renderingItem, EnterspeedIngestService enterspeedIngestService)
+
+        public void EnqueueJobs(IList<EnterspeedJob> jobs)
         {
-            string id = _identityService.GetId(renderingItem);
-            _loggingService.Info($"Beginning to delete rendering entity ({id}).");
-            Response deleteResponse = enterspeedIngestService.Delete(id);
-
-            if (!deleteResponse.Success)
+            if (!jobs.Any())
             {
-                _loggingService.Warn($"Failed deleting rendering entity ({id}). Message: {deleteResponse.Message}", deleteResponse.Exception);
+                return;
             }
-            else
-            {
-                _loggingService.Debug($"Successfully deleting rendering entity ({id})");
-            }
-        }
 
-        public void SaveEntity(RenderingItem renderingItem, EnterspeedIngestService enterspeedIngestService, EnterspeedSitecoreConfiguration configuration)
-        {
-            SitecoreRenderingEntity sitecoreRenderingEntity = _sitecoreRenderingEntityModelMapper.Map(renderingItem, configuration);
-
-            string id = _identityService.GetId(renderingItem);
-            _loggingService.Info($"Beginning to ingest rendering entity ({id}).");
-            Response saveResponse = enterspeedIngestService.Save(sitecoreRenderingEntity);
-
-            if (!saveResponse.Success)
-            {
-                _loggingService.Warn($"Failed ingesting rendering entity ({id}). Message: {saveResponse.Message}", saveResponse.Exception);
-            }
-            else
-            {
-                _loggingService.Debug($"Successfully ingested rendering entity ({id})");
-            }
+            _enterspeedJobRepository.Save(jobs);
         }
     }
 }

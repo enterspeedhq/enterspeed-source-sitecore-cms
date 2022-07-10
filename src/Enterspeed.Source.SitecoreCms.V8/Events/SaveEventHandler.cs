@@ -1,9 +1,5 @@
 ﻿using System;
-using Enterspeed.Source.Sdk.Domain.Services;
-using Enterspeed.Source.SitecoreCms.V8.Providers;
-using Enterspeed.Source.SitecoreCms.V8.Services;
 using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
-using Enterspeed.Source.SitecoreCms.V8.Services.Serializers;
 using Sitecore.Data.Items;
 using Sitecore.Events;
 
@@ -44,8 +40,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                     continue;
                 }
 
-                var enterspeedIngestService = new EnterspeedIngestService(new SitecoreEnterspeedConnection(configuration), new NewtonsoftJsonSerializer(), new EnterspeedSitecoreConfigurationProvider(_enterspeedConfigurationService));
-
                 if (!_enterspeedSitecoreIngestService.HasAllowedPath(sourceItem))
                 {
                     continue;
@@ -62,9 +56,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                     continue;
                 }
 
-                _enterspeedSitecoreIngestService.HandleContentItem(sourceItem, enterspeedIngestService, configuration, false, true, true);
-                _enterspeedSitecoreIngestService.HandleRendering(sourceItem, enterspeedIngestService, configuration, false, true, true);
-                _enterspeedSitecoreIngestService.HandleDictionary(sourceItem, enterspeedIngestService, configuration, false, true, true);
+                _enterspeedSitecoreIngestService.HandleContentItem(sourceItem, configuration, false, true);
+                _enterspeedSitecoreIngestService.HandleRendering(sourceItem, configuration, false, true);
+                _enterspeedSitecoreIngestService.HandleDictionary(sourceItem, configuration, false, true);
             }
         }
     }

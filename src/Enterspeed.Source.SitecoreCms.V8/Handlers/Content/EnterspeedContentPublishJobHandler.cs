@@ -99,9 +99,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
             return sitecoreEntities;
         }
 
-        protected virtual void Ingest(IEnterspeedEntity umbracoData, EnterspeedJob job)
+        protected virtual void Ingest(IEnterspeedEntity enterspeedData, EnterspeedJob job)
         {
-            var ingestResponse = _enterspeedIngestService.Save(umbracoData);
+            var ingestResponse = _enterspeedIngestService.Save(enterspeedData);
             if (!ingestResponse.Success)
             {
                 var message = ingestResponse.Exception != null

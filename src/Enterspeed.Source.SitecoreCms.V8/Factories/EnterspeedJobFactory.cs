@@ -6,10 +6,10 @@ namespace Enterspeed.Source.SitecoreCms.V8.Factories
 {
     public class EnterspeedJobFactory : IEnterspeedJobFactory
     {
-        public EnterspeedJob GetPublishJob(Item content, string culture, EnterspeedContentState state)
+        public EnterspeedJob GetPublishJob(Item content, string culture, EnterspeedContentState state, EnterspeedJobEntityType? enterspeedJobEntityType = null)
         {
             var now = DateTime.UtcNow;
-            return new EnterspeedJob
+            var job = new EnterspeedJob
             {
                 EntityId = content.ID.ToString(),
                 EntityType = EnterspeedJobEntityType.Content,
@@ -20,22 +20,36 @@ namespace Enterspeed.Source.SitecoreCms.V8.Factories
                 UpdatedAt = now,
                 ContentState = state
             };
+
+            if (enterspeedJobEntityType != null)
+            {
+                job.EntityType = enterspeedJobEntityType.Value;
+            }
+
+            return job;
         }
 
-        public EnterspeedJob GetDeleteJob(Item content, string culture, EnterspeedContentState state)
+        public EnterspeedJob GetDeleteJob(Item content, string culture, EnterspeedContentState state, EnterspeedJobEntityType? enterspeedJobEntityType = null)
         {
             var now = DateTime.UtcNow;
-            return new EnterspeedJob
+            var job = new EnterspeedJob
             {
                 EntityId = content.ID.ToString(),
                 EntityType = EnterspeedJobEntityType.Content,
                 Culture = culture,
                 JobType = EnterspeedJobType.Delete,
-                State = EnterspeedJobState.Pending,  
+                State = EnterspeedJobState.Pending,
                 CreatedAt = now,
                 UpdatedAt = now,
                 ContentState = state
             };
+
+            if (enterspeedJobEntityType != null)
+            {
+                job.EntityType = enterspeedJobEntityType.Value;
+            }
+
+            return job;
         }
 
         public EnterspeedJob GetFailedJob(EnterspeedJob job, string exception)

@@ -5,8 +5,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Factories
 {
     public interface IEnterspeedJobFactory
     {
-        EnterspeedJob GetPublishJob(Item content, string culture, EnterspeedContentState state);
-        EnterspeedJob GetDeleteJob(Item content, string culture, EnterspeedContentState state);
+        EnterspeedJob GetPublishJob(Item content, string culture, EnterspeedContentState state, EnterspeedJobEntityType? enterspeedJobEntityType = null);
+        EnterspeedJob GetDeleteJob(Item content, string culture, EnterspeedContentState state, EnterspeedJobEntityType? enterspeedJobEntityType = null);
         EnterspeedJob GetFailedJob(EnterspeedJob job, string exception);
     }
 }

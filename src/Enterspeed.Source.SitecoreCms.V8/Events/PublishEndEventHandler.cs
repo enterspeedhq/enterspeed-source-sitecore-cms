@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.Http;
-using System.Threading.Tasks;
 using Enterspeed.Source.SitecoreCms.V8.Extensions;
 using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
@@ -12,7 +11,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
 {
     public class PublishEndEventHandler
     {
-        private static HttpClient client = new HttpClient();
+        private static readonly HttpClient Client = new HttpClient();
 
         public PublishEndEventHandler(
            IEnterspeedConfigurationService enterspeedConfigurationService)
@@ -57,7 +56,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                 }
 
                 // TODO: Task with no await? Any consequences to this?
-                var result = CallHookAsync(siteOfItem.PublishHookUrl);
+                //var result = CallHookAsync(siteOfItem.PublishHookUrl);
             }
         }
 
@@ -66,16 +65,16 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             return item.IsContentItem() || item.IsRenderingItem() || item.IsDictionaryItem();
         }
 
-        private static async Task<string> CallHookAsync(string path)
-        {
-            string result = null;
-            HttpResponseMessage response = await client.PostAsync(path, null);
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadAsStringAsync();
-            }
+        //private static async Task<string> CallHookAsync(string path)
+        //{
+        //    string result = null;
+        //    HttpResponseMessage response = await Client.PostAsync(path, null);
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        result = await response.Content.ReadAsStringAsync();
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
     }
 }
