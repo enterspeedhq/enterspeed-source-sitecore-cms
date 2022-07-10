@@ -6,12 +6,13 @@ using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Events
 {
-    public class BaseEventHandler
+    public class BaseEnterspeedEventHandler
     {
         private readonly IEnterspeedJobRepository _enterspeedJobRepository;
         private readonly IEnterspeedJobsHandlingService _enterspeedJobsHandlingService;
 
-        public BaseEventHandler(IEnterspeedJobRepository enterspeedJobRepository, IEnterspeedJobsHandlingService enterspeedJobsHandlingService)
+        public BaseEnterspeedEventHandler(IEnterspeedJobRepository enterspeedJobRepository,
+            IEnterspeedJobsHandlingService enterspeedJobsHandlingService)
         {
             _enterspeedJobRepository = enterspeedJobRepository;
             _enterspeedJobsHandlingService = enterspeedJobsHandlingService;

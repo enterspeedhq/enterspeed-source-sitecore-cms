@@ -55,7 +55,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Dictionaries
 
         protected virtual Item GetDictionaryItem(EnterspeedJob job)
         {
-            var isDictionaryId = Guid.TryParse(job.EntityId, out var dictionaryId);
+            var isDictionaryId = Guid.TryParse(job.EntityId, out var _);
             var dictionaryItem = isDictionaryId
                 ? GetDictionaryItem(job)
                 : null;

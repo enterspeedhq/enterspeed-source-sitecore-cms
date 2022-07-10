@@ -142,7 +142,7 @@
     <Compile Include="Data\Repositories\EnterspeedJobRepository.cs" />
     <Compile Include="Data\Repositories\IEnterspeedJobRepository.cs" />
     <Compile Include="Data\Schemas\EnterspeedJobSchema.cs" />
-    <Compile Include="Events\BaseEventHandler.cs" />
+    <Compile Include="Events\BaseEnterspeedEventHandler.cs" />
     <Compile Include="Events\PublishEndEventHandler.cs" />
     <Compile Include="Events\SaveEventHandler.cs" />
     <Compile Include="Exceptions\JobHandlingException.cs" />
@@ -156,6 +156,8 @@
     <Compile Include="Handlers\Dictionaries\EnterspeedDictionaryItemDeleteJobHandler.cs" />
     <Compile Include="Handlers\Dictionaries\EnterspeedDictionaryItemPublishJobHandler.cs" />
     <Compile Include="Handlers\IEnterspeedJobHandler.cs" />
+    <Compile Include="Handlers\PreviewContent\EnterspeedPreviewContentDeleteJobHandler.cs" />
+    <Compile Include="Handlers\PreviewContent\EnterspeedPreviewContentPublishJobHandler.cs" />
     <Compile Include="Models\Configuration\EnterspeedIDs.cs" />
     <Compile Include="Models\Configuration\EnterspeedSiteInfo.cs" />
     <Compile Include="Models\ConnectionType.cs" />
