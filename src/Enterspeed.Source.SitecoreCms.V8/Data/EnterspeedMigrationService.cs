@@ -53,13 +53,14 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                const string sql = "CREATE TABLE EnterspeedJobs ( Id int, EntityId int, JobType int, State int, Exception varchar(Max), " +
+                const string sql = "CREATE TABLE EnterspeedJobs ( Id int, Culture varchar(8), EntityId varchar(40), JobType int, State int, Exception varchar(Max), " +
                                    "CreatedAt dateTime, UpdatedAt dateTime, EntityType int, ContentState int, BuildHookUrls varchar(Max)); ";
 
                 using (var command = new SqlCommand(sql, connection))
                 {
                     command.ExecuteNonQuery();
                 }
+
                 connection.Close();
             }
         }

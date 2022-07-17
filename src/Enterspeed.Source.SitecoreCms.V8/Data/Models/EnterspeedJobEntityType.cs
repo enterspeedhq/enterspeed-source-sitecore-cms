@@ -5,5 +5,5 @@
         Content,
         Media,
         Dictionary
-    }
+    }   
 }

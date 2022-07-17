@@ -121,7 +121,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             {
                 _loggingService.Error("Something went wrong when handling rendering item: ", e);
             }
-        }
+        }   
 
         public void HandleDictionary(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished)
         {

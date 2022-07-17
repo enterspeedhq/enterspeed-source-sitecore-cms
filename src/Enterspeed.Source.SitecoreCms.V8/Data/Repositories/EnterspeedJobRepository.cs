@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Linq;
 using Enterspeed.Source.SitecoreCms.V8.Data.Models;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Configuration;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
@@ -13,10 +15,12 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
     {
         private readonly string _connectionString;
         private readonly string _schemaName = "EnterspeedJobs";
+        private readonly IEnterspeedSitecoreLoggingService _loggingService;
 
-        public EnterspeedJobRepository()
+        public EnterspeedJobRepository(IEnterspeedSitecoreLoggingService loggingService)
         {
             var connectionstringName = ConfigurationManager.AppSettings["Enterspeed.QueueSQLConnectionstringName"] ?? "Master";
+            _loggingService = loggingService;
             _connectionString = Settings.GetConnectionString(connectionstringName);
         }
 
@@ -135,22 +139,45 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
                 return;
             }
 
-            foreach (var job in jobs)
+            try
             {
-                var sql = $@"INSERT INTO Id ( EntityId, Culture, JobType, State, Exception, CreatedAt, UpdatedAt, EntityType, ContentState, BuildHookUrls) 
-                    VALUES('{job.EntityId}', '{job.Culture}', '{job.JobType}', '{job.State}', '{job.Exception}', '{job.CreatedAt}','{job.UpdatedAt}','{job.EntityType}','{job.ContentState}', '{job.BuildHookUrls}'); ";
-
-                using (var connection = new SqlConnection(_connectionString))
+                foreach (var job in jobs)
                 {
-                    connection.Open();
+                    Enum jobType = job.JobType;
+                    var jobTypeInt = Convert.ToInt32(jobType);
 
-                    using (var command = new SqlCommand(sql, connection))
+                    Enum jobState = job.State;
+                    var jobStateInt = Convert.ToInt32(jobState);
+
+                    Enum contentState = job.ContentState;
+                    var contentStateInt = Convert.ToInt32(contentState);
+
+                    Enum entityType = job.EntityType;
+                    var entityTypeInt = Convert.ToInt32(entityType);
+
+                    var createdAt = job.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss");
+                    var updatedAt = job.UpdatedAt.ToString("yyyy-MM-dd HH:mm:ss");
+
+                    var sql = $@"INSERT INTO EnterspeedJobs ( EntityId, Culture, JobType, State, Exception, CreatedAt, UpdatedAt, EntityType, ContentState, BuildHookUrls) 
+                    VALUES('{job.EntityId}', '{job.Culture}', '{jobTypeInt}', '{jobStateInt}', '{job.Exception}', '{createdAt}','{updatedAt}','{entityTypeInt}','{contentStateInt}', '{job.BuildHookUrls}'); ";
+
+                    using (var connection = new SqlConnection(_connectionString))
                     {
-                        command.ExecuteNonQuery();
-                    }
+                        connection.Open();
 
-                    connection.Close();
+                        using (var command = new SqlCommand(sql, connection))
+                        {
+                            command.ExecuteNonQuery();
+                        }
+
+                        connection.Close();
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                _loggingService.Error("Something went wrong storing jobs + ", e);
+                throw;
             }
         }
 
