@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
 using System.Linq;
 using Enterspeed.Source.SitecoreCms.V8.Data.Models;
+using Enterspeed.Source.SitecoreCms.V8.Exceptions;
 using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Configuration;
 
@@ -143,28 +143,13 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
             {
                 foreach (var job in jobs)
                 {
-                    Enum jobType = job.JobType;
-                    var jobTypeInt = Convert.ToInt32(jobType);
-
-                    Enum jobState = job.State;
-                    var jobStateInt = Convert.ToInt32(jobState);
-
-                    Enum contentState = job.ContentState;
-                    var contentStateInt = Convert.ToInt32(contentState);
-
-                    Enum entityType = job.EntityType;
-                    var entityTypeInt = Convert.ToInt32(entityType);
-
-                    var createdAt = job.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss");
-                    var updatedAt = job.UpdatedAt.ToString("yyyy-MM-dd HH:mm:ss");
-
                     var sql = $@"INSERT INTO EnterspeedJobs ( EntityId, Culture, JobType, State, Exception, CreatedAt, UpdatedAt, EntityType, ContentState, BuildHookUrls) 
-                    VALUES('{job.EntityId}', '{job.Culture}', '{jobTypeInt}', '{jobStateInt}', '{job.Exception}', '{createdAt}','{updatedAt}','{entityTypeInt}','{contentStateInt}', '{job.BuildHookUrls}'); ";
+                        VALUES('{job.EntityId}', '{job.Culture}', '{job.JobType.ToInt()}', '{job.State.ToInt()}', '{job.Exception}',
+                        '{job.CreatedAt.ToSqlDateTime()}','{job.UpdatedAt.ToSqlDateTime()}','{job.EntityType.ToInt()}','{job.ContentState.ToInt()}', '{job.BuildHookUrls}'); ";
 
                     using (var connection = new SqlConnection(_connectionString))
                     {
                         connection.Open();
-
                         using (var command = new SqlCommand(sql, connection))
                         {
                             command.ExecuteNonQuery();
@@ -206,6 +191,5 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
         {
             while (reader.Read()) yield return reader;
         }
-
     }
 }

@@ -3,6 +3,6 @@
     public enum EnterspeedJobType
     {
         Publish,
-        Delete  
+        Delete
     }
 }

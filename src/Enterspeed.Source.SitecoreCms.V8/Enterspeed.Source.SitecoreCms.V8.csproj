@@ -143,7 +143,9 @@
     <Compile Include="Data\Repositories\IEnterspeedJobRepository.cs" />
     <Compile Include="Data\Schemas\EnterspeedJobSchema.cs" />
     <Compile Include="Events\SaveEventHandler.cs" />
+    <Compile Include="Exceptions\EnumExtensions.cs" />
     <Compile Include="Exceptions\JobHandlingException.cs" />
+    <Compile Include="Exceptions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\EnterspeedConfigurationExtensions.cs" />
     <Compile Include="Extensions\ItemExtensions.cs" />
     <Compile Include="Factories\EnterspeedJobFactory.cs" />
