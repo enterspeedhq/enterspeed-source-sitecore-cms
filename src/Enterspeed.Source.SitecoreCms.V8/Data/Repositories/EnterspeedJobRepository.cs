@@ -132,37 +132,37 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
             return result;
         }
 
-        public void Save(IList<EnterspeedJob> jobs)
+        public void Save(EnterspeedJob job)
         {
-            if (jobs == null || !jobs.Any())
-            {
-                return;
-            }
-
             try
             {
-                foreach (var job in jobs)
-                {
-                    var sql = $@"INSERT INTO EnterspeedJobs ( EntityId, Culture, JobType, State, Exception, CreatedAt, UpdatedAt, EntityType, ContentState, BuildHookUrls) 
+                var sql = $@"INSERT INTO EnterspeedJobs ( EntityId, Culture, JobType, State, Exception, CreatedAt, UpdatedAt, EntityType, ContentState, BuildHookUrls) 
                         VALUES('{job.EntityId}', '{job.Culture}', '{job.JobType.ToInt()}', '{job.State.ToInt()}', '{job.Exception}',
                         '{job.CreatedAt.ToSqlDateTime()}','{job.UpdatedAt.ToSqlDateTime()}','{job.EntityType.ToInt()}','{job.ContentState.ToInt()}', '{job.BuildHookUrls}'); ";
 
-                    using (var connection = new SqlConnection(_connectionString))
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    connection.Open();
+                    using (var command = new SqlCommand(sql, connection))
                     {
-                        connection.Open();
-                        using (var command = new SqlCommand(sql, connection))
-                        {
-                            command.ExecuteNonQuery();
-                        }
-
-                        connection.Close();
+                        command.ExecuteNonQuery();
                     }
+
+                    connection.Close();
                 }
             }
             catch (Exception e)
             {
                 _loggingService.Error("Something went wrong storing jobs + ", e);
                 throw;
+            }
+        }
+
+        public void Save(IList<EnterspeedJob> jobs)
+        {
+            foreach (var job in jobs)
+            {
+                Save(job);
             }
         }
 

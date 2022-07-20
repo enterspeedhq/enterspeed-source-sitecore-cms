@@ -22,7 +22,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
         private readonly IEntityModelMapper<Item, SitecoreContentEntity> _sitecoreContentEntityModelMapper;
         private readonly IEnterspeedJobFactory _enterspeedJobFactory;
         private readonly IEnterspeedJobRepository _enterspeedJobRepository;
-        public readonly List<EnterspeedJob> Jobs = new List<EnterspeedJob>();
 
         public EnterspeedSitecoreJobSeederService(
             BaseLinkStrategyFactory linkStrategyFactory,
@@ -56,6 +55,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 if (!item.IsContentItem())
                 {
                     return;
+
                 }
 
                 var siteOfItem = configuration.GetSite(item);
@@ -73,16 +73,14 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 if (itemIsDeleted)
                 {
                     var job = _enterspeedJobFactory.GetDeleteJob(item, item.Language.Name, EnterspeedContentState.Publish, publishHookUrls: configuration.SiteInfos.Select(s => s.PublishHookUrl));
-                    Jobs.Add(job);
+                    EnqueueJob(job);
                 }
 
                 if (itemIsPublished)
                 {
                     var job = _enterspeedJobFactory.GetPublishJob(item, item.Language.Name, EnterspeedContentState.Publish, publishHookUrls: configuration.SiteInfos.Select(s => s.PublishHookUrl));
-                    Jobs.Add(job);
+                    EnqueueJob(job);
                 }
-
-                EnqueueJobs(Jobs);
             }
             catch (Exception e)
             {
@@ -107,21 +105,19 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 if (itemIsDeleted)
                 {
                     var job = _enterspeedJobFactory.GetDeleteJob(item, item.Language.Name, EnterspeedContentState.Publish, publishHookUrls: configuration.SiteInfos.Select(s => s.PublishHookUrl));
-                    Jobs.Add(job);
+                    EnqueueJob(job);
                 }
                 else if (itemIsPublished)
                 {
                     var job = _enterspeedJobFactory.GetPublishJob(item, item.Language.Name, EnterspeedContentState.Publish, publishHookUrls: configuration.SiteInfos.Select(s => s.PublishHookUrl));
-                    Jobs.Add(job);
+                    EnqueueJob(job);
                 }
-
-                EnqueueJobs(Jobs);
             }
             catch (Exception e)
             {
                 _loggingService.Error("Something went wrong when handling rendering item: ", e);
             }
-        }   
+        }
 
         public void HandleDictionary(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished)
         {
@@ -136,19 +132,19 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 return;
             }
 
+
             if (itemIsDeleted)
             {
                 var job = _enterspeedJobFactory.GetDeleteJob(item, item.Language.Name, EnterspeedContentState.Publish, EnterspeedJobEntityType.Dictionary, configuration.SiteInfos.Select(s => s.PublishHookUrl));
-                Jobs.Add(job);
+                EnqueueJob(job);
             }
 
             if (itemIsPublished)
             {
                 var job = _enterspeedJobFactory.GetPublishJob(item, item.Language.Name, EnterspeedContentState.Publish, EnterspeedJobEntityType.Dictionary, configuration.SiteInfos.Select(s => s.PublishHookUrl));
-                Jobs.Add(job);
+                EnqueueJob(job);
             }
 
-            EnqueueJobs(Jobs);
         }
 
         private bool IsItemReferencedFromEnabledContent(Item item, EnterspeedSitecoreConfiguration configuration)
@@ -187,14 +183,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             return item.IsRenderingItem() && renderingItem.InnerItem != null;
         }
 
-        private void EnqueueJobs(IList<EnterspeedJob> jobs)
+        private void EnqueueJob(EnterspeedJob job)
         {
-            if (!jobs.Any())
-            {
-                return;
-            }
-
-            _enterspeedJobRepository.Save(jobs);
+            _enterspeedJobRepository.Save(job);
         }
     }
 }

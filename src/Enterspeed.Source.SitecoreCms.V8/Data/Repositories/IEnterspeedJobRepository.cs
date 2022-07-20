@@ -8,6 +8,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
         IList<EnterspeedJob> GetFailedJobs();
         IList<EnterspeedJob> GetPendingJobs(int count);
         IList<EnterspeedJob> GetOldProcessingTasks(int olderThanMinutes = 60);
+        void Save(EnterspeedJob jobs);
         void Save(IList<EnterspeedJob> jobs);
         void Delete(IList<int> ids);
         IList<EnterspeedJob> GetFailedJobs(List<string> entityIds);

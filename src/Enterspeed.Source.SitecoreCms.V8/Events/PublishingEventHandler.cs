@@ -17,7 +17,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
 
         public PublishingEventHandler(
             BaseItemManager itemManager,
-            IEnterspeedConfigurationService enterspeedConfigurationService, 
+            IEnterspeedConfigurationService enterspeedConfigurationService,
             IEnterspeedSitecoreJobSeederService enterspeedSitecoreJobSeederService)
         {
             _itemManager = itemManager;
