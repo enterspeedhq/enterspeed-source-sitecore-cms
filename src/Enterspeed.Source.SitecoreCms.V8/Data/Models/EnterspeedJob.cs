@@ -36,12 +36,11 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Models
         {
             var contentStateParsed = Enum.TryParse(record["ContentState"].ToString(), out EnterspeedContentState contentState);
             var jobTypeParsed = Enum.TryParse(record["JobType"].ToString(), out EnterspeedJobType jobType);
-            var jobStateParsed = Enum.TryParse(record["State"].ToString(), out EnterspeedJobState jobState);
+            var jobStateParsed = Enum.TryParse(record["State"].ToString(), out EnterspeedJobState state);
             var entityTypeParsed = Enum.TryParse(record["EntityType"].ToString(), out EnterspeedJobEntityType entityType);
 
             var enterspeedJob = new EnterspeedJob()
             {
-                Id = int.Parse(record["Id"].ToString()),
                 EntityId = record["EntityId"].ToString(),
                 Culture = record["Culture"].ToString(),
                 CreatedAt = DateTime.Parse(record["CreatedAt"].ToString()),
@@ -62,7 +61,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Models
 
             if (jobStateParsed)
             {
-                enterspeedJob.State = jobState;
+                enterspeedJob.State = state;
             }
 
             if (entityTypeParsed)
