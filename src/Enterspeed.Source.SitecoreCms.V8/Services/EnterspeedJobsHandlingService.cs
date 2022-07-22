@@ -13,7 +13,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
         private readonly IEnterspeedJobsHandler _enterspeedJobsHandler;
         private readonly IEnterspeedSitecoreLoggingService _enterspeedSitecoreLoggingService;
 
-        public EnterspeedJobsHandlingService(IEnterspeedSitecoreLoggingService enterspeedSitecoreLoggingService, IEnterspeedJobsHandler enterspeedJobsHandler, IEnterspeedJobRepository enterspeedJobRepository)
+        public EnterspeedJobsHandlingService(IEnterspeedSitecoreLoggingService enterspeedSitecoreLoggingService,
+            IEnterspeedJobsHandler enterspeedJobsHandler,
+            IEnterspeedJobRepository enterspeedJobRepository)
         {
             _enterspeedSitecoreLoggingService = enterspeedSitecoreLoggingService;
             _enterspeedJobsHandler = enterspeedJobsHandler;

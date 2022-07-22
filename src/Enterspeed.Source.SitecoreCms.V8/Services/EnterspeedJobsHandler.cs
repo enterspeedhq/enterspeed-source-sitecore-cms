@@ -79,8 +79,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                     failedJobs.Add(_enterspeedJobFactory.GetFailedJob(newestJob, message));
                     _loggingService.Warn(message);
                 }
-
-               
             }
 
             if (buildHookUrls.Any())

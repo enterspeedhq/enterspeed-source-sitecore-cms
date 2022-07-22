@@ -104,12 +104,12 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
                 if (itemIsDeleted)
                 {
-                    var job = _enterspeedJobFactory.GetDeleteJob(item, item.Language.Name, EnterspeedContentState.Publish, publishHookUrls: configuration.SiteInfos.Select(s => s.PublishHookUrl));
+                    var job = _enterspeedJobFactory.GetDeleteJob(item, item.Language.Name, EnterspeedContentState.Publish, EnterspeedJobEntityType.Rendering, configuration.SiteInfos.Select(s => s.PublishHookUrl));
                     EnqueueJob(job);
                 }
                 else if (itemIsPublished)
                 {
-                    var job = _enterspeedJobFactory.GetPublishJob(item, item.Language.Name, EnterspeedContentState.Publish, publishHookUrls: configuration.SiteInfos.Select(s => s.PublishHookUrl));
+                    var job = _enterspeedJobFactory.GetPublishJob(item, item.Language.Name, EnterspeedContentState.Publish, EnterspeedJobEntityType.Rendering, configuration.SiteInfos.Select(s => s.PublishHookUrl));
                     EnqueueJob(job);
                 }
             }

@@ -130,6 +130,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Agents\EnterspeedQueueAgent.cs" />
     <Compile Include="App_Start\EnterspeedStart.cs" />
     <Compile Include="Controllers\EnterspeedController.cs" />
     <Compile Include="Data\EnterspeedMigrationService.cs" />

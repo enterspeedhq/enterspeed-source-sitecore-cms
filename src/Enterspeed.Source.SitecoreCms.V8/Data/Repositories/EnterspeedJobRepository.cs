@@ -78,7 +78,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
             return result;
         }
 
-        public IList<EnterspeedJob> GetPendingJobs(int count)
+        public IList<EnterspeedJob> GetPendingJobs(int count = 60)
         {
             var result = new List<EnterspeedJob>();
             using (var connection = new SqlConnection(_connectionString))

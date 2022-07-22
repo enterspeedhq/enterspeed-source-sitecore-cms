@@ -4,6 +4,7 @@
     {
         Content,
         Media,
-        Dictionary
-    }   
+        Dictionary,
+        Rendering
+    }
 }

@@ -6,7 +6,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
     public interface IEnterspeedJobRepository
     {
         IList<EnterspeedJob> GetFailedJobs();
-        IList<EnterspeedJob> GetPendingJobs(int count);
+        IList<EnterspeedJob> GetPendingJobs(int count = 60);
         IList<EnterspeedJob> GetOldProcessingTasks(int olderThanMinutes = 60);
         void Save(EnterspeedJob jobs);
         void Save(IList<EnterspeedJob> jobs);
