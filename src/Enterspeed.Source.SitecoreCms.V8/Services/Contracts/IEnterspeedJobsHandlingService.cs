@@ -6,5 +6,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services.Contracts
     public interface IEnterspeedJobsHandlingService
     {
         void HandleJobs(IList<EnterspeedJob> jobs);
+        void HandlePendingJobs(int batchSize);
     }
 }
