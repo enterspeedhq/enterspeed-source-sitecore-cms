@@ -11,6 +11,7 @@ using Enterspeed.Source.SitecoreCms.V8.Handlers;
 using Enterspeed.Source.SitecoreCms.V8.Handlers.Content;
 using Enterspeed.Source.SitecoreCms.V8.Handlers.Dictionaries;
 using Enterspeed.Source.SitecoreCms.V8.Handlers.PreviewContent;
+using Enterspeed.Source.SitecoreCms.V8.Handlers.Rendering;
 using Enterspeed.Source.SitecoreCms.V8.Models;
 using Enterspeed.Source.SitecoreCms.V8.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V8.Providers;
@@ -64,10 +65,12 @@ namespace Enterspeed.Source.SitecoreCms.V8.DependencyInjection
             services.AddTransient<IEnterspeedJobsHandlingService, EnterspeedJobsHandlingService>();
             services.AddTransient<IEnterspeedJobRepository, EnterspeedJobRepository>();
             services.AddTransient<IEnterspeedJobFactory, EnterspeedJobFactory>();
-            services.AddTransient<IEnterspeedJobsHandler, EnterspeedJobsHandler>();
             services.AddTransient<IEnterspeedGuardService, EnterspeedGuardService>();
 
             // Job handlers
+            services.AddTransient<IEnterspeedJobsHandler, EnterspeedJobsHandler>();
+            services.AddTransient<IEnterspeedJobHandler, EnterspeedRenderingDeleteJobHandler>();
+            services.AddTransient<IEnterspeedJobHandler, EnterspeedRenderingPublishJobHandler>();
             services.AddTransient<IEnterspeedJobHandler, EnterspeedContentDeleteJobHandler>();
             services.AddTransient<IEnterspeedJobHandler, EnterspeedContentPublishJobHandler>();
             services.AddTransient<IEnterspeedJobHandler, EnterspeedPreviewContentDeleteJobHandler>();
