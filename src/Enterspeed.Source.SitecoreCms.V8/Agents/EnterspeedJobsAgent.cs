@@ -4,12 +4,12 @@ using Sitecore.Tasks;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Agents
 {
-    public class EnterspeedQueueAgent : BaseAgent
+    public class EnterspeedJobsAgent : BaseAgent
     {
         private readonly IEnterspeedJobsHandlingService _enterspeedJobsHandlingService;
         private readonly IEnterspeedSitecoreLoggingService _loggingService;
 
-        public EnterspeedQueueAgent(IEnterspeedJobsHandlingService enterspeedJobsHandlingService,
+        public EnterspeedJobsAgent(IEnterspeedJobsHandlingService enterspeedJobsHandlingService,
             IEnterspeedSitecoreLoggingService loggingService)
         {
             _enterspeedJobsHandlingService = enterspeedJobsHandlingService;

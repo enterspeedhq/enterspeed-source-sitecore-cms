@@ -25,20 +25,15 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
         public virtual void HandlePendingJobs(int batchSize)
         {
-            int jobCount;
-            do
+            var jobs = _enterspeedJobRepository.GetPendingJobs(batchSize).ToList();
+            try
             {
-                var jobs = _enterspeedJobRepository.GetPendingJobs(batchSize).ToList();
-                jobCount = jobs.Count;
-                try
-                {
-                    HandleJobs(jobs);
-                }
-                catch (Exception e)
-                {
-                    _enterspeedSitecoreLoggingService.Error("Error has happened", e);
-                }
-            } while (jobCount > 0);
+                HandleJobs(jobs);
+            }
+            catch (Exception e)
+            {
+                _enterspeedSitecoreLoggingService.Error("Error has happened", e);
+            }
         }
 
         public virtual void HandleJobs(IList<EnterspeedJob> jobs)
@@ -57,13 +52,13 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 job.UpdatedAt = DateTime.UtcNow;
             }
 
-            _enterspeedJobRepository.Save(jobs);
+            _enterspeedJobRepository.Update(jobs);
             _enterspeedJobsHandler.HandleJobs(jobs);
         }
 
         public virtual void InvalidateOldProcessingJobs()
         {
-            var oldJobs = _enterspeedJobRepository.GetOldProcessingTasks().ToList();
+            var oldJobs = _enterspeedJobRepository.GetOldProcessingTasks(1).ToList();
             if (oldJobs.Any())
             {
                 foreach (var job in oldJobs)
@@ -73,7 +68,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                     job.UpdatedAt = DateTime.UtcNow;
                 }
 
-                _enterspeedJobRepository.Save(oldJobs);
+                _enterspeedJobRepository.Update(oldJobs);
             }
         }
     }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Enterspeed.Source.SitecoreCms.V8.Data.Models;
 using Enterspeed.Source.SitecoreCms.V8.Data.Repositories;
@@ -185,7 +184,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
         private void EnqueueJob(EnterspeedJob job)
         {
-            _enterspeedJobRepository.Save(job);
+            _enterspeedJobRepository.Create(job);
         }
     }
 }

@@ -7,7 +7,10 @@ using Enterspeed.Source.SitecoreCms.V8.Exceptions;
 using Enterspeed.Source.SitecoreCms.V8.Models;
 using Enterspeed.Source.SitecoreCms.V8.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
+using Sitecore.Abstractions;
+using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Globalization;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Dictionaries
 {
@@ -17,18 +20,20 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Dictionaries
         private readonly IEnterspeedGuardService _enterspeedGuardService;
         private readonly IEntityModelMapper<Item, SitecoreDictionaryEntity> _sitecoreDictionaryEntityModelMapper;
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
+        private readonly BaseItemManager _itemManager;
 
 
         public EnterspeedDictionaryItemPublishJobHandler(
             IEnterspeedIngestService enterspeedIngestService,
             IEnterspeedGuardService enterspeedGuardService,
             IEntityModelMapper<Item, SitecoreDictionaryEntity> sitecoreDictionaryEntityModelMapper,
-            IEnterspeedConfigurationService enterspeedConfigurationService)
+            IEnterspeedConfigurationService enterspeedConfigurationService, BaseItemManager itemManager)
         {
             _enterspeedIngestService = enterspeedIngestService;
             _enterspeedGuardService = enterspeedGuardService;
             _sitecoreDictionaryEntityModelMapper = sitecoreDictionaryEntityModelMapper;
             _enterspeedConfigurationService = enterspeedConfigurationService;
+            _itemManager = itemManager;
         }
 
         public bool CanHandle(EnterspeedJob job)
@@ -55,9 +60,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Dictionaries
 
         protected virtual Item GetDictionaryItem(EnterspeedJob job)
         {
-            var isDictionaryId = Guid.TryParse(job.EntityId, out var _);
-            var dictionaryItem = isDictionaryId
-                ? GetDictionaryItem(job)
+            var isDictionaryId = ID.TryParse(job.EntityId, out var itemId);
+            var dictionaryItem = isDictionaryId ? _itemManager.GetItem(itemId, Language.Parse(job.Culture), Sitecore.Data.Version.Latest, Database.GetDatabase("master"))
                 : null;
 
             if (dictionaryItem == null)

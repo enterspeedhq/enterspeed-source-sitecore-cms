@@ -60,11 +60,12 @@ namespace Enterspeed.Source.SitecoreCms.V8.DependencyInjection
 
         private static void RegisterQueueImplementations(IServiceCollection services)
         {
-            // Queue implementation
             services.AddTransient<IEnterspeedMigrationService, EnterspeedMigrationService>();
             services.AddTransient<IEnterspeedJobsHandlingService, EnterspeedJobsHandlingService>();
             services.AddTransient<IEnterspeedJobRepository, EnterspeedJobRepository>();
             services.AddTransient<IEnterspeedJobFactory, EnterspeedJobFactory>();
+            services.AddTransient<IEnterspeedJobsHandler, EnterspeedJobsHandler>();
+            services.AddTransient<IEnterspeedGuardService, EnterspeedGuardService>();
 
             // Job handlers
             services.AddTransient<IEnterspeedJobHandler, EnterspeedContentDeleteJobHandler>();

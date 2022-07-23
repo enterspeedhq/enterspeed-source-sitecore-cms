@@ -1,35 +1,19 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Enterspeed.Source.SitecoreCms.V8.Guards;
-using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
+﻿using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Data.Items;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Services
 {
     public class EnterspeedGuardService : IEnterspeedGuardService
     {
-        private readonly IEnterspeedSitecoreLoggingService _loggingService;
-        private readonly List<IEnterspeedItemHandlingGuard> _itemHandlingGuards;
-
-        public EnterspeedGuardService(
-            IEnterspeedSitecoreLoggingService loggingService,
-            List<IEnterspeedItemHandlingGuard> itemHandlingGuards)
+        public EnterspeedGuardService()
         {
-            _loggingService = loggingService;
-            _itemHandlingGuards = itemHandlingGuards;
+
         }
 
         //TODO: Implement guards
         public bool CanIngest(Item item, string culture)
         {
-            var blockingGuard = _itemHandlingGuards.FirstOrDefault(guard => !guard.CanIngest(item, culture));
-            if (blockingGuard == null)
-            {
-                return true;
-            }
-
-            _loggingService.Debug($@"Item {item.ID} with {culture} culture, ingest avoided by '{blockingGuard.GetType().Name}'.");
-            return false;
+            return true;
         }
     }
 }

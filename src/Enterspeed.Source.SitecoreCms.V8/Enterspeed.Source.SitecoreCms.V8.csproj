@@ -130,7 +130,8 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Agents\EnterspeedQueueAgent.cs" />
+    <Compile Include="Agents\InvalidateEnterspeedJobsAgent.cs" />
+    <Compile Include="Agents\EnterspeedJobsAgent.cs" />
     <Compile Include="App_Start\EnterspeedStart.cs" />
     <Compile Include="Controllers\EnterspeedController.cs" />
     <Compile Include="Data\EnterspeedMigrationService.cs" />
@@ -144,7 +145,6 @@
     <Compile Include="Data\Repositories\IEnterspeedJobRepository.cs" />
     <Compile Include="Data\Schemas\EnterspeedJobSchema.cs" />
     <Compile Include="Events\SaveEventHandler.cs" />
-    <Compile Include="Exceptions\EnumExtensions.cs" />
     <Compile Include="Exceptions\JobHandlingException.cs" />
     <Compile Include="Exceptions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\EnterspeedConfigurationExtensions.cs" />
@@ -152,6 +152,8 @@
     <Compile Include="Factories\EnterspeedJobFactory.cs" />
     <Compile Include="Factories\IEnterspeedJobFactory.cs" />
     <Compile Include="Guards\IEnterspeedItemHandlingGuard.cs" />
+    <Compile Include="Handlers\Rendering\EnterspeedRenderingDeleteJobHandler.cs" />
+    <Compile Include="Handlers\Rendering\EnterspeedRenderingPublishJobHandler.cs" />
     <Compile Include="Handlers\Content\EnterspeedContentDeleteJobHandler.cs" />
     <Compile Include="Handlers\Content\EnterspeedContentPublishJobHandler.cs" />
     <Compile Include="Handlers\Dictionaries\EnterspeedDictionaryItemDeleteJobHandler.cs" />

@@ -12,9 +12,9 @@ using Sitecore.Data;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
 
-namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
+namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Rendering
 {
-    public class EnterspeedContentPublishJobHandler : IEnterspeedJobHandler
+    public class EnterspeedRenderingPublishJobHandler : IEnterspeedJobHandler
     {
         private readonly IEntityModelMapper<Item, SitecoreContentEntity> _sitecoreContentEntityModelMapper;
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
@@ -22,7 +22,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
         private readonly IEnterspeedGuardService _enterspeedGuardService;
         private readonly BaseItemManager _itemManager;
 
-        public EnterspeedContentPublishJobHandler(
+        public EnterspeedRenderingPublishJobHandler(
             IEntityModelMapper<Item, SitecoreContentEntity> sitecoreContentEntityModelMapper,
             IEnterspeedConfigurationService enterspeedConfigurationService,
             BaseItemManager itemManager,
@@ -38,7 +38,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
 
         public virtual bool CanHandle(EnterspeedJob job)
         {
-            return job.EntityType == EnterspeedJobEntityType.Content
+            return job.EntityType == EnterspeedJobEntityType.Rendering
                    && job.JobType == EnterspeedJobType.Publish
                    && job.ContentState == EnterspeedContentState.Publish;
         }

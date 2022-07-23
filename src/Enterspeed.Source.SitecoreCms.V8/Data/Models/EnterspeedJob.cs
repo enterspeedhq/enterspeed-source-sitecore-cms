@@ -41,6 +41,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Models
 
             var enterspeedJob = new EnterspeedJob()
             {
+                Id = int.Parse(record["Id"].ToString()),
                 EntityId = record["EntityId"].ToString(),
                 Culture = record["Culture"].ToString(),
                 CreatedAt = DateTime.Parse(record["CreatedAt"].ToString()),

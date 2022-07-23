@@ -7,5 +7,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services.Contracts
     {
         void HandleJobs(IList<EnterspeedJob> jobs);
         void HandlePendingJobs(int batchSize);
+        void InvalidateOldProcessingJobs();
     }
 }

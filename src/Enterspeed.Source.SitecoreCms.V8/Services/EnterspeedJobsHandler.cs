@@ -8,6 +8,7 @@ using Enterspeed.Source.SitecoreCms.V8.Data.Repositories;
 using Enterspeed.Source.SitecoreCms.V8.Factories;
 using Enterspeed.Source.SitecoreCms.V8.Handlers;
 using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Services
 {
@@ -16,19 +17,23 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
         private readonly IEnterspeedJobRepository _enterspeedJobRepository;
         private readonly IEnterspeedSitecoreLoggingService _loggingService;
         private readonly IEnterspeedJobFactory _enterspeedJobFactory;
-        private readonly List<IEnterspeedJobHandler> _jobHandlers;
+        private readonly IEnumerable<IEnterspeedJobHandler> _enterspeedJobHandlers;
         private readonly HttpClient _client = new HttpClient();
 
         public EnterspeedJobsHandler(
             IEnterspeedJobFactory enterspeedJobFactory,
             IEnterspeedSitecoreLoggingService loggingService,
             IEnterspeedJobRepository enterspeedJobRepository,
-            List<IEnterspeedJobHandler> jobHandlers)
+            IServiceProvider serviceProvider)
         {
             _enterspeedJobFactory = enterspeedJobFactory;
             _loggingService = loggingService;
             _enterspeedJobRepository = enterspeedJobRepository;
-            _jobHandlers = jobHandlers;
+
+            if (serviceProvider != null)
+            {
+                _enterspeedJobHandlers = serviceProvider.GetServices<IEnterspeedJobHandler>();
+            }
         }
 
         public void HandleJobs(IList<EnterspeedJob> jobs)
@@ -40,7 +45,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             // Fetch all failed jobs for these content ids. We need to do this to delete the failed jobs if they no longer fails
             var failedJobsToHandle = _enterspeedJobRepository.GetFailedJobs(jobs.Select(x => x.EntityId).Distinct().ToList());
             var jobsByEntityIdAndContentState = jobs.GroupBy(x => new { x.EntityId, x.ContentState, x.Culture });
-          
+
             // Creating a list for hooks that we have to call after data has been ingested.
             var buildHookUrls = new List<string>();
 
@@ -59,7 +64,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 // Get the failed jobs and add it to the batch of jobs that needs to be handled, so we can delete them afterwards
                 failedJobsToDelete.AddRange(failedJobsToHandle.Where(x => x.EntityId == jobInfo.Key.EntityId && x.Culture == jobInfo.Key.Culture && x.ContentState == jobInfo.Key.ContentState));
 
-                var handler = _jobHandlers.FirstOrDefault(f => f.CanHandle(newestJob));
+                var handler = _enterspeedJobHandlers.FirstOrDefault(f => f.CanHandle(newestJob));
                 if (handler == null)
                 {
                     var message = $"No job handler available for {newestJob.EntityId} {newestJob.EntityType}";
@@ -74,7 +79,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                     buildHookUrls.AddRange(newestJob.BuildHookUrls.Split(','));
                 }
                 catch (Exception exception)
-                {
+                {   
                     var message = exception?.Message ?? "Failed to handle the job";
                     failedJobs.Add(_enterspeedJobFactory.GetFailedJob(newestJob, message));
                     _loggingService.Warn(message);
@@ -89,8 +94,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 }
             }
 
-            // Save all jobs that failed
-            _enterspeedJobRepository.Save(failedJobs);
+            // Create all jobs that failed
+            _enterspeedJobRepository.Create(failedJobs);
 
             // Delete all jobs - Note, that it's safe to delete all jobs because failed jobs will be created as a new job
             _enterspeedJobRepository.Delete(jobs.Select(x => x.Id).Concat(failedJobsToDelete.Select(x => x.Id)).ToList());
