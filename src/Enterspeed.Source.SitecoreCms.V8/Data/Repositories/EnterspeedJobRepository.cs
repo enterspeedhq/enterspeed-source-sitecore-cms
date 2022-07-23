@@ -35,12 +35,10 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
                 using (var command = new SqlCommand(sql, connection))
                 {
                     var reader = command.ExecuteReader();
-                    while (reader.Read())
+
+                    foreach (var record in GetFromReader(reader))
                     {
-                        foreach (var record in GetFromReader(reader))
-                        {
-                            result.Add(EnterspeedJob.Map(record));
-                        }
+                        result.Add(EnterspeedJob.Map(record));
                     }
 
                     reader.Dispose();
@@ -65,13 +63,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
                 using (var command = new SqlCommand(sql, connection))
                 {
                     var reader = command.ExecuteReader();
-
-                    while (reader.Read())
+                    foreach (var record in GetFromReader(reader))
                     {
-                        foreach (var record in GetFromReader(reader))
-                        {
-                            result.Add(EnterspeedJob.Map(record));
-                        }
+                        result.Add(EnterspeedJob.Map(record));
                     }
 
                     reader.Dispose();
@@ -96,12 +90,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
                 using (var command = new SqlCommand(sql, connection))
                 {
                     var reader = command.ExecuteReader();
-                    while (reader.Read())
+                    foreach (var record in GetFromReader(reader))
                     {
-                        foreach (var record in GetFromReader(reader))
-                        {
-                            result.Add(EnterspeedJob.Map(record));
-                        }
+                        result.Add(EnterspeedJob.Map(record));
                     }
 
                     reader.Dispose();
@@ -128,23 +119,22 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
                 using (var command = new SqlCommand(sql, connection))
                 {
                     var reader = command.ExecuteReader();
-                    while (reader.Read())
                     {
                         foreach (var record in GetFromReader(reader))
                         {
                             result.Add(EnterspeedJob.Map(record));
                         }
+
+                        reader.Dispose();
+                        command.Dispose();
                     }
 
-                    reader.Dispose();
-                    command.Dispose();
+                    connection.Close();
+                    connection.Dispose();
                 }
 
-                connection.Close();
-                connection.Dispose();
+                return result;
             }
-
-            return result;
         }
 
         public void Create(EnterspeedJob job)
