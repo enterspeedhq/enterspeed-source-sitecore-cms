@@ -60,30 +60,18 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
 
                 // Handling if the item was deleted or unpublished
                 var itemIsDeleted = context.Action == PublishAction.DeleteTargetItem;
-
                 if (itemIsDeleted)
                 {
                     _enterspeedSitecoreJobSeederService.HandleContentItem(sourceItem, configuration, true, false);
                     _enterspeedSitecoreJobSeederService.HandleRendering(sourceItem, configuration, true, false);
                     _enterspeedSitecoreJobSeederService.HandleDictionary(sourceItem, configuration, true, false);
-                    continue;
                 }
-
-                // Handling if the item was published
-                var targetItem = _itemManager.GetItem(context.ItemId, language, Version.Latest, context.PublishHelper.Options.TargetDatabase);
-                if (targetItem == null || targetItem.Versions.Count == 0)
+                else
                 {
-                    continue;
+                    _enterspeedSitecoreJobSeederService.HandleContentItem(sourceItem, configuration, false, true);
+                    _enterspeedSitecoreJobSeederService.HandleRendering(sourceItem, configuration, false, true);
+                    _enterspeedSitecoreJobSeederService.HandleDictionary(sourceItem, configuration, false, true);
                 }
-
-                if (!HasAllowedPath(targetItem))
-                {
-                    continue;
-                }
-
-                _enterspeedSitecoreJobSeederService.HandleContentItem(sourceItem, configuration, false, true);
-                _enterspeedSitecoreJobSeederService.HandleRendering(sourceItem, configuration, false, true);
-                _enterspeedSitecoreJobSeederService.HandleDictionary(sourceItem, configuration, false, true);
             }
         }
 
