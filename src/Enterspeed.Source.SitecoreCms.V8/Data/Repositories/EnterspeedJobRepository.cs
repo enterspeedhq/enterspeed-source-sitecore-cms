@@ -31,7 +31,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
             {
                 connection.Open();
 
-                var sql = $@"SELECT * FROM {_schemaName} WHERE State = {EnterspeedJobState.Failed.GetHashCode()} ORDER BY CreatedAt DESC";
+                var sql = $"SELECT * FROM {_schemaName} WHERE State = {EnterspeedJobState.Failed.GetHashCode()} ORDER BY CreatedAt DESC";
                 using (var command = new SqlCommand(sql, connection))
                 {
                     var reader = command.ExecuteReader();
@@ -59,7 +59,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
             {
                 connection.Open();
 
-                var sql = $@"SELECT * FROM {_schemaName} WHERE State = {EnterspeedJobState.Failed.GetHashCode()} ORDER BY CreatedAt DESC";
+                var sql = $"SELECT * FROM {_schemaName} WHERE State = {EnterspeedJobState.Failed.GetHashCode()} ORDER BY CreatedAt DESC";
                 using (var command = new SqlCommand(sql, connection))
                 {
                     var reader = command.ExecuteReader();
@@ -86,7 +86,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
             {
                 connection.Open();
 
-                var sql = $@"SELECT TOP {count} * FROM {_schemaName} WHERE State = {EnterspeedJobState.Pending.GetHashCode()} ORDER BY CreatedAt DESC";
+                var sql = $"SELECT TOP {count} * FROM {_schemaName} WHERE State = {EnterspeedJobState.Pending.GetHashCode()} ORDER BY CreatedAt DESC";
                 using (var command = new SqlCommand(sql, connection))
                 {
                     var reader = command.ExecuteReader();
@@ -115,7 +115,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
             {
                 connection.Open();
 
-                var sql = $@"SELECT * FROM {_schemaName} WHERE (State = {EnterspeedJobState.Processing.GetHashCode()} OR State = {EnterspeedJobState.Pending.GetHashCode()}) AND UpdatedAt <= '{dateThreshhold}'";
+                var sql = $"SELECT * FROM {_schemaName} WHERE (State = {EnterspeedJobState.Processing.GetHashCode()} OR State = {EnterspeedJobState.Pending.GetHashCode()}) " +
+                         $"AND UpdatedAt <= '{dateThreshhold}'";
                 using (var command = new SqlCommand(sql, connection))
                 {
                     var reader = command.ExecuteReader();
@@ -141,9 +142,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
         {
             try
             {
-                var sql = $@"INSERT INTO {_schemaName} (EntityId, Culture, JobType, State, Exception, CreatedAt, UpdatedAt, EntityType, ContentState, BuildHookUrls) 
-                        VALUES('{job.EntityId}', '{job.Culture}', '{job.JobType.GetHashCode()}', '{job.State.GetHashCode()}', '{job.Exception}',
-                        '{job.CreatedAt.ToSqlDateTime()}','{job.UpdatedAt.ToSqlDateTime()}','{job.EntityType.GetHashCode()}','{job.ContentState.GetHashCode()}', '{job.BuildHookUrls}'); ";
+                var sql = $@"INSERT INTO {_schemaName} (EntityId, Culture, JobType, State, Exception, CreatedAt, UpdatedAt, EntityType, ContentState, BuildHookUrls) " +
+                        $"VALUES('{job.EntityId}', '{job.Culture}', '{job.JobType.GetHashCode()}', '{job.State.GetHashCode()}', '{job.Exception}', " +
+                        $"'{job.CreatedAt.ToSqlDateTime()}','{job.UpdatedAt.ToSqlDateTime()}','{job.EntityType.GetHashCode()}','{job.ContentState.GetHashCode()}', '{job.BuildHookUrls}'); ";
 
                 using (var connection = new SqlConnection(_connectionString))
                 {
@@ -176,9 +177,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
         {
             try
             {
-                var sql = $@"UPDATE {_schemaName} SET EntityId = '{job.EntityId}', Culture = '{job.Culture}', JobType = {job.JobType.GetHashCode()}, State = {job.State.GetHashCode()}, 
-                        Exception = '{job.Exception}', CreatedAt = '{job.CreatedAt.ToSqlDateTime()}', UpdatedAt = '{job.UpdatedAt.ToSqlDateTime()}', EntityType = {job.EntityType.GetHashCode()}, 
-                        ContentState = {job.ContentState.GetHashCode()}, BuildHookUrls = '{job.BuildHookUrls}' WHERE Id = {job.Id}";
+                var sql = $"UPDATE {_schemaName} SET EntityId = '{job.EntityId}', Culture = '{job.Culture}', JobType = {job.JobType.GetHashCode()}, " +
+                          $"State = {job.State.GetHashCode()}, Exception = '{job.Exception}', CreatedAt = '{job.CreatedAt.ToSqlDateTime()}', UpdatedAt = '{job.UpdatedAt.ToSqlDateTime()}', " +
+                          $"EntityType = {job.EntityType.GetHashCode()}, ContentState = {job.ContentState.GetHashCode()}, BuildHookUrls = '{job.BuildHookUrls}' WHERE Id = {job.Id}";
 
                 using (var connection = new SqlConnection(_connectionString))
                 {

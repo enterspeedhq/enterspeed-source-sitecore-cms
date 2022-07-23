@@ -91,7 +91,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
         {
             try
             {
-                if (IsRenderingItem(item))
+                if (!IsRenderingItem(item))
                 {
                     return;
                 }
