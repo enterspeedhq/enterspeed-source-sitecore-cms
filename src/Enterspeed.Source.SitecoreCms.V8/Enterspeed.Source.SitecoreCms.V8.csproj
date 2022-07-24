@@ -164,6 +164,7 @@
     <Compile Include="Models\Configuration\EnterspeedIDs.cs" />
     <Compile Include="Models\Configuration\EnterspeedSiteInfo.cs" />
     <Compile Include="Models\ConnectionType.cs" />
+    <Compile Include="Models\EnterspeedDashboardViewModel.cs" />
     <Compile Include="Models\EnterspeedSitecoreIdentity.cs" />
     <Compile Include="Models\Mappers\IEntityModelMapper.cs" />
     <Compile Include="Models\Mappers\SitecoreContentEntityModelMapper.cs" />
@@ -234,9 +235,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <Content Include="Views\Enterspeed\Index.cshtml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="_content\App_Config\Include\Enterspeed\Enterspeed.SitecoreCms.V8.config" />
