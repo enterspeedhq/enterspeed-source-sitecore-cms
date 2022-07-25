@@ -8,14 +8,14 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
     public class SaveEventHandler
     {
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
-        private readonly IEnterspeedSitecoreJobSeederService _enterspeedSitecoreJobSeederService;
+        private readonly IEnterspeedSitecoreJobService _enterspeedSitecoreJobService;
 
         public SaveEventHandler(
             IEnterspeedConfigurationService enterspeedConfigurationService,
-            IEnterspeedSitecoreJobSeederService enterspeedSitecoreJobSeederService)
+            IEnterspeedSitecoreJobService enterspeedSitecoreJobService)
         {
             _enterspeedConfigurationService = enterspeedConfigurationService;
-            _enterspeedSitecoreJobSeederService = enterspeedSitecoreJobSeederService;
+            _enterspeedSitecoreJobService = enterspeedSitecoreJobService;
         }
 
         public void OnItemSaved(object sender, EventArgs args)
@@ -40,7 +40,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                     continue;
                 }
 
-                if (!_enterspeedSitecoreJobSeederService.HasAllowedPath(sourceItem))
+                if (!_enterspeedSitecoreJobService.HasAllowedPath(sourceItem))
                 {
                     continue;
                 }
@@ -51,14 +51,14 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                     continue;
                 }
 
-                if (!_enterspeedSitecoreJobSeederService.HasAllowedPath(sourceItem))
+                if (!_enterspeedSitecoreJobService.HasAllowedPath(sourceItem))
                 {
                     continue;
                 }
 
-                _enterspeedSitecoreJobSeederService.HandleContentItem(sourceItem, configuration, false, true);
-                _enterspeedSitecoreJobSeederService.HandleRendering(sourceItem, configuration, false, true);
-                _enterspeedSitecoreJobSeederService.HandleDictionary(sourceItem, configuration, false, true);
+                _enterspeedSitecoreJobService.HandleContentItem(sourceItem, configuration, false, true);
+                _enterspeedSitecoreJobService.HandleRendering(sourceItem, configuration, false, true);
+                _enterspeedSitecoreJobService.HandleDictionary(sourceItem, configuration, false, true);
             }
         }
     }

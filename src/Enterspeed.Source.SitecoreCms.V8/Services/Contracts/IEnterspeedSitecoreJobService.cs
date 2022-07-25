@@ -3,8 +3,9 @@ using Sitecore.Data.Items;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Services.Contracts
 {
-    public interface IEnterspeedSitecoreJobSeederService
+    public interface IEnterspeedSitecoreJobService
     {
+        void Seed(Item item);
         bool HasAllowedPath(Item item);
         void HandleContentItem(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished);
         void HandleRendering(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished);

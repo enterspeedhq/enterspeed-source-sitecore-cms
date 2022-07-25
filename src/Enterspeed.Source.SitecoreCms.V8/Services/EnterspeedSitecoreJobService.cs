@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Web.UI.WebControls.Expressions;
 using Enterspeed.Source.SitecoreCms.V8.Data.Models;
 using Enterspeed.Source.SitecoreCms.V8.Data.Repositories;
 using Enterspeed.Source.SitecoreCms.V8.Extensions;
@@ -14,26 +16,49 @@ using Sitecore.Links;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Services
 {
-    public class EnterspeedSitecoreJobSeederService : IEnterspeedSitecoreJobSeederService
+    public class EnterspeedSitecoreJobService : IEnterspeedSitecoreJobService
     {
         private readonly BaseLinkStrategyFactory _linkStrategyFactory;
         private readonly IEnterspeedSitecoreLoggingService _loggingService;
         private readonly IEntityModelMapper<Item, SitecoreContentEntity> _sitecoreContentEntityModelMapper;
         private readonly IEnterspeedJobFactory _enterspeedJobFactory;
         private readonly IEnterspeedJobRepository _enterspeedJobRepository;
+        private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
 
-        public EnterspeedSitecoreJobSeederService(
+
+        public EnterspeedSitecoreJobService(
             BaseLinkStrategyFactory linkStrategyFactory,
             IEnterspeedSitecoreLoggingService loggingService,
             IEntityModelMapper<Item, SitecoreContentEntity> sitecoreContentEntityModelMapper,
             IEnterspeedJobFactory enterspeedJobFactory,
-            IEnterspeedJobRepository enterspeedJobRepository)
+            IEnterspeedJobRepository enterspeedJobRepository,
+            IEnterspeedConfigurationService enterspeedConfigurationService)
         {
             _linkStrategyFactory = linkStrategyFactory;
             _loggingService = loggingService;
             _sitecoreContentEntityModelMapper = sitecoreContentEntityModelMapper;
             _enterspeedJobFactory = enterspeedJobFactory;
             _enterspeedJobRepository = enterspeedJobRepository;
+            _enterspeedConfigurationService = enterspeedConfigurationService;
+        }
+
+        public void Seed(Item item)
+        {
+            var database = Sitecore.Configuration.Factory.GetDatabase("web");
+            var targetItem = database.GetItem(item.ID, item.Language);
+            if (targetItem != null)
+            {
+                var descendants = targetItem.Axes.GetDescendants();
+                foreach (var configuration in _enterspeedConfigurationService.GetConfigurations())
+                {
+                    foreach (var descendant in descendants)
+                    {
+                        HandleContentItem(descendant, configuration, false, true);
+                        HandleRendering(descendant, configuration, false, true);
+                        HandleDictionary(descendant, configuration, false, true);
+                    }
+                }
+            }
         }
 
         public bool HasAllowedPath(Item item)

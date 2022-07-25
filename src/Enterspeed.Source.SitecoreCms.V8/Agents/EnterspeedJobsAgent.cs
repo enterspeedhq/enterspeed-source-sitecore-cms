@@ -20,7 +20,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Agents
         {
             try
             {
-                _enterspeedJobsHandlingService.HandlePendingJobs(100);
+                _enterspeedJobsHandlingService.HandlePendingJobs(1000);
             }
             catch (Exception e)
             {

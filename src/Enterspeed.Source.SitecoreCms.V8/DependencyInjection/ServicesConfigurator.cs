@@ -45,7 +45,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.DependencyInjection
             services.AddSingleton<IEnterspeedConfigurationService, EnterspeedConfigurationService>();
             services.AddSingleton<IEnterspeedConfigurationProvider, EnterspeedSitecoreConfigurationProvider>();
             services.AddSingleton<IEnterspeedUrlService, EnterspeedSitecoreUrlService>();
-            services.AddTransient<IEnterspeedSitecoreJobSeederService, EnterspeedSitecoreJobSeederService>();
+            services.AddTransient<IEnterspeedSitecoreJobService, EnterspeedSitecoreJobService>();
             services.AddSingleton<EnterspeedDateFormatter>();
 
             services.AddSingleton<IEnterspeedConnection>(provider =>
