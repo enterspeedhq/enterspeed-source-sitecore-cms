@@ -236,6 +236,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Content Include="_content\Views\Enterspeed\Index.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_content\Views\Enterspeed\Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="_content\App_Config\Include\Enterspeed\Enterspeed.SitecoreCms.V8.config" />
