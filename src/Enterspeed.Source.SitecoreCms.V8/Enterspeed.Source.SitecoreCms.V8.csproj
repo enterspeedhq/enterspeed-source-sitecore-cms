@@ -130,7 +130,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Agents\InvalidateEnterspeedJobsAgent.cs" />
+    <Compile Include="Agents\DeleteOlderEnterspeedJobs.cs" />
     <Compile Include="Agents\EnterspeedJobsAgent.cs" />
     <Compile Include="App_Start\EnterspeedStart.cs" />
     <Compile Include="Commands\SeedEnterspeed.cs" />

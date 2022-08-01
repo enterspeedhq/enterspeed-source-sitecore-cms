@@ -4,12 +4,12 @@ using Sitecore.Tasks;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Agents
 {
-    public class InvalidateEnterspeedJobsAgent : BaseAgent
+    public class DeleteOlderEnterspeedJobs : BaseAgent
     {
         private readonly IEnterspeedJobsHandlingService _enterspeedJobsHandlingService;
         private readonly IEnterspeedSitecoreLoggingService _loggingService;
 
-        public InvalidateEnterspeedJobsAgent(IEnterspeedJobsHandlingService enterspeedJobsHandlingService,
+        public DeleteOlderEnterspeedJobs(IEnterspeedJobsHandlingService enterspeedJobsHandlingService,
             IEnterspeedSitecoreLoggingService loggingService)
         {
             _enterspeedJobsHandlingService = enterspeedJobsHandlingService;

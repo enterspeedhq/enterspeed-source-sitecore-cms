@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
 using Enterspeed.Source.SitecoreCms.V9.Extensions;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Services;
 using Sitecore.Data.Items;
-using Sitecore.Globalization;
 using Sitecore.Publishing;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Events

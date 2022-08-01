@@ -26,7 +26,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Agents
             {
                 _loggingService.Error("Something went wrong when handling jobs ", e);
             }
-
         }
     }
 }

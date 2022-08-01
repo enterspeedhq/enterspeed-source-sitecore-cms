@@ -58,17 +58,10 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
         public virtual void InvalidateOldProcessingJobs()
         {
-            var oldJobs = _enterspeedJobRepository.GetOldProcessingTasks(1).ToList();
+            var oldJobs = _enterspeedJobRepository.GetOldProcessingTasks().ToList();
             if (oldJobs.Any())
             {
-                foreach (var job in oldJobs)
-                {
-                    job.State = EnterspeedJobState.Failed;
-                    job.Exception = $"Job processing timed out. Last updated at: {job.UpdatedAt}";
-                    job.UpdatedAt = DateTime.UtcNow;
-                }
-
-                _enterspeedJobRepository.Update(oldJobs);
+                _enterspeedJobRepository.Delete(oldJobs.Select(oj => oj.Id).ToList());
             }
         }
     }
