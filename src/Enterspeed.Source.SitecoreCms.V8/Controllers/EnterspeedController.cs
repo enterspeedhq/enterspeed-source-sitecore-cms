@@ -17,7 +17,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Controllers
         public ActionResult Index()
         {
             var failedJobs = _enterspeedJobRepository.GetFailedJobs();
-            var pendingJobs = _enterspeedJobRepository.GetPendingJobs(1000000);
+            var pendingJobs = _enterspeedJobRepository.GetPendingJobs(1000);
 
             var vm = new EnterspeedDashboardViewModel()
             {
