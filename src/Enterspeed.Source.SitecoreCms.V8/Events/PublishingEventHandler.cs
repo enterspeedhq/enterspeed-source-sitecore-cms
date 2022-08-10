@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using Enterspeed.Source.Sdk.Api.Services;
 using Enterspeed.Source.Sdk.Domain.Connection;
 using Enterspeed.Source.Sdk.Domain.Services;
 using Enterspeed.Source.SitecoreCms.V8.Extensions;
@@ -40,7 +39,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
             IEntityModelMapper<RenderingItem, SitecoreRenderingEntity> sitecoreRenderingEntityModelMapper,
             IEntityModelMapper<Item, SitecoreDictionaryEntity> sitecoreDictionaryEntityModelMapper,
             IEnterspeedIdentityService identityService,
-            IEnterspeedIngestService enterspeedIngestService,
             IEnterspeedConfigurationService enterspeedConfigurationService)
         {
             _itemManager = itemManager;
@@ -241,6 +239,12 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
 
             // Skip, if the item published is not a dictionary item
             if (!item.IsDictionaryItem())
+            {
+                return;
+            }
+
+            // The dictionary is not added to any sites. Do not publish.
+            if (!configuration.SiteInfos.Any(s => s.IsDictionaryOfSite(item)))
             {
                 return;
             }

@@ -16,6 +16,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
         private const string GearIcon = "applications/32x32/gear_refresh.png";
         private const string SiteIcon = "Applications/32x32/window_gear.png";
         private const string EnabledSitesHelpText = "Select the site items here with the same fullPath as the rootPath configured for the respective site(s).";
+        private const string EnabledDictionariesHelpText = "Select the dictionary parent item, to push the item and all descendant dictionaries to Enterspeed.";
+
         private const string ApiKeyHelpText = "For example \"source-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\".";
 
         private readonly BaseItemManager _itemManager;
@@ -109,14 +111,18 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
                 enterspeedRootTemplatesFolder.Add("Site Configuration", new TemplateID(TemplateIDs.Template), EnterspeedIDs.Templates.EnterspeedSiteConfigurationID);
         }
 
-        private static void EnsureEnterspeedConfigurationItem(Item systemRoot)
+        private static void EnsureEnterspeedConfigurationItem(Item systemRoot, out Item newEnterspeedConfigurationItem)
         {
+            newEnterspeedConfigurationItem = null;
+
             if (systemRoot.Children["Enterspeed Configuration"] == null)
             {
                 var settingsItem = systemRoot.Add("Enterspeed Configuration", new TemplateID(EnterspeedIDs.Templates.EnterspeedConfigurationID), EnterspeedIDs.Items.EnterspeedConfigurationID);
                 settingsItem.Editing.BeginEdit();
                 settingsItem.Fields["__Masters"].Value = EnterspeedIDs.Templates.EnterspeedSiteConfigurationID.ToString();
                 settingsItem.Editing.EndEdit();
+
+                newEnterspeedConfigurationItem = settingsItem;
             }
         }
 
@@ -147,8 +153,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
 
         private static void EnsureEnterspeedSiteConfigurationDataSectionFields(Item enterspeedSiteConfigSection)
         {
-            Item apiBaseUrlField = enterspeedSiteConfigSection.Children["API Base Url"]
-                ?? enterspeedSiteConfigSection.Add("API Base Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedApiBaseUrlFieldID);
+            Item apiBaseUrlField = enterspeedSiteConfigSection.Children["API Base Url"] ?? enterspeedSiteConfigSection.Add("API Base Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedApiBaseUrlFieldID);
 
             using (new EditContext(apiBaseUrlField))
             {
@@ -239,6 +244,40 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
                 }
             }
 
+            Item dictionariesField = enterspeedSiteConfigSection.Children["Enabled Dictionaries"]
+                ?? enterspeedSiteConfigSection.Add("Enabled Dictionaries", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnabledDictionariesFieldID);
+
+            using (new EditContext(dictionariesField))
+            {
+                dictionariesField.Appearance.Sortorder = 135;
+
+                string currentTypeValue = dictionariesField[TemplateFieldIDs.Type];
+                if (!currentTypeValue.Equals("Treelist", StringComparison.OrdinalIgnoreCase))
+                {
+                    dictionariesField[TemplateFieldIDs.Type] = "Treelist";
+                }
+
+                dictionariesField[TemplateFieldIDs.Source] = "/sitecore/System/Dictionary";
+
+                string currentSharedValue = dictionariesField[TemplateFieldIDs.Shared];
+                if (currentSharedValue != "1")
+                {
+                    dictionariesField[TemplateFieldIDs.Shared] = "1";
+                }
+
+                string currentUnversionedValue = dictionariesField[TemplateFieldIDs.Unversioned];
+                if (currentUnversionedValue != "1")
+                {
+                    dictionariesField[TemplateFieldIDs.Unversioned] = "1";
+                }
+
+                string currentHelpValue = dictionariesField.Help.ToolTip;
+                if (!currentHelpValue.Equals(EnabledSitesHelpText, StringComparison.OrdinalIgnoreCase))
+                {
+                    dictionariesField.Help.ToolTip = EnabledDictionariesHelpText;
+                }
+            }
+
             Item siteBaseUrlField = enterspeedSiteConfigSection.Children["Site Base Url"]
                 ?? enterspeedSiteConfigSection.Add("Site Base Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedSiteBaseUrlFieldID);
 
@@ -292,7 +331,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
             }
 
             Item publishHookUrlField = enterspeedSiteConfigSection.Children["Publish Hook Url"]
-    ?? enterspeedSiteConfigSection.Add("Publish Hook Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedpublishHookUrlFieldID);
+                ?? enterspeedSiteConfigSection.Add("Publish Hook Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedpublishHookUrlFieldID);
 
             using (new EditContext(publishHookUrlField))
             {
@@ -318,7 +357,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
             }
 
             Item enablePreviewField = enterspeedSiteConfigSection.Children["Enable Preview"]
-?? enterspeedSiteConfigSection.Add("Enable Preview", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnablePreviewFieldID);
+                ?? enterspeedSiteConfigSection.Add("Enable Preview", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnablePreviewFieldID);
 
             using (new EditContext(enablePreviewField))
             {
@@ -354,7 +393,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
                 Language language = Language.Parse("en");
 
                 EnsureTemplates(masterDb, webDb, language);
-
                 EnsureItems(masterDb, webDb, language);
             }
         }
@@ -394,9 +432,12 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
                 throw new InvalidOperationException("Unable to find System Root (/sitecore/system) in Sitecore (master database) with the language \"en\".");
             }
 
-            EnsureEnterspeedConfigurationItem(systemRoot);
+            EnsureEnterspeedConfigurationItem(systemRoot, out var newEnterspeedConfigurationItem);
 
-            _publishManager.PublishItem(systemRoot, new[] { webDb }, new[] { language }, true, false, true);
+            if (newEnterspeedConfigurationItem != null)
+            {
+                _publishManager.PublishItem(newEnterspeedConfigurationItem, new[] { webDb }, new[] { language }, true, false, true);
+            }
         }
     }
 }

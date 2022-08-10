@@ -20,6 +20,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Models.Configuration
             public static readonly ID EnterspeedApiBaseUrlFieldID = new ID(Guid.Parse("{8E3253A1-1700-4A44-B9F1-32F3785FC0E3}"));
             public static readonly ID EnterspeedApiKeyFieldID = new ID(Guid.Parse("{77EBAD36-9C7D-4C5D-808D-50A100D3FB26}"));
             public static readonly ID EnterspeedEnabledSitesFieldID = new ID(Guid.Parse("{F9ED1DE7-C846-4D77-949A-C6AA07B6E8E7}"));
+            public static readonly ID EnterspeedEnabledDictionariesFieldID = new ID(Guid.Parse("{9CF467EB-0A4E-42FA-AB01-5FB7A006CD24}"));
             public static readonly ID EnterspeedSiteBaseUrlFieldID = new ID(Guid.Parse("{a5c257ad-5c76-40e4-9411-8a9cc98cbeb6}"));
             public static readonly ID EnterspeedMediaBaseUrlFieldID = new ID(Guid.Parse("{33ec5722-c98e-46dd-9c33-88d75cae8000}"));
             public static readonly ID EnterspeedpublishHookUrlFieldID = new ID(Guid.Parse("{37ec5722-c98e-46dd-9c33-88d75cbe8000}"));

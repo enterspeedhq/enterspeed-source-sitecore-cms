@@ -177,6 +177,12 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 return;
             }
 
+            // The dictionary is not added to any sites. Do not publish.
+            if (!configuration.SiteInfos.Any(s => s.IsDictionaryOfSite(item)))
+            {
+                return;
+            }
+
             SitecoreDictionaryEntity sitecoreDictionaryEntity = _sitecoreDictionaryEntityModelMapper.Map(item, configuration);
             if (sitecoreDictionaryEntity == null)
             {
