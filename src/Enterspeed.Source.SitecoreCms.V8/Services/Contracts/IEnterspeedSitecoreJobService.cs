@@ -1,5 +1,6 @@
 ﻿using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
 using Sitecore.Data.Items;
+using Sitecore.Globalization;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Services.Contracts
 {
@@ -7,8 +8,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services.Contracts
     {
         void Seed(Item item);
         bool HasAllowedPath(Item item);
-        void HandleContentItem(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished);
-        void HandleRendering(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished);
-        void HandleDictionary(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished);
+        void HandleContentItem(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished, Language overrideLanguage = null);
+        void HandleRendering(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished, Language overrideLanguage = null);
+        void HandleDictionary(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished, Language overrideLanguage = null);
     }
 }

@@ -12,6 +12,7 @@ using Enterspeed.Source.SitecoreCms.V8.Models.Mappers;
 using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Abstractions;
 using Sitecore.Data.Items;
+using Sitecore.Globalization;
 using Sitecore.Links;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Services
@@ -66,7 +67,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             return item.IsContentItem() || item.IsRenderingItem() || item.IsDictionaryItem();
         }
 
-        public void HandleContentItem(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished)
+        public void HandleContentItem(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished, Language overrideLanguage = null)
         {
             try
             {
@@ -79,7 +80,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 if (!item.IsContentItem())
                 {
                     return;
-
                 }
 
                 var siteOfItem = configuration.GetSite(item);
@@ -94,15 +94,17 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                     return;
                 }
 
+                var language = overrideLanguage != null ? overrideLanguage.Name : item.Language.Name;
+
                 if (itemIsDeleted)
                 {
-                    var job = _enterspeedJobFactory.GetDeleteJob(item, item.Language.Name, EnterspeedContentState.Publish, publishHookUrls: configuration.SiteInfos.Select(s => s.PublishHookUrl));
+                    var job = _enterspeedJobFactory.GetDeleteJob(item, language, EnterspeedContentState.Publish, publishHookUrls: configuration.SiteInfos.Select(s => s.PublishHookUrl));
                     EnqueueJob(job);
                 }
 
                 if (itemIsPublished)
                 {
-                    var job = _enterspeedJobFactory.GetPublishJob(item, item.Language.Name, EnterspeedContentState.Publish, publishHookUrls: configuration.SiteInfos.Select(s => s.PublishHookUrl));
+                    var job = _enterspeedJobFactory.GetPublishJob(item, language, EnterspeedContentState.Publish, publishHookUrls: configuration.SiteInfos.Select(s => s.PublishHookUrl));
                     EnqueueJob(job);
                 }
             }
@@ -112,7 +114,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             }
         }
 
-        public void HandleRendering(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished)
+        public void HandleRendering(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished, Language overrideLanguage = null)
         {
             try
             {
@@ -126,14 +128,16 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                     return;
                 }
 
+                var language = overrideLanguage != null ? overrideLanguage.Name : item.Language.Name;
+
                 if (itemIsDeleted)
                 {
-                    var job = _enterspeedJobFactory.GetDeleteJob(item, item.Language.Name, EnterspeedContentState.Publish, EnterspeedJobEntityType.Rendering, configuration.SiteInfos.Select(s => s.PublishHookUrl));
+                    var job = _enterspeedJobFactory.GetDeleteJob(item, language, EnterspeedContentState.Publish, EnterspeedJobEntityType.Rendering, configuration.SiteInfos.Select(s => s.PublishHookUrl));
                     EnqueueJob(job);
                 }
                 else if (itemIsPublished)
                 {
-                    var job = _enterspeedJobFactory.GetPublishJob(item, item.Language.Name, EnterspeedContentState.Publish, EnterspeedJobEntityType.Rendering, configuration.SiteInfos.Select(s => s.PublishHookUrl));
+                    var job = _enterspeedJobFactory.GetPublishJob(item, language, EnterspeedContentState.Publish, EnterspeedJobEntityType.Rendering, configuration.SiteInfos.Select(s => s.PublishHookUrl));
                     EnqueueJob(job);
                 }
             }
@@ -143,7 +147,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             }
         }
 
-        public void HandleDictionary(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished)
+        public void HandleDictionary(Item item, EnterspeedSitecoreConfiguration configuration, bool itemIsDeleted, bool itemIsPublished, Language overrideLanguage = null)
         {
             if (item == null)
             {
@@ -156,19 +160,19 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 return;
             }
 
+            var language = overrideLanguage != null ? overrideLanguage.Name : item.Language.Name;
 
             if (itemIsDeleted)
             {
-                var job = _enterspeedJobFactory.GetDeleteJob(item, item.Language.Name, EnterspeedContentState.Publish, EnterspeedJobEntityType.Dictionary, configuration.SiteInfos.Select(s => s.PublishHookUrl));
+                var job = _enterspeedJobFactory.GetDeleteJob(item, language, EnterspeedContentState.Publish, EnterspeedJobEntityType.Dictionary, configuration.SiteInfos.Select(s => s.PublishHookUrl));
                 EnqueueJob(job);
             }
 
             if (itemIsPublished)
             {
-                var job = _enterspeedJobFactory.GetPublishJob(item, item.Language.Name, EnterspeedContentState.Publish, EnterspeedJobEntityType.Dictionary, configuration.SiteInfos.Select(s => s.PublishHookUrl));
+                var job = _enterspeedJobFactory.GetPublishJob(item, language, EnterspeedContentState.Publish, EnterspeedJobEntityType.Dictionary, configuration.SiteInfos.Select(s => s.PublishHookUrl));
                 EnqueueJob(job);
             }
-
         }
 
         private bool IsItemReferencedFromEnabledContent(Item item, EnterspeedSitecoreConfiguration configuration)

@@ -60,13 +60,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
 
                 // Handling if the item was deleted or unpublished
                 var itemIsDeleted = context.Action == PublishAction.DeleteTargetItem;
-                if (itemIsDeleted)
-                {
-                    _enterspeedSitecoreJobService.HandleContentItem(sourceItem, configuration, true, false);
-                    _enterspeedSitecoreJobService.HandleRendering(sourceItem, configuration, true, false);
-                    _enterspeedSitecoreJobService.HandleDictionary(sourceItem, configuration, true, false);
-                }
-                else
+                if (!itemIsDeleted)
                 {
                     _enterspeedSitecoreJobService.HandleContentItem(sourceItem, configuration, false, true);
                     _enterspeedSitecoreJobService.HandleRendering(sourceItem, configuration, false, true);

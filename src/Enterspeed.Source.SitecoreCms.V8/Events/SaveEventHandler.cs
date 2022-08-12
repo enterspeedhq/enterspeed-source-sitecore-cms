@@ -2,6 +2,7 @@
 using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Data.Items;
 using Sitecore.Events;
+using Sitecore.Jobs;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Events
 {
