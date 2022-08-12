@@ -23,7 +23,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
         }
 
 
-        public virtual void HandlePendingJobs(int batchSize)
+        public virtual void HandlePendingJobs(int batchSize = 2000)
         {
             var jobs = _enterspeedJobRepository.GetPendingJobs(batchSize).ToList();
             try

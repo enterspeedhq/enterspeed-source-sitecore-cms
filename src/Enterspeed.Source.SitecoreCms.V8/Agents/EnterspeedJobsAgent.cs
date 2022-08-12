@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Tasks;
 
@@ -20,7 +21,10 @@ namespace Enterspeed.Source.SitecoreCms.V8.Agents
         {
             try
             {
-                _enterspeedJobsHandlingService.HandlePendingJobs(1000);
+                var batchSizeConfig = ConfigurationManager.AppSettings["enterspeedBatchSize"];
+                var batchSizeParsed = int.TryParse(batchSizeConfig, out var batchSize);
+
+                _enterspeedJobsHandlingService.HandlePendingJobs(batchSizeParsed ? batchSize : 2000);
             }
             catch (Exception e)
             {

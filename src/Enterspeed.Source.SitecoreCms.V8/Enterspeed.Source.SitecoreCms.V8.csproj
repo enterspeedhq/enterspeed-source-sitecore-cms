@@ -146,6 +146,7 @@
     <Compile Include="Data\Repositories\IEnterspeedJobRepository.cs" />
     <Compile Include="Data\Schemas\EnterspeedJobSchema.cs" />
     <Compile Include="Events\DeleteEventHandler.cs" />
+    <Compile Include="Events\PublishEndEventHandler.cs" />
     <Compile Include="Events\SaveEventHandler.cs" />
     <Compile Include="Exceptions\JobHandlingException.cs" />
     <Compile Include="Exceptions\DateTimeExtensions.cs" />

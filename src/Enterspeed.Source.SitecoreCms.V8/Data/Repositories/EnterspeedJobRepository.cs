@@ -79,7 +79,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Data.Repositories
             return result;
         }
 
-        public IList<EnterspeedJob> GetPendingJobs(int count = 60)
+        public IList<EnterspeedJob> GetPendingJobs(int count = 2000)
         {
             var result = new List<EnterspeedJob>();
             using (var connection = new SqlConnection(_connectionString))
