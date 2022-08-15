@@ -1,6 +1,6 @@
 ﻿using System;
 using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
-using Enterspeed.Source.SitecoreCms.V8.Services;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Data.Items;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Models.Mappers
@@ -10,18 +10,15 @@ namespace Enterspeed.Source.SitecoreCms.V8.Models.Mappers
         private readonly IEnterspeedIdentityService _enterspeedIdentityService;
         private readonly IEnterspeedPropertyService _enterspeedPropertyService;
         private readonly IEnterspeedUrlService _urlService;
-        private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
 
         public SitecoreContentEntityModelMapper(
             IEnterspeedIdentityService enterspeedIdentityService,
             IEnterspeedPropertyService enterspeedPropertyService,
-            IEnterspeedUrlService urlService,
-            IEnterspeedConfigurationService enterspeedConfigurationService)
+            IEnterspeedUrlService urlService)
         {
             _enterspeedIdentityService = enterspeedIdentityService;
             _enterspeedPropertyService = enterspeedPropertyService;
             _urlService = urlService;
-            _enterspeedConfigurationService = enterspeedConfigurationService;
         }
 
         public SitecoreContentEntity Map(Item input, EnterspeedSitecoreConfiguration configuration)

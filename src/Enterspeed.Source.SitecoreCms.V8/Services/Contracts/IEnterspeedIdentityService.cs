@@ -3,7 +3,7 @@ using Enterspeed.Source.SitecoreCms.V8.Models;
 using Sitecore.Data.Items;
 using Sitecore.Globalization;
 
-namespace Enterspeed.Source.SitecoreCms.V8.Services
+namespace Enterspeed.Source.SitecoreCms.V8.Services.Contracts
 {
     public interface IEnterspeedIdentityService
     {

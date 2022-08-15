@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Enterspeed.Source.SitecoreCms.V8.Models;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Abstractions;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -55,10 +56,9 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 return null;
             }
 
-            Guid itemId;
             Language language = _languageManager.GetDefaultLanguage();
 
-            if (Guid.TryParse(id, out itemId))
+            if (Guid.TryParse(id, out var itemId))
             {
                 return new EnterspeedSitecoreIdentity
                 {

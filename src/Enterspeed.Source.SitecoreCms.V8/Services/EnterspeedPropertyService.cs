@@ -6,6 +6,7 @@ using System.Web;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
 using Enterspeed.Source.SitecoreCms.V8.Extensions;
 using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Enterspeed.Source.SitecoreCms.V8.Services.DataProperties;
 using Enterspeed.Source.SitecoreCms.V8.Services.DataProperties.Formatters;
 using Sitecore;
@@ -23,36 +24,27 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
         private const string MetaData = "metaData";
         private const string Renderings = "renderings";
 
-        private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
         private readonly IEnterspeedIdentityService _identityService;
         private readonly EnterspeedDateFormatter _dateFormatter;
         private readonly IEnumerable<IEnterspeedFieldValueConverter> _fieldValueConverters;
         private readonly IEnterspeedFieldConverter _fieldConverter;
         private readonly BaseItemManager _itemManager;
         private readonly BaseUserManager _userManager;
-        private readonly BaseAccessRightManager _accessRightManager;
-        private readonly BaseRolesInRolesManager _rolesInRolesManager;
 
         public EnterspeedPropertyService(
-            IEnterspeedConfigurationService enterspeedConfigurationService,
             IEnterspeedIdentityService identityService,
             EnterspeedDateFormatter dateFormatter,
             IEnumerable<IEnterspeedFieldValueConverter> fieldValueConverters,
             IEnterspeedFieldConverter fieldConverter,
             BaseItemManager itemManager,
-            BaseUserManager userManager,
-            BaseAccessRightManager accessRightManager,
-            BaseRolesInRolesManager rolesInRolesManager)
+            BaseUserManager userManager)
         {
-            _enterspeedConfigurationService = enterspeedConfigurationService;
             _identityService = identityService;
             _dateFormatter = dateFormatter;
             _fieldValueConverters = fieldValueConverters;
             _fieldConverter = fieldConverter;
             _itemManager = itemManager;
             _userManager = userManager;
-            _accessRightManager = accessRightManager;
-            _rolesInRolesManager = rolesInRolesManager;
         }
 
         public IDictionary<string, IEnterspeedProperty> GetProperties(Item item,  EnterspeedSitecoreConfiguration configuration)
@@ -107,8 +99,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
         private IEnterspeedProperty CreateDictionaryMetaData(Item item)
         {
-            int level = GetContentPathIds(item).IndexOf(item.ID.Guid);
-
             var metaData = new Dictionary<string, IEnterspeedProperty>
             {
                 ["language"] = new StringEnterspeedProperty("language", item.Language.Name),

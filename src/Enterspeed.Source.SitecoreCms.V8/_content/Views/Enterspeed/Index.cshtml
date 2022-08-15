@@ -1,0 +1,155 @@
+﻿@model Enterspeed.Source.SitecoreCms.V8.Models.EnterspeedDashboardViewModel
+@{
+    Layout = null;
+}
+
+<style>
+    .enterspeed-dashboard {
+        margin: 15px;
+    }
+
+    .dashboard-section {
+        background-color: white;
+        padding: 15px;
+    }
+
+    .dashboard-list {
+        position: relative;
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .dashboard-list-header {
+        margin-bottom: 22px;
+    }
+
+    .dashboard-list li.dashboard-list-header div, .dashboard-list li div div {
+        display: inline-block;
+    }
+
+    .dashboard-list-item-property-name {
+        font-weight: bold;
+    }
+
+    .dashboard-list-item-property {
+        margin-bottom: 15px;
+    }
+
+    .job-exception {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+
+        .job-exception h4 {
+            margin: 0;
+        }
+
+        .job-exception.show {
+            display: inline-block !important;
+            transition: display 0.5s !important;
+        }
+
+    .show-exception {
+        cursor: pointer;
+    }
+</style>
+
+
+
+<div class="enterspeed-dashboard">
+    <h1>
+        Enterspeed
+    </h1>
+
+    @if (Model.PendingJobs != null && Model.PendingJobs.Any())
+    {
+        <div class="dashboard-section">
+            <h3>Pending jobs</h3>
+            <ul class="dashboard-list">
+                <li class="dashboard-list-header">
+                    <div class="dashboard-list-item-property-name" style="width: 5%">ID</div>
+                    <div class="dashboard-list-item-property-name" style="width: 20%">Entity ID</div>
+                    <div class="dashboard-list-item-property-name" style="width: 10%">Type</div>
+                    <div class="dashboard-list-item-property-name" style="width: 10%">Culture</div>
+                    <div class="dashboard-list-item-property-name" style="width: 10%">Job type</div>
+                    <div class="dashboard-list-item-property-name" style="width: 10%">Created at</div>
+                    <div class="dashboard-list-item-property-name" style="width: 10%">Updated at</div>
+                </li>
+                @foreach (var job in Model.PendingJobs)
+                {
+                    <li>
+                        <div class="dashboard-list-item">
+                            <div class="dashboard-list-item-property" style="width: 5%">@job.Id</div>
+                            <div class="dashboard-list-item-property" style="width: 20%">@job.EntityId</div>
+                            <div class="dashboard-list-item-property" style="width: 10%">@job.EntityType.ToString()</div>
+                            <div class="dashboard-list-item-property" style="width: 10%">@job.Culture</div>
+                            <div class="dashboard-list-item-property" style="width: 10%">@job.JobType</div>
+                            <div class="dashboard-list-item-property" style="width: 10%">@job.CreatedAt</div>
+                            <div class="dashboard-list-item-property" style="width: 10%">@job.UpdatedAt</div>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+
+    @if (Model.FailedJobs != null && Model.FailedJobs.Any())
+    {
+        <div class="dashboard-section">
+            <h3>Failed jobs</h3>
+            <ul class="dashboard-list">
+                <li class="dashboard-list-header">
+                    <div class="dashboard-list-item-property-name" style="width: 5%">ID</div>
+                    <div class="dashboard-list-item-property-name" style="width: 20%">Entity ID</div>
+                    <div class="dashboard-list-item-property-name" style="width: 10%">Type</div>
+                    <div class="dashboard-list-item-property-name" style="width: 10%">Culture</div>
+                    <div class="dashboard-list-item-property-name" style="width: 10%">Job type</div>
+                    <div class="dashboard-list-item-property-name" style="width: 10%">Created at</div>
+                    <div class="dashboard-list-item-property-name" style="width: 10%">Updated at</div>
+                </li>
+                @foreach (var job in Model.FailedJobs)
+                {
+                    <li>
+                        <div class="dashboard-list-item">
+                            <div class="dashboard-list-item-property" style="width: 5%">@job.Id</div>
+                            <div class="dashboard-list-item-property" style="width: 20%">@job.EntityId</div>
+                            <div class="dashboard-list-item-property" style="width: 10%">@job.EntityType.ToString()</div>
+                            <div class="dashboard-list-item-property" style="width: 10%">@job.Culture</div>
+                            <div class="dashboard-list-item-property" style="width: 10%">@job.JobType</div>
+                            <div class="dashboard-list-item-property" style="width: 10%">@job.CreatedAt</div>
+                            <div class="dashboard-list-item-property" style="width: 10%">@job.UpdatedAt</div>
+                            @if (!string.IsNullOrEmpty(job.Exception))
+                            {
+                                <div class="dashboard-list-item-property show-exception" style="width: 10%">Show/Hide exception</div>
+                                if (!string.IsNullOrEmpty(job.Exception))
+                                {
+
+                                    <div class="dashboard-list-item job-exception" style="display: none;">
+                                        <h4>Exception</h4>
+                                        <div class="dashboard-list-item-property" style="width: 60%">@job.Exception</div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </li>
+
+
+                }
+            </ul>
+        </div>
+
+    }
+</div>
+
+<script type="text/javascript">
+    let showExceptionElements = document.querySelectorAll('.show-exception');
+    showExceptionElements.forEach(el => el.addEventListener('click', event => {
+        const sibling = el.nextElementSibling;
+
+        if (sibling.style.display === "none") {
+            sibling.style.display = "inline-block";
+        } else {
+            sibling.style.display = "none";
+        }
+    }));
+</script>

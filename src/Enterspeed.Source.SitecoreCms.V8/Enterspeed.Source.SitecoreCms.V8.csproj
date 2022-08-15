@@ -127,13 +127,44 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Agents\DeleteOlderEnterspeedJobs.cs" />
+    <Compile Include="Agents\EnterspeedJobsAgent.cs" />
     <Compile Include="App_Start\EnterspeedStart.cs" />
+    <Compile Include="Commands\SeedEnterspeed.cs" />
     <Compile Include="Controllers\EnterspeedController.cs" />
+    <Compile Include="Data\EnterspeedMigrationService.cs" />
+    <Compile Include="Data\IEnterspeedMigrationService.cs" />
+    <Compile Include="Data\Models\EnterspeedJob.cs" />
+    <Compile Include="Data\Models\EnterspeedJobEntityType.cs" />
+    <Compile Include="Data\Models\EnterspeedJobState.cs" />
+    <Compile Include="Data\Models\EnterspeedJobType.cs" />
+    <Compile Include="Data\Models\EnterspeedContentState.cs" />
+    <Compile Include="Data\Repositories\EnterspeedJobRepository.cs" />
+    <Compile Include="Data\Repositories\IEnterspeedJobRepository.cs" />
+    <Compile Include="Data\Schemas\EnterspeedJobSchema.cs" />
+    <Compile Include="Events\DeleteEventHandler.cs" />
     <Compile Include="Events\PublishEndEventHandler.cs" />
     <Compile Include="Events\SaveEventHandler.cs" />
+    <Compile Include="Exceptions\JobHandlingException.cs" />
+    <Compile Include="Exceptions\DateTimeExtensions.cs" />
+    <Compile Include="Extensions\EnterspeedConfigurationExtensions.cs" />
     <Compile Include="Extensions\ItemExtensions.cs" />
+    <Compile Include="Factories\EnterspeedJobFactory.cs" />
+    <Compile Include="Factories\IEnterspeedJobFactory.cs" />
+    <Compile Include="Guards\IEnterspeedItemHandlingGuard.cs" />
+    <Compile Include="Handlers\Rendering\EnterspeedRenderingDeleteJobHandler.cs" />
+    <Compile Include="Handlers\Rendering\EnterspeedRenderingPublishJobHandler.cs" />
+    <Compile Include="Handlers\Content\EnterspeedContentDeleteJobHandler.cs" />
+    <Compile Include="Handlers\Content\EnterspeedContentPublishJobHandler.cs" />
+    <Compile Include="Handlers\Dictionaries\EnterspeedDictionaryItemDeleteJobHandler.cs" />
+    <Compile Include="Handlers\Dictionaries\EnterspeedDictionaryItemPublishJobHandler.cs" />
+    <Compile Include="Handlers\IEnterspeedJobHandler.cs" />
+    <Compile Include="Handlers\PreviewContent\EnterspeedPreviewContentDeleteJobHandler.cs" />
+    <Compile Include="Handlers\PreviewContent\EnterspeedPreviewContentPublishJobHandler.cs" />
     <Compile Include="Models\Configuration\EnterspeedIDs.cs" />
     <Compile Include="Models\Configuration\EnterspeedSiteInfo.cs" />
+    <Compile Include="Models\ConnectionType.cs" />
+    <Compile Include="Models\EnterspeedDashboardViewModel.cs" />
     <Compile Include="Models\EnterspeedSitecoreIdentity.cs" />
     <Compile Include="Models\Mappers\IEntityModelMapper.cs" />
     <Compile Include="Models\Mappers\SitecoreContentEntityModelMapper.cs" />
@@ -149,6 +180,7 @@
     <Compile Include="Pipelines\Initialize\InitializeEnterspeed.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\EnterspeedSitecoreConfigurationProvider.cs" />
+    <Compile Include="RegisterEnterspeedRoutes.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultCheckboxFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultChecklistFieldValueConverter.cs" />
     <Compile Include="Services\DataProperties\DefaultFieldConverters\DefaultDateFieldValueConverter.cs" />
@@ -173,19 +205,25 @@
     <Compile Include="Services\DataProperties\IEnterspeedFieldValueConverter.cs" />
     <Compile Include="Services\EnterspeedConfigurationService.cs" />
     <Compile Include="Services\EnterspeedFieldConverter.cs" />
+    <Compile Include="Services\EnterspeedGuardService.cs" />
+    <Compile Include="Services\EnterspeedJobsHandler.cs" />
+    <Compile Include="Services\EnterspeedJobsHandlingService.cs" />
     <Compile Include="Services\EnterspeedPropertyService.cs" />
     <Compile Include="Services\EnterspeedSitecoreFieldService.cs" />
-    <Compile Include="Services\EnterspeedSitecoreIngestService.cs" />
+    <Compile Include="Services\EnterspeedSitecoreJobService.cs" />
     <Compile Include="Services\EnterspeedSitecoreLoggingService.cs" />
     <Compile Include="Services\EnterspeedSitecoreUrlService.cs" />
-    <Compile Include="Services\IEnterspeedConfigurationService.cs" />
-    <Compile Include="Services\IEnterspeedIdentityService.cs" />
-    <Compile Include="Services\IEnterspeedFieldConverter.cs" />
-    <Compile Include="Services\IEnterspeedPropertyService.cs" />
-    <Compile Include="Services\IEnterspeedSitecoreFieldService.cs" />
-    <Compile Include="Services\IEnterspeedSitecoreIngestService.cs" />
-    <Compile Include="Services\IEnterspeedSitecoreLoggingService.cs" />
-    <Compile Include="Services\IEnterspeedUrlService.cs" />
+    <Compile Include="Services\Contracts\IEnterspeedConfigurationService.cs" />
+    <Compile Include="Services\Contracts\IEnterspeedGuardService.cs" />
+    <Compile Include="Services\Contracts\IEnterspeedIdentityService.cs" />
+    <Compile Include="Services\Contracts\IEnterspeedFieldConverter.cs" />
+    <Compile Include="Services\Contracts\IEnterspeedJobsHandler.cs" />
+    <Compile Include="Services\Contracts\IEnterspeedJobsHandlingService.cs" />
+    <Compile Include="Services\Contracts\IEnterspeedPropertyService.cs" />
+    <Compile Include="Services\Contracts\IEnterspeedSitecoreFieldService.cs" />
+    <Compile Include="Services\Contracts\IEnterspeedSitecoreJobService.cs" />
+    <Compile Include="Services\Contracts\IEnterspeedSitecoreLoggingService.cs" />
+    <Compile Include="Services\Contracts\IEnterspeedUrlService.cs" />
     <Compile Include="Services\EnterspeedSitecoreIdentityService.cs" />
     <Compile Include="Services\Serializers\NewtonsoftJsonSerializer.cs" />
     <Compile Include="Services\SitecoreEnterspeedConnection.cs" />
@@ -197,6 +235,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Content Include="_content\Views\Enterspeed\Index.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="_content\Views\Enterspeed\Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="_content\App_Config\Include\Enterspeed\Enterspeed.SitecoreCms.V8.config" />

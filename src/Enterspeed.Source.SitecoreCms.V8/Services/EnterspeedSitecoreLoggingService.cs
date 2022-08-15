@@ -1,4 +1,5 @@
 ﻿using System;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using log4net;
 using Sitecore.Diagnostics;
 

@@ -1,81 +1,35 @@
 ﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Enterspeed.Source.SitecoreCms.V8.Extensions;
-using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
-using Enterspeed.Source.SitecoreCms.V8.Services;
-using Sitecore.Data.Items;
-using Sitecore.Publishing;
+using System.Configuration;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
+using Sitecore.Jobs;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Events
 {
     public class PublishEndEventHandler
     {
-        private static HttpClient client = new HttpClient();
+        private readonly IEnterspeedJobsHandlingService _enterspeedJobsHandlingService;
 
         public PublishEndEventHandler(
-           IEnterspeedConfigurationService enterspeedConfigurationService)
+             IEnterspeedJobsHandlingService enterspeedJobsHandlingService)
         {
-            _enterspeedConfigurationService = enterspeedConfigurationService;
+            _enterspeedJobsHandlingService = enterspeedJobsHandlingService;
         }
-
-        private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
 
         public void PublishEnd(object sender, EventArgs args)
         {
-            var sitecoreArgs = args as Sitecore.Events.SitecoreEventArgs;
-            if (sitecoreArgs == null)
+            var batchSizeConfig = ConfigurationManager.AppSettings["enterspeedBatchSize"];
+            var batchSizeParsed = int.TryParse(batchSizeConfig, out var batchSize);
+
+            object[] parameters = { batchSizeParsed ? 2000 : batchSize };
+
+            var jobOptions = new JobOptions("handleQueuedJobs", "Enterspeed", "CM", _enterspeedJobsHandlingService,
+                "HandlePendingJobs", parameters)
             {
-                return;
-            }
+                WriteToLog = true
+            };
 
-            var publisher = sitecoreArgs.Parameters[0] as Publisher;
-
-            var rootItem = publisher.Options.RootItem;
-
-            var siteConfigurations = _enterspeedConfigurationService.GetConfiguration();
-            foreach (EnterspeedSitecoreConfiguration configuration in siteConfigurations)
-            {
-                if (!configuration.IsEnabled)
-                {
-                    continue;
-                }
-
-                if (!HasAllowedPath(rootItem))
-                {
-                    continue;
-                }
-
-                EnterspeedSiteInfo siteOfItem = configuration.GetSite(rootItem);
-                if (siteOfItem == null) 
-                {
-                    continue;
-                }
-
-                if (string.IsNullOrEmpty(siteOfItem.PublishHookUrl))
-                {
-                    continue;
-                }
-
-                var result = CallHookAsync(siteOfItem.PublishHookUrl);
-            }
-        }
-
-        private static bool HasAllowedPath(Item item)
-        {
-            return item.IsContentItem() || item.IsRenderingItem() || item.IsDictionaryItem();
-        }
-
-        private static async Task<string> CallHookAsync(string path)
-        {
-            string result = null;
-            HttpResponseMessage response = await client.PostAsync(path, null);
-            if (response.IsSuccessStatusCode)
-            {
-                result = await response.Content.ReadAsStringAsync();
-            }
-
-            return result;
+            var job = new Job(jobOptions);
+            JobManager.Start(job);
         }
     }
 }

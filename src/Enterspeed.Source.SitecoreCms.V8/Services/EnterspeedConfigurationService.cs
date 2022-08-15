@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Enterspeed.Source.SitecoreCms.V8.Exceptions;
 using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Abstractions;
 using Sitecore.Configuration;
 using Sitecore.Data.Fields;
@@ -24,8 +25,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
         private readonly IEnterspeedSitecoreLoggingService _loggingService;
 
         private List<EnterspeedSitecoreConfiguration> _configuration;
-        private Guid _configurationRevisionId = Guid.Empty;
-
         private DateTime _lastUpdatedDate = DateTime.MinValue;
 
         public EnterspeedConfigurationService(
@@ -44,7 +43,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
             _loggingService = loggingService;
         }
 
-        public List<EnterspeedSitecoreConfiguration> GetConfiguration()
+        public List<EnterspeedSitecoreConfiguration> GetConfigurations()
         {
             var enterspeedConfigurationItem = _itemManager.GetItem(EnterspeedIDs.Items.EnterspeedConfigurationID, Language.Parse("en"), Version.Latest, _factory.GetDatabase("web"));
             if (HasNoConfigurationSetUp(enterspeedConfigurationItem))
@@ -179,19 +178,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 || enterspeedConfigurationItem.Versions.Count == 0
                 || enterspeedConfigurationItem.Children == null
                 || !enterspeedConfigurationItem.Children.Any();
-        }
-
-        private bool IsConfigurationUpdated(Item item, out Guid currentRevisionId)
-        {
-            currentRevisionId = Guid.Parse(item.Statistics.Revision);
-
-            if (_configurationRevisionId == currentRevisionId &&
-                _configuration != null)
-            {
-                return false;
-            }
-
-            return true;
         }
 
         private bool IsConfigurationUpdated(Item item, out DateTime currentUpdatedDate)

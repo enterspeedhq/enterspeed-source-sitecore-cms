@@ -1,7 +1,7 @@
 ﻿using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
 using Sitecore.Data.Items;
 
-namespace Enterspeed.Source.SitecoreCms.V8.Services
+namespace Enterspeed.Source.SitecoreCms.V8.Services.Contracts
 {
     public interface IEnterspeedUrlService
     {

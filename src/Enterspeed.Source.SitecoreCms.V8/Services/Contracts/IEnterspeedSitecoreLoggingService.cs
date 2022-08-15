@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Enterspeed.Source.SitecoreCms.V8.Services
+namespace Enterspeed.Source.SitecoreCms.V8.Services.Contracts
 {
     public interface IEnterspeedSitecoreLoggingService
     {

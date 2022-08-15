@@ -1,42 +1,35 @@
 ﻿using System;
-using Enterspeed.Source.Sdk.Domain.Services;
-using Enterspeed.Source.SitecoreCms.V8.Models.Configuration;
-using Enterspeed.Source.SitecoreCms.V8.Providers;
-using Enterspeed.Source.SitecoreCms.V8.Services;
-using Enterspeed.Source.SitecoreCms.V8.Services.Serializers;
-using Sitecore.Abstractions;
+using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Data.Items;
 using Sitecore.Events;
+using Sitecore.Jobs;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Events
 {
     public class SaveEventHandler
     {
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
-        private readonly IEnterspeedSitecoreIngestService _enterspeedSitecoreIngestService;
+        private readonly IEnterspeedSitecoreJobService _enterspeedSitecoreJobService;
 
         public SaveEventHandler(
-            BaseItemManager itemManager,
             IEnterspeedConfigurationService enterspeedConfigurationService,
-            IEnterspeedSitecoreIngestService enterspeedSitecoreIngestService)
+            IEnterspeedSitecoreJobService enterspeedSitecoreJobService)
         {
             _enterspeedConfigurationService = enterspeedConfigurationService;
-            _enterspeedSitecoreIngestService = enterspeedSitecoreIngestService;
+            _enterspeedSitecoreJobService = enterspeedSitecoreJobService;
         }
 
         public void OnItemSaved(object sender, EventArgs args)
         {
-            SitecoreEventArgs eventArgs = args as SitecoreEventArgs;
+            var eventArgs = args as SitecoreEventArgs;
 
-            Item sourceItem = eventArgs.Parameters[0] as Item;
-
-            if (sourceItem == null)
+            if (!(eventArgs.Parameters[0] is Item sourceItem))
             {
                 return;
             }
 
-            var siteConfigurations = _enterspeedConfigurationService.GetConfiguration();
-            foreach (EnterspeedSitecoreConfiguration configuration in siteConfigurations)
+            var siteConfigurations = _enterspeedConfigurationService.GetConfigurations();
+            foreach (var configuration in siteConfigurations)
             {
                 if (!configuration.IsEnabled)
                 {
@@ -48,33 +41,25 @@ namespace Enterspeed.Source.SitecoreCms.V8.Events
                     continue;
                 }
 
-                EnterspeedIngestService enterspeedIngestService = new EnterspeedIngestService(new SitecoreEnterspeedConnection(configuration), new NewtonsoftJsonSerializer(), new EnterspeedSitecoreConfigurationProvider(_enterspeedConfigurationService));
-
-                // Getting the source item first
-                if (sourceItem == null)
-                {
-                    continue;
-                }
-
-                if (!_enterspeedSitecoreIngestService.HasAllowedPath(sourceItem))
+                if (!_enterspeedSitecoreJobService.HasAllowedPath(sourceItem))
                 {
                     continue;
                 }
 
                 // Handling if the item was published
-                if (sourceItem == null || sourceItem.Versions.Count == 0)
+                if (sourceItem.Versions.Count == 0)
                 {
                     continue;
                 }
 
-                if (!_enterspeedSitecoreIngestService.HasAllowedPath(sourceItem))
+                if (!_enterspeedSitecoreJobService.HasAllowedPath(sourceItem))
                 {
                     continue;
                 }
 
-                _enterspeedSitecoreIngestService.HandleContentItem(sourceItem, enterspeedIngestService, configuration, false, true, true);
-                _enterspeedSitecoreIngestService.HandleRendering(sourceItem, enterspeedIngestService, configuration, false, true, true);
-                _enterspeedSitecoreIngestService.HandleDictionary(sourceItem, enterspeedIngestService, configuration, false, true, true);
+                _enterspeedSitecoreJobService.HandleContentItem(sourceItem, configuration, false, true);
+                _enterspeedSitecoreJobService.HandleRendering(sourceItem, configuration, false, true);
+                _enterspeedSitecoreJobService.HandleDictionary(sourceItem, configuration, false, true);
             }
         }
     }
