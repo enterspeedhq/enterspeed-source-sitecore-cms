@@ -52,7 +52,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 }
 
                 EnterspeedIngestService enterspeedIngestService = new EnterspeedIngestService(new SitecoreEnterspeedConnection(configuration), new SystemTextJsonSerializer(), new EnterspeedSitecoreConfigurationProvider(_enterspeedConfigurationService));
-                Language language = sourceItem.Language;
 
                 // Getting the source item first
                 if (sourceItem == null)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Enterspeed.Source.Sdk.Api.Models;
 using Enterspeed.Source.Sdk.Api.Services;
 using Enterspeed.Source.SitecoreCms.V8.Data.Models;
@@ -51,6 +52,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Dictionaries
                 return;
             }
 
+
             var sitecoreDictionaryEntities = CreateSitecoreDictionaryEntity(dictionaryItem, job);
             foreach (var entity in sitecoreDictionaryEntities)
             {
@@ -86,14 +88,18 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Dictionaries
                 var configurations = _enterspeedConfigurationService.GetConfigurations();
                 foreach (var configuration in configurations)
                 {
+                    if (!configuration.SiteInfos.Any(s => s.IsDictionaryOfSite(item)))
+                    {
+                        continue;
+                    }
+
                     var dictionaryEntity = _sitecoreDictionaryEntityModelMapper.Map(item, configuration);
                     dictionaryEntities.Add(dictionaryEntity);
                 }
             }
             catch (Exception e)
             {
-                throw new JobHandlingException(
-                    $"Failed creating entity ({job.EntityId}/{job.Culture}). Message: {e.Message}. StackTrace: {e.StackTrace}");
+                throw new JobHandlingException($"Failed creating entity ({job.EntityId}/{job.Culture}). Message: {e.Message}. StackTrace: {e.StackTrace}");
             }
 
             return dictionaryEntities;

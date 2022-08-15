@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [0.8.0 - 2021-08-10]
+* https://github.com/enterspeedhq/enterspeed-source-sitecore-cms/pull/21
+
 ## [0.3.0 - 2021-05-20]
 
 * Fixed problem when exceptions are thrown too early from the configuration service.

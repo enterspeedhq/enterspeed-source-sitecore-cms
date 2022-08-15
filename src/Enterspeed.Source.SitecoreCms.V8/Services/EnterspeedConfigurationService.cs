@@ -77,6 +77,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                 config.ItemNotFoundUrl = GetItemNotFoundUrl();
 
                 MultilistField enabledSitesField = enterspeedSiteConfigurationItem.Fields[EnterspeedIDs.Fields.EnterspeedEnabledSitesFieldID];
+                MultilistField dictionariesItemPaths = enterspeedSiteConfigurationItem.Fields[EnterspeedIDs.Fields.EnterspeedEnabledDictionariesFieldID];
+                var dictionariesItemPathsList = dictionariesItemPaths?.GetItems()?.Select(d => d.Paths.FullPath)?.ToList();
 
                 var enabledSites = enabledSitesField?.GetItems()?.ToList() ?? new List<Item>();
                 if (enabledSites.Any())
@@ -136,7 +138,8 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                                 PublishHookUrl = publishHookUrl,
                                 HomeItemPath = siteContext.StartPath,
                                 SiteItemPath = siteContext.RootPath,
-                                Language = siteLanguage.Name
+                                Language = siteLanguage.Name,
+                                DictionariesItemPaths = dictionariesItemPathsList
                             };
 
                             if (siteContext.Properties["scheme"] != null &&

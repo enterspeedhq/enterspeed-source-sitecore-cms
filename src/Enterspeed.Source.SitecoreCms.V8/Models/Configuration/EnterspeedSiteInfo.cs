@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Sitecore.Data.Items;
 
 namespace Enterspeed.Source.SitecoreCms.V8.Models.Configuration
@@ -19,9 +21,29 @@ namespace Enterspeed.Source.SitecoreCms.V8.Models.Configuration
 
         public string SiteItemPath { get; set; }
 
+        public List<string> DictionariesItemPaths { get; set; }
+
         public bool IsHttpsEnabled { get; set; }
 
         public string Language { get; set; }
+
+        public bool IsDictionaryOfSite(Item item)
+        {
+            if (DictionariesItemPaths == null || !DictionariesItemPaths.Any() || item == null)
+            {
+                return false;
+            }
+
+            foreach (var path in DictionariesItemPaths)
+            {
+                if (item.Paths.FullPath.StartsWith(path))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         public bool IsItemOfSite(Item item)
         {

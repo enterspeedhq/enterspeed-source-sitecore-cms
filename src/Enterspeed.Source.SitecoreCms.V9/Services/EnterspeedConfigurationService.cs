@@ -10,7 +10,6 @@ using Sitecore.Globalization;
 using Sitecore.Links;
 using Sitecore.Links.UrlBuilders;
 using Sitecore.Sites;
-using Sitecore.Web;
 using Version = Sitecore.Data.Version;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Services
@@ -82,6 +81,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 config.ItemNotFoundUrl = GetItemNotFoundUrl(_settings);
 
                 MultilistField enabledSitesField = enterspeedSiteConfigurationItem.Fields[EnterspeedIDs.Fields.EnterspeedEnabledSitesFieldID];
+                MultilistField dictionariesItemPaths = enterspeedSiteConfigurationItem.Fields[EnterspeedIDs.Fields.EnterspeedEnabledDictionariesFieldID];
+                var dictionariesItemPathsList = dictionariesItemPaths?.GetItems()?.Select(d => d.Paths.FullPath).ToList();
 
                 var enabledSites = enabledSitesField?.GetItems()?.ToList() ?? new List<Item>();
                 if (enabledSites.Any())
@@ -113,6 +114,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                             if (homeItem == null || homeItem.Versions.Count == 0)
                             {
                                 _loggingService.Error($"HomeItem is null for site being configured. Site with start path {siteContext.StartPath} and language {siteLanguage}");
+                                continue;
                             }
 
                             var siteBaseUrl = languageEnterspeedSiteConfigurationItem[EnterspeedIDs.Fields.EnterspeedSiteBaseUrlFieldID];
@@ -143,7 +145,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                                 PublishHookUrl = publishHookUrl,
                                 HomeItemPath = siteContext.StartPath,
                                 SiteItemPath = siteContext.RootPath,
-                                Language = siteLanguage.Name
+                                Language = siteLanguage.Name,
+                                DictionariesItemPaths = dictionariesItemPathsList
                             };
 
                             if (siteContext.Properties["scheme"] != null &&
