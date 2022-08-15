@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [0.9.0 - 2021-08-15]
+* Pushing datasources async instead of sync
+* Limited dictionaries to only publish the selected area of the dictionaries
+* Ensure that config is only published, when actually updated
+* Delete datasources based on comparison between master and web database, instead of publish configuration
+
 ## [0.8.0 - 2021-08-10]
 * https://github.com/enterspeedhq/enterspeed-source-sitecore-cms/pull/21
 
