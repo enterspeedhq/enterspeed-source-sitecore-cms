@@ -1,13 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Enterspeed.Source.Sdk.Api.Models;
-using Enterspeed.Source.Sdk.Api.Services;
+using Enterspeed.Source.Sdk.Configuration;
+using Enterspeed.Source.Sdk.Domain.Services;
 using Enterspeed.Source.SitecoreCms.V8.Data.Models;
 using Enterspeed.Source.SitecoreCms.V8.Exceptions;
 using Enterspeed.Source.SitecoreCms.V8.Models;
 using Enterspeed.Source.SitecoreCms.V8.Models.Mappers;
+using Enterspeed.Source.SitecoreCms.V8.Providers;
+using Enterspeed.Source.SitecoreCms.V8.Services;
 using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
+using Enterspeed.Source.SitecoreCms.V8.Services.Serializers;
 using Sitecore.Abstractions;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -17,7 +19,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Dictionaries
 {
     public class EnterspeedDictionaryItemPublishJobHandler : IEnterspeedJobHandler
     {
-        private readonly IEnterspeedIngestService _enterspeedIngestService;
         private readonly IEnterspeedGuardService _enterspeedGuardService;
         private readonly IEntityModelMapper<Item, SitecoreDictionaryEntity> _sitecoreDictionaryEntityModelMapper;
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
@@ -25,12 +26,10 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Dictionaries
 
 
         public EnterspeedDictionaryItemPublishJobHandler(
-            IEnterspeedIngestService enterspeedIngestService,
             IEnterspeedGuardService enterspeedGuardService,
             IEntityModelMapper<Item, SitecoreDictionaryEntity> sitecoreDictionaryEntityModelMapper,
             IEnterspeedConfigurationService enterspeedConfigurationService, BaseItemManager itemManager)
         {
-            _enterspeedIngestService = enterspeedIngestService;
             _enterspeedGuardService = enterspeedGuardService;
             _sitecoreDictionaryEntityModelMapper = sitecoreDictionaryEntityModelMapper;
             _enterspeedConfigurationService = enterspeedConfigurationService;
@@ -52,11 +51,19 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Dictionaries
                 return;
             }
 
-
-            var sitecoreDictionaryEntities = CreateSitecoreDictionaryEntity(dictionaryItem, job);
-            foreach (var entity in sitecoreDictionaryEntities)
+            var configurations = _enterspeedConfigurationService.GetConfigurations();
+            foreach (var configuration in configurations)
             {
-                Ingest(entity, job);
+                try
+                {
+                    var sitecoreEntity = _sitecoreDictionaryEntityModelMapper.Map(dictionaryItem, configuration);
+                    Ingest(sitecoreEntity, job, configuration);
+                }
+                catch (Exception e)
+                {
+                    throw new JobHandlingException(
+                        $"Failed creating entity ({job.EntityId}/{job.Culture}). Message: {e.Message}. StackTrace: {e.StackTrace}");
+                }
             }
         }
 
@@ -79,35 +86,11 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Dictionaries
             return _enterspeedGuardService.CanIngest(dictionaryItem, job.Culture);
         }
 
-        protected virtual IList<SitecoreDictionaryEntity> CreateSitecoreDictionaryEntity(Item item, EnterspeedJob job)
+        protected virtual void Ingest(IEnterspeedEntity sitecoreData, EnterspeedJob job, EnterspeedConfiguration configuration)
         {
-            var dictionaryEntities = new List<SitecoreDictionaryEntity>();
+            var enterspeedIngestService = new EnterspeedIngestService(new SitecoreEnterspeedConnection(configuration), new NewtonsoftJsonSerializer(), new EnterspeedSitecoreConfigurationProvider(_enterspeedConfigurationService));
 
-            try
-            {
-                var configurations = _enterspeedConfigurationService.GetConfigurations();
-                foreach (var configuration in configurations)
-                {
-                    if (!configuration.SiteInfos.Any(s => s.IsDictionaryOfSite(item)))
-                    {
-                        continue;
-                    }
-
-                    var dictionaryEntity = _sitecoreDictionaryEntityModelMapper.Map(item, configuration);
-                    dictionaryEntities.Add(dictionaryEntity);
-                }
-            }
-            catch (Exception e)
-            {
-                throw new JobHandlingException($"Failed creating entity ({job.EntityId}/{job.Culture}). Message: {e.Message}. StackTrace: {e.StackTrace}");
-            }
-
-            return dictionaryEntities;
-        }
-
-        protected virtual void Ingest(IEnterspeedEntity sitecoreData, EnterspeedJob job)
-        {
-            var ingestResponse = _enterspeedIngestService.Save(sitecoreData);
+            var ingestResponse = enterspeedIngestService.Save(sitecoreData);
             if (!ingestResponse.Success)
             {
                 var message = ingestResponse.Exception != null
