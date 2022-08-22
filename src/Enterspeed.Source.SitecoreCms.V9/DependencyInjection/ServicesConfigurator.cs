@@ -38,12 +38,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.DependencyInjection
             services.AddSingleton<IEnterspeedSitecoreIngestService, EnterspeedSitecoreIngestService>();
             services.AddSingleton<EnterspeedDateFormatter>();
 
-            services.AddSingleton<IEnterspeedConnection>(provider =>
-            {
-                var configurationProvider = provider.GetService<IEnterspeedConfigurationProvider>();
-                return new EnterspeedConnection(configurationProvider);
-            });
-
             RegisterFieldConverters(services);
 
             RegisterControllers(services);
