@@ -1,12 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using Enterspeed.Source.Sdk.Api.Models;
-using Enterspeed.Source.Sdk.Api.Services;
+using Enterspeed.Source.Sdk.Configuration;
+using Enterspeed.Source.Sdk.Domain.Services;
 using Enterspeed.Source.SitecoreCms.V8.Data.Models;
 using Enterspeed.Source.SitecoreCms.V8.Exceptions;
 using Enterspeed.Source.SitecoreCms.V8.Models;
 using Enterspeed.Source.SitecoreCms.V8.Models.Mappers;
+using Enterspeed.Source.SitecoreCms.V8.Providers;
+using Enterspeed.Source.SitecoreCms.V8.Services;
 using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
+using Enterspeed.Source.SitecoreCms.V8.Services.Serializers;
 using Sitecore.Abstractions;
 using Sitecore.Data;
 using Sitecore.Data.Items;
@@ -18,7 +21,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
     {
         private readonly IEntityModelMapper<Item, SitecoreContentEntity> _sitecoreContentEntityModelMapper;
         private readonly IEnterspeedConfigurationService _enterspeedConfigurationService;
-        private readonly IEnterspeedIngestService _enterspeedIngestService;
         private readonly IEnterspeedGuardService _enterspeedGuardService;
         private readonly BaseItemManager _itemManager;
 
@@ -26,13 +28,11 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
             IEntityModelMapper<Item, SitecoreContentEntity> sitecoreContentEntityModelMapper,
             IEnterspeedConfigurationService enterspeedConfigurationService,
             BaseItemManager itemManager,
-            IEnterspeedIngestService enterspeedIngestService,
             IEnterspeedGuardService enterspeedGuardService)
         {
             _sitecoreContentEntityModelMapper = sitecoreContentEntityModelMapper;
             _enterspeedConfigurationService = enterspeedConfigurationService;
             _itemManager = itemManager;
-            _enterspeedIngestService = enterspeedIngestService;
             _enterspeedGuardService = enterspeedGuardService;
         }
 
@@ -51,10 +51,25 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
                 return;
             }
 
-            var contentEntities = CreateSitecoreContentEntity(item, job);
-            foreach (var sitecoreContentEntity in contentEntities)
+            var configurations = _enterspeedConfigurationService.GetConfigurations();
+            foreach (var configuration in configurations)
             {
-                Ingest(sitecoreContentEntity, job);
+                try
+                {
+                    var siteOfItem = configuration.GetSite(item);
+                    if (siteOfItem == null)
+                    {
+                        continue;
+                    }
+
+                    var sitecoreEntity = _sitecoreContentEntityModelMapper.Map(item, configuration);
+                    Ingest(sitecoreEntity, job, configuration);
+                }
+                catch (Exception e)
+                {
+                    throw new JobHandlingException(
+                        $"Failed creating entity ({job.EntityId}/{job.Culture}). Message: {e.Message}. StackTrace: {e.StackTrace}");
+                }
             }
         }
 
@@ -78,31 +93,10 @@ namespace Enterspeed.Source.SitecoreCms.V8.Handlers.Content
             return _enterspeedGuardService.CanIngest(item, job.Culture);
         }
 
-        protected virtual List<SitecoreContentEntity> CreateSitecoreContentEntity(Item item, EnterspeedJob job)
+        protected virtual void Ingest(IEnterspeedEntity enterspeedData, EnterspeedJob job, EnterspeedConfiguration configuration)
         {
-            var sitecoreEntities = new List<SitecoreContentEntity>();
-            try
-            {
-                var configurations = _enterspeedConfigurationService.GetConfigurations();
-                foreach (var configuration in configurations)
-                {
-                    var sitecoreEntity = _sitecoreContentEntityModelMapper.Map(item, configuration);
-                    sitecoreEntities.Add(sitecoreEntity);
-                }
-            }
-            catch (Exception e)
-            {
-                throw new JobHandlingException(
-                    $"Failed creating entity ({job.EntityId}/{job.Culture}). Message: {e.Message}. StackTrace: {e.StackTrace}");
-            }
-
-            return sitecoreEntities;
-        }
-
-        protected virtual void Ingest(IEnterspeedEntity enterspeedData, EnterspeedJob job)
-        {
-            var ingestResponse = _enterspeedIngestService.Save(enterspeedData);
-            if (!ingestResponse.Success)
+            var enterspeedIngestService = new EnterspeedIngestService(new SitecoreEnterspeedConnection(configuration), new NewtonsoftJsonSerializer(), new EnterspeedSitecoreConfigurationProvider(_enterspeedConfigurationService));
+            var ingestResponse = enterspeedIngestService.Save(enterspeedData); if (!ingestResponse.Success)
             {
                 var message = ingestResponse.Exception != null
                     ? ingestResponse.Exception.Message
