@@ -1,4 +1,5 @@
 ﻿using System;
+using Enterspeed.Source.SitecoreCms.V9.Data;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Sitecore;
 using Sitecore.Abstractions;
@@ -16,26 +17,31 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
         private const string GearIcon = "applications/32x32/gear_refresh.png";
         private const string SiteIcon = "Applications/32x32/window_gear.png";
         private const string EnabledSitesHelpText = "Select the site items here with the same fullPath as the rootPath configured for the respective site(s).";
-        private const string ApiKeyHelpText = "For example \"source-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\".";
         private const string EnabledDictionariesHelpText = "Select the dictionary parent item, to push the item and all descendant dictionaries to Enterspeed.";
+
+        private const string ApiKeyHelpText = "For example \"source-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\".";
 
         private readonly BaseItemManager _itemManager;
         private readonly BaseFactory _factory;
         private readonly BasePublishManager _publishManager;
+        private readonly IEnterspeedMigrationService _migrationService;
 
         public InitializeEnterspeed(
             BaseItemManager itemManager,
             BaseFactory factory,
-            BasePublishManager publishManager)
+            BasePublishManager publishManager,
+            IEnterspeedMigrationService migrationService)
         {
             _itemManager = itemManager;
             _factory = factory;
             _publishManager = publishManager;
+            _migrationService = migrationService;
         }
 
         public void Process(PipelineArgs args)
         {
             Init();
+            _migrationService.Init();
         }
 
         private static Item EnsureEnterspeedTemplatesFolder(Item templatesSystemRoot)
@@ -152,8 +158,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
 
         private static void EnsureEnterspeedSiteConfigurationDataSectionFields(Item enterspeedSiteConfigSection)
         {
-            Item apiBaseUrlField = enterspeedSiteConfigSection.Children["API Base Url"]
-                ?? enterspeedSiteConfigSection.Add("API Base Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedApiBaseUrlFieldID);
+            Item apiBaseUrlField = enterspeedSiteConfigSection.Children["API Base Url"] ?? enterspeedSiteConfigSection.Add("API Base Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedApiBaseUrlFieldID);
 
             using (new EditContext(apiBaseUrlField))
             {
@@ -245,7 +250,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
             }
 
             Item dictionariesField = enterspeedSiteConfigSection.Children["Enabled Dictionaries"]
-                                     ?? enterspeedSiteConfigSection.Add("Enabled Dictionaries", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnabledDictionariesFieldID);
+                ?? enterspeedSiteConfigSection.Add("Enabled Dictionaries", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnabledDictionariesFieldID);
 
             using (new EditContext(dictionariesField))
             {
@@ -331,7 +336,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
             }
 
             Item publishHookUrlField = enterspeedSiteConfigSection.Children["Publish Hook Url"]
-    ?? enterspeedSiteConfigSection.Add("Publish Hook Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedpublishHookUrlFieldID);
+                ?? enterspeedSiteConfigSection.Add("Publish Hook Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedpublishHookUrlFieldID);
 
             using (new EditContext(publishHookUrlField))
             {
@@ -357,7 +362,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
             }
 
             Item enablePreviewField = enterspeedSiteConfigSection.Children["Enable Preview"]
-?? enterspeedSiteConfigSection.Add("Enable Preview", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnablePreviewFieldID);
+                ?? enterspeedSiteConfigSection.Add("Enable Preview", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnablePreviewFieldID);
 
             using (new EditContext(enablePreviewField))
             {
@@ -392,7 +397,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 Language language = Language.Parse("en");
 
                 EnsureTemplates(masterDb, webDb, language);
-
                 EnsureItems(masterDb, webDb, language);
             }
         }

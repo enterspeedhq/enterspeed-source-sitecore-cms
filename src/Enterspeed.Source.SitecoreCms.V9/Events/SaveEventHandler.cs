@@ -4,6 +4,7 @@ using Enterspeed.Source.Sdk.Domain.SystemTextJson;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Providers;
 using Enterspeed.Source.SitecoreCms.V9.Services;
+using Enterspeed.Source.SitecoreCms.V9.Services.Contracts;
 using Sitecore.Abstractions;
 using Sitecore.Data.Items;
 using Sitecore.Events;
@@ -38,7 +39,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                 return;
             }
 
-            var siteConfigurations = _enterspeedConfigurationService.GetConfiguration();
+            var siteConfigurations = _enterspeedConfigurationService.GetConfigurations();
             foreach (EnterspeedSitecoreConfiguration configuration in siteConfigurations)
             {
                 if (!configuration.IsEnabled)

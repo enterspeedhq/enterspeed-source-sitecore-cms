@@ -4,7 +4,7 @@ using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties;
 using Sitecore.Data.Items;
 
-namespace Enterspeed.Source.SitecoreCms.V9.Services
+namespace Enterspeed.Source.SitecoreCms.V9.Services.Contracts
 {
     public interface IEnterspeedFieldConverter
     {

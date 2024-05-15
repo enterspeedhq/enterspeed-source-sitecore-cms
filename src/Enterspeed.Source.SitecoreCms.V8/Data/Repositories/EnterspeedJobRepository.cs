@@ -5,7 +5,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using Enterspeed.Source.SitecoreCms.V8.Data.Models;
-using Enterspeed.Source.SitecoreCms.V8.Exceptions;
+using Enterspeed.Source.SitecoreCms.V8.Extensions;
 using Enterspeed.Source.SitecoreCms.V8.Services.Contracts;
 using Sitecore.Configuration;
 

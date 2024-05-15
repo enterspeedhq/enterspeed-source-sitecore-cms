@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
+using Enterspeed.Source.SitecoreCms.V9.Services.Contracts;
 using HtmlAgilityPack;
+using log4net.Repository.Hierarchy;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 using Sitecore.Web.UI.WebControls;
@@ -13,11 +15,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
     public class DefaultRichTextFieldValueConverter : IEnterspeedFieldValueConverter
     {
         private readonly IEnterspeedSitecoreFieldService _fieldService;
+        private readonly IEnterspeedSitecoreLoggingService _loggingService;
 
         public DefaultRichTextFieldValueConverter(
-            IEnterspeedSitecoreFieldService fieldService)
+            IEnterspeedSitecoreFieldService fieldService,
+            IEnterspeedSitecoreLoggingService loggingService)
         {
             _fieldService = fieldService;
+            _loggingService = loggingService;
         }
 
         public bool CanConvert(Field field)
@@ -33,7 +38,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
             {
                 value = PrefixRelativeImagesWithDomain(value, siteInfo.BaseUrl);
 
-                value = PrefixRelativeLinksWithDomain(value, siteInfo.BaseUrl);
+                value = PrefixRelativeLinksWithDomain(value, siteInfo.BaseUrl, item);
             }
 
             return new StringEnterspeedProperty(_fieldService.GetFieldName(field), value);
@@ -69,7 +74,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
             return htmlDocument.DocumentNode.InnerHtml;
         }
 
-        private static string PrefixRelativeLinksWithDomain(string html, string baseUrl)
+        private string PrefixRelativeLinksWithDomain(string html, string baseUrl, Item item)
         {
             if (string.IsNullOrWhiteSpace(html) ||
                 string.IsNullOrWhiteSpace(baseUrl))
@@ -102,7 +107,14 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
 
                 if (!uri.IsAbsoluteUri || href.StartsWith("/"))
                 {
-                    anchorNode.SetAttributeValue("href", new Uri(baseUri, href).ToString());
+                    if (Uri.TryCreate(baseUri, href, out var newUri))
+                    {
+                        anchorNode.SetAttributeValue("href", newUri.ToString());
+                    }
+                    else
+                    {
+                        _loggingService.Warn($"Could not create a new Uri from the baseUri '{baseUri}' and the href '{href}' on item: " + item.ID.ToString());
+                    }
                 }
             }
 

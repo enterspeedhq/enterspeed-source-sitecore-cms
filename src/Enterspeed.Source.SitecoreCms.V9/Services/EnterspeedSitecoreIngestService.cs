@@ -7,6 +7,7 @@ using Enterspeed.Source.SitecoreCms.V9.Extensions;
 using Enterspeed.Source.SitecoreCms.V9.Models;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Models.Mappers;
+using Enterspeed.Source.SitecoreCms.V9.Services.Contracts;
 using Sitecore.Abstractions;
 using Sitecore.Data.Items;
 using Sitecore.Links;
@@ -22,7 +23,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
         private readonly IEntityModelMapper<Item, SitecoreDictionaryEntity> _sitecoreDictionaryEntityModelMapper;
         private readonly IEnterspeedIdentityService _identityService;
         public EnterspeedSitecoreIngestService(
-            BaseItemManager itemManager,
             BaseLinkStrategyFactory linkStrategyFactory,
             IEnterspeedSitecoreLoggingService loggingService,
             IEntityModelMapper<Item, SitecoreContentEntity> sitecoreContentEntityModelMapper,
