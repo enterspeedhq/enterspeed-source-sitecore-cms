@@ -25,6 +25,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
         {
             var output = new Dictionary<string, IEnterspeedProperty>();
 
+            item.Fields.ReadAll();
+
             FieldCollection fieldsCollection = item.Fields;
             if (fieldsCollection == null || !fieldsCollection.Any())
             {
