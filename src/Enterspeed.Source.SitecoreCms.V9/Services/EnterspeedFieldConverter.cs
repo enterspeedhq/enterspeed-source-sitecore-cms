@@ -68,10 +68,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 IEnterspeedFieldValueConverter converter = fieldValueConverters.FirstOrDefault(x => x.CanConvert(field));
 
                 var value = converter?.Convert(item, field, siteInfo, fieldValueConverters, configuration);
-                if (value == null)
-                {
-                    continue;
-                }
 
                 output.Add(_fieldService.GetFieldName(field), value);
             }
