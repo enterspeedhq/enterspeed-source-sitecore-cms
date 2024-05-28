@@ -2,7 +2,7 @@
 using System.Linq;
 using Enterspeed.Source.Sdk.Api.Providers;
 using Enterspeed.Source.Sdk.Configuration;
-using Enterspeed.Source.SitecoreCms.V9.Services;
+using Enterspeed.Source.SitecoreCms.V9.Services.Contracts;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Providers
 {
@@ -16,6 +16,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Providers
             _enterspeedConfigurationService = enterspeedConfigurationService;
         }
 
-        public EnterspeedConfiguration Configuration => _enterspeedConfigurationService.GetConfiguration().Any() ? _enterspeedConfigurationService.GetConfiguration().First() : new EnterspeedConfiguration();
+        public EnterspeedConfiguration Configuration => _enterspeedConfigurationService.GetConfigurations().Any() ? _enterspeedConfigurationService.GetConfigurations().First() : new EnterspeedConfiguration();
     }
 }

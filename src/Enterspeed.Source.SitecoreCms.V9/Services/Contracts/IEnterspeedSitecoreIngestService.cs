@@ -3,7 +3,7 @@ using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 
-namespace Enterspeed.Source.SitecoreCms.V9.Services
+namespace Enterspeed.Source.SitecoreCms.V9.Services.Contracts
 {
     public interface IEnterspeedSitecoreIngestService
     {
