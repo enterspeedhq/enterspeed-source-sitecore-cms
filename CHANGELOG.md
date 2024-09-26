@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [0.9.1 - 2024-09-14]
+* Added dependency constraint for Sitecore.Kernel and Sitecore.Mvc 1.0 > 9.0.0
+
 ## [0.9.1 - 2022-08-22]
 * https://github.com/enterspeedhq/enterspeed-source-sitecore-cms/pull/24
 
