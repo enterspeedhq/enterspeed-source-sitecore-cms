@@ -22,7 +22,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
 
             object[] parameters = { batchSizeParsed ? 2000 : batchSize };
 
-            var jobOptions = new Sitecore.Jobs.DefaultJobOptions("handleQueuedJobs", "Enterspeed", "CM", _enterspeedJobsHandlingService, "HandlePendingJobs", parameters)
+            var jobOptions = new Sitecore.Jobs.DefaultJobOptions("handleQueuedJobs", "Enterspeed", Sitecore.Context.GetSiteName(), _enterspeedJobsHandlingService, "HandlePendingJobs", parameters)
             {
                 WriteToLog = true
             };
