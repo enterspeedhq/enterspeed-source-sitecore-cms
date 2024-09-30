@@ -5,6 +5,7 @@ using Sitecore;
 using Sitecore.Abstractions;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Data.Masters;
 using Sitecore.Globalization;
 using Sitecore.Pipelines;
 using Sitecore.SecurityModel;
@@ -156,7 +157,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 ?? enterspeedSiteConfigTemplateItem.Add("Data", new TemplateID(TemplateIDs.TemplateSection), EnterspeedIDs.Templates.EnterspeedSiteConfigurationDataSectionID);
         }
 
-        private static void EnsureEnterspeedSiteConfigurationDataSectionFields(Item enterspeedSiteConfigSection)
+        private static void EnsureEnterspeedSiteConfigurationDataSectionFields(Item enterspeedSiteConfigSection, Database masterDb)
         {
             Item apiBaseUrlField = enterspeedSiteConfigSection.Children["API Base Url"] ?? enterspeedSiteConfigSection.Add("API Base Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedApiBaseUrlFieldID);
 
@@ -386,6 +387,24 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                     enablePreviewField[TemplateFieldIDs.Unversioned] = "1";
                 }
             }
+
+            var enterspeedSiteConfigTemplate = masterDb.GetTemplate(enterspeedSiteConfigSection.Parent.ID);
+            if (enterspeedSiteConfigTemplate.StandardValues == null)
+            {
+                using (new EditContext(enterspeedSiteConfigTemplate))
+                {
+                    enterspeedSiteConfigTemplate.CreateStandardValues();
+                }
+
+                using (new EditContext(enterspeedSiteConfigTemplate.StandardValues))
+                {
+                    var apiBaseUrlStandardValues = enterspeedSiteConfigTemplate.StandardValues["API Base Url"];
+                    if (apiBaseUrlStandardValues.ToString() == string.Empty)
+                    {
+                        enterspeedSiteConfigTemplate.StandardValues["API Base Url"] = "https://api.enterspeed.com";
+                    }
+                }
+            }
         }
 
         private void Init()
@@ -415,7 +434,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
             EnsureEnterspeedSiteConfigurationTemplateFields(enterspeedSiteConfigTemplateItem);
             Item enterspeedSiteConfigSection = EnsureEnterspeedSiteConfigurationTemplateDataSection(enterspeedSiteConfigTemplateItem);
 
-            EnsureEnterspeedSiteConfigurationDataSectionFields(enterspeedSiteConfigSection);
+            EnsureEnterspeedSiteConfigurationDataSectionFields(enterspeedSiteConfigSection, masterDb);
 
             Item enterspeedConfigTemplateItem = EnsureEnterspeedConfigurationTemplate(EnsureEnterspeedTemplatesFolder(templatesSystemRoot));
 
