@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Enterspeed.Source.Sdk.Api.Models;
+using Enterspeed.Source.Sdk.Api.Models.Properties;
 using Enterspeed.Source.Sdk.Api.Services;
 using Enterspeed.Source.SitecoreCms.V9.Extensions;
 using Enterspeed.Source.SitecoreCms.V9.Models;
@@ -75,7 +76,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Controllers
                     items.Add(itemOfPath);
                 }
 
-                var entities = new List<IEnterspeedEntity>();
+                var entities = new List<IEnterspeedEntity<IDictionary<string, IEnterspeedProperty>>>();
 
                 foreach (Item item in items)
                 {
@@ -109,9 +110,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Controllers
             }
         }
 
-        private IEnterspeedEntity Map(Item item, EnterspeedSitecoreConfiguration configuration)
+        private IEnterspeedEntity<IDictionary<string, IEnterspeedProperty>> Map(Item item, EnterspeedSitecoreConfiguration configuration)
         {
-            IEnterspeedEntity entity;
+            IEnterspeedEntity<IDictionary<string, IEnterspeedProperty>> entity;
 
             if (item.IsRenderingItem())
             {

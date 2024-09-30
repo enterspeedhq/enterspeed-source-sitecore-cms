@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using Enterspeed.Source.Sdk.Api.Models;
+using Enterspeed.Source.Sdk.Api.Models.Properties;
 using Enterspeed.Source.Sdk.Configuration;
 using Enterspeed.Source.Sdk.Domain.Services;
 using Enterspeed.Source.SitecoreCms.V9.Data.Models;
@@ -93,9 +95,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Handlers.Content
             return _enterspeedGuardService.CanIngest(item, job.Culture);
         }
 
-        protected virtual void Ingest(IEnterspeedEntity enterspeedData, EnterspeedJob job, EnterspeedConfiguration configuration)
+        protected virtual void Ingest(IEnterspeedEntity<IDictionary<string, IEnterspeedProperty>> enterspeedData, EnterspeedJob job, EnterspeedConfiguration configuration)
         {
-            var enterspeedIngestService = new EnterspeedIngestService(new SitecoreEnterspeedConnection(configuration), new NewtonsoftJsonSerializer(), new EnterspeedSitecoreConfigurationProvider(_enterspeedConfigurationService));
+            var enterspeedIngestService = new EnterspeedIngestService(new SitecoreEnterspeedConnection(configuration), new NewtonsoftJsonSerializer());
             var ingestResponse = enterspeedIngestService.Save(enterspeedData);
             if (!ingestResponse.Success)
             {

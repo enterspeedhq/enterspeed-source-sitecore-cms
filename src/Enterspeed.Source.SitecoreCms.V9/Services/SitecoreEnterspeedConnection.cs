@@ -28,7 +28,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
         private string ApiKey => _configuration.ApiKey;
         private string BaseUrl => _configuration.BaseUrl;
         private int ConnectionTimeout => _configuration.ConnectionTimeout;
-        private string IngestVersion => _configuration.IngestVersion;
+        private string IngestVersion => "1";
 
         public HttpClient HttpClientConnection
         {
@@ -69,6 +69,10 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
             _httpClientConnection.DefaultRequestHeaders.Add("Accept", "application/json");
 
             _connectionEstablishedDate = DateTime.Now;
+        }
+
+        public void Dispose()
+        {
         }
     }
 }

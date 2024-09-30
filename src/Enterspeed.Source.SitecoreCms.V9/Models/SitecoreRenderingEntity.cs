@@ -4,7 +4,7 @@ using Enterspeed.Source.Sdk.Api.Models.Properties;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Models
 {
-    public class SitecoreRenderingEntity : IEnterspeedEntity
+    public class SitecoreRenderingEntity : IEnterspeedEntity<IDictionary<string, IEnterspeedProperty>>
     {
         public string Id { get; set; }
         public string Type { get; set; }

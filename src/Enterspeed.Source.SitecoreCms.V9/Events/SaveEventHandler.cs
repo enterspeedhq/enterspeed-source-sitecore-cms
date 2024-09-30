@@ -52,7 +52,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Events
                     continue;
                 }
 
-                EnterspeedIngestService enterspeedIngestService = new EnterspeedIngestService(new SitecoreEnterspeedConnection(configuration), new SystemTextJsonSerializer(), new EnterspeedSitecoreConfigurationProvider(_enterspeedConfigurationService));
+                EnterspeedIngestService enterspeedIngestService = new EnterspeedIngestService(new SitecoreEnterspeedConnection(configuration), new SystemTextJsonSerializer());
 
                 // Getting the source item first
                 if (sourceItem == null)
