@@ -19,8 +19,12 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
         private const string SiteIcon = "Applications/32x32/window_gear.png";
         private const string EnabledSitesHelpText = "Select the site items here with the same fullPath as the rootPath configured for the respective site(s).";
         private const string EnabledDictionariesHelpText = "Select the dictionary parent item, to push the item and all descendant dictionaries to Enterspeed.";
-
         private const string ApiKeyHelpText = "For example \"source-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\".";
+
+        private const string ApiBaseUrlTitle = "API Base Url *";
+        private const string ApiKeyTitle = "Api Key *";
+        private const string SiteBaseUrlTitle = "Site Base Url *";
+
 
         private readonly BaseItemManager _itemManager;
         private readonly BaseFactory _factory;
@@ -182,6 +186,12 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
                 {
                     apiBaseUrlField[TemplateFieldIDs.Unversioned] = "1";
                 }
+
+                string currentTitle = apiBaseUrlField[TemplateFieldIDs.Title];
+                if (currentTitle != ApiBaseUrlTitle)
+                {
+                    apiBaseUrlField[TemplateFieldIDs.Title] = ApiBaseUrlTitle;
+                }
             }
 
             Item apiKeyField = enterspeedSiteConfigSection.Children["API Key"]
@@ -213,6 +223,12 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
                 if (!currentHelpValue.Equals(ApiKeyHelpText, StringComparison.OrdinalIgnoreCase))
                 {
                     apiKeyField.Help.ToolTip = ApiKeyHelpText;
+                }
+
+                string currentTitle = apiKeyField[TemplateFieldIDs.Title];
+                if (currentTitle != ApiKeyTitle)
+                {
+                    apiKeyField[TemplateFieldIDs.Title] = ApiKeyTitle;
                 }
             }
 
@@ -307,6 +323,12 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
                 if (currentUnversionedValue != "1")
                 {
                     siteBaseUrlField[TemplateFieldIDs.Unversioned] = "1";
+                }
+
+                string currentTitle = siteBaseUrlField[TemplateFieldIDs.Title];
+                if (currentTitle != SiteBaseUrlTitle)
+                {
+                    siteBaseUrlField[TemplateFieldIDs.Title] = SiteBaseUrlTitle;
                 }
             }
 
