@@ -7,6 +7,7 @@ using Enterspeed.Source.SitecoreCms.V9.Services.Contracts;
 using Sitecore.Abstractions;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
+using Sitecore.Data.Managers;
 using Sitecore.Globalization;
 using Sitecore.Links;
 using Sitecore.Links.UrlBuilders;
@@ -204,22 +205,28 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
 
         private bool IsConfigurationUpdated(Item item, out DateTime currentUpdatedDate)
         {
-            if (item.Children != null && item.Children.Any())
+            var database = _factory.GetDatabase("web");
+            var languages = _languageManager.GetLanguages(_factory.GetDatabase("web"));
+            currentUpdatedDate = DateTime.MinValue;
+
+            foreach (var language in languages)
             {
-                currentUpdatedDate = item.Children.Max(i => i.Statistics.Updated);
-            }
-            else
-            {
-                currentUpdatedDate = DateTime.UtcNow;
+                var languageItem = _itemManager.GetItem(item.ID, language, Version.Latest, database);
+                if (languageItem != null)
+                {
+                    if (languageItem.Children != null && languageItem.Children.Any())
+                    {
+                        currentUpdatedDate = languageItem.Children.Max(i => i.Statistics.Updated);
+                    }
+
+                    if (_lastUpdatedDate < currentUpdatedDate)
+                    {
+                        return true;
+                    }
+                }
             }
 
-            if (_lastUpdatedDate >= currentUpdatedDate &&
-                _configuration != null)
-            {
-                return false;
-            }
-
-            return true;
+            return false;
         }
     }
 }
