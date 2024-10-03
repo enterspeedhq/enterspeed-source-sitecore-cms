@@ -183,7 +183,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
         private bool IsConfigurationUpdated(Item item, out DateTime currentUpdatedDate)
         {
             var database = _factory.GetDatabase("web");
-            var languages = _languageManager.GetLanguages(_factory.GetDatabase("web"));
+            var languages = _languageManager.GetLanguages(database);
             currentUpdatedDate = DateTime.MinValue;
 
             foreach (var language in languages)
