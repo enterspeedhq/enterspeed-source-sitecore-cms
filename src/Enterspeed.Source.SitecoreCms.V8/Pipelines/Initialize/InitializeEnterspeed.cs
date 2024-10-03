@@ -464,8 +464,6 @@ namespace Enterspeed.Source.SitecoreCms.V8.Pipelines.Initialize
             Item enterspeedConfigSection = EnsureEnterspeedConfigurationTemplateDataSection(enterspeedConfigTemplateItem);
 
             EnsureEnterspeedConfigurationDataSectionFields(enterspeedConfigSection);
-
-            _publishManager.PublishItem(templatesSystemRoot, new[] { webDb }, new[] { language }, true, false, true);
         }
 
         private void EnsureItems(Database masterDb, Database webDb, Language language)
