@@ -1,9 +1,11 @@
 ﻿using System;
+using Enterspeed.Source.SitecoreCms.V9.Data;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Sitecore;
 using Sitecore.Abstractions;
 using Sitecore.Data;
 using Sitecore.Data.Items;
+using Sitecore.Data.Masters;
 using Sitecore.Globalization;
 using Sitecore.Pipelines;
 using Sitecore.SecurityModel;
@@ -16,26 +18,34 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
         private const string GearIcon = "applications/32x32/gear_refresh.png";
         private const string SiteIcon = "Applications/32x32/window_gear.png";
         private const string EnabledSitesHelpText = "Select the site items here with the same fullPath as the rootPath configured for the respective site(s).";
-        private const string ApiKeyHelpText = "For example \"source-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\".";
         private const string EnabledDictionariesHelpText = "Select the dictionary parent item, to push the item and all descendant dictionaries to Enterspeed.";
+        private const string ApiKeyHelpText = "For example \"source-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx\".";
+
+        private const string ApiBaseUrlTitle = "API Base Url *";
+        private const string ApiKeyTitle = "Api Key *";
+        private const string SiteBaseUrlTitle = "Site Base Url *";
 
         private readonly BaseItemManager _itemManager;
         private readonly BaseFactory _factory;
         private readonly BasePublishManager _publishManager;
+        private readonly IEnterspeedMigrationService _migrationService;
 
         public InitializeEnterspeed(
             BaseItemManager itemManager,
             BaseFactory factory,
-            BasePublishManager publishManager)
+            BasePublishManager publishManager,
+            IEnterspeedMigrationService migrationService)
         {
             _itemManager = itemManager;
             _factory = factory;
             _publishManager = publishManager;
+            _migrationService = migrationService;
         }
 
         public void Process(PipelineArgs args)
         {
             Init();
+            _migrationService.Init();
         }
 
         private static Item EnsureEnterspeedTemplatesFolder(Item templatesSystemRoot)
@@ -150,10 +160,9 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 ?? enterspeedSiteConfigTemplateItem.Add("Data", new TemplateID(TemplateIDs.TemplateSection), EnterspeedIDs.Templates.EnterspeedSiteConfigurationDataSectionID);
         }
 
-        private static void EnsureEnterspeedSiteConfigurationDataSectionFields(Item enterspeedSiteConfigSection)
+        private static void EnsureEnterspeedSiteConfigurationDataSectionFields(Item enterspeedSiteConfigSection, Database masterDb)
         {
-            Item apiBaseUrlField = enterspeedSiteConfigSection.Children["API Base Url"]
-                ?? enterspeedSiteConfigSection.Add("API Base Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedApiBaseUrlFieldID);
+            Item apiBaseUrlField = enterspeedSiteConfigSection.Children["API Base Url"] ?? enterspeedSiteConfigSection.Add("API Base Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedApiBaseUrlFieldID);
 
             using (new EditContext(apiBaseUrlField))
             {
@@ -175,6 +184,12 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 if (currentUnversionedValue != "1")
                 {
                     apiBaseUrlField[TemplateFieldIDs.Unversioned] = "1";
+                }
+
+                string currentTitle = apiBaseUrlField[TemplateFieldIDs.Title];
+                if (currentTitle != ApiBaseUrlTitle)
+                {
+                    apiBaseUrlField[TemplateFieldIDs.Title] = ApiBaseUrlTitle;
                 }
             }
 
@@ -207,6 +222,12 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 if (!currentHelpValue.Equals(ApiKeyHelpText, StringComparison.OrdinalIgnoreCase))
                 {
                     apiKeyField.Help.ToolTip = ApiKeyHelpText;
+                }
+
+                string currentTitle = apiKeyField[TemplateFieldIDs.Title];
+                if (currentTitle != ApiKeyTitle)
+                {
+                    apiKeyField[TemplateFieldIDs.Title] = ApiKeyTitle;
                 }
             }
 
@@ -245,7 +266,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
             }
 
             Item dictionariesField = enterspeedSiteConfigSection.Children["Enabled Dictionaries"]
-                                     ?? enterspeedSiteConfigSection.Add("Enabled Dictionaries", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnabledDictionariesFieldID);
+                ?? enterspeedSiteConfigSection.Add("Enabled Dictionaries", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnabledDictionariesFieldID);
 
             using (new EditContext(dictionariesField))
             {
@@ -302,6 +323,12 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 {
                     siteBaseUrlField[TemplateFieldIDs.Unversioned] = "1";
                 }
+
+                string currentTitle = siteBaseUrlField[TemplateFieldIDs.Title];
+                if (currentTitle != SiteBaseUrlTitle)
+                {
+                    siteBaseUrlField[TemplateFieldIDs.Title] = SiteBaseUrlTitle;
+                }
             }
 
             Item mediaBaseUrlField = enterspeedSiteConfigSection.Children["Media Base Url"]
@@ -331,7 +358,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
             }
 
             Item publishHookUrlField = enterspeedSiteConfigSection.Children["Publish Hook Url"]
-    ?? enterspeedSiteConfigSection.Add("Publish Hook Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedpublishHookUrlFieldID);
+                ?? enterspeedSiteConfigSection.Add("Publish Hook Url", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedpublishHookUrlFieldID);
 
             using (new EditContext(publishHookUrlField))
             {
@@ -357,7 +384,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
             }
 
             Item enablePreviewField = enterspeedSiteConfigSection.Children["Enable Preview"]
-?? enterspeedSiteConfigSection.Add("Enable Preview", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnablePreviewFieldID);
+                ?? enterspeedSiteConfigSection.Add("Enable Preview", new TemplateID(TemplateIDs.TemplateField), EnterspeedIDs.Fields.EnterspeedEnablePreviewFieldID);
 
             using (new EditContext(enablePreviewField))
             {
@@ -381,6 +408,24 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                     enablePreviewField[TemplateFieldIDs.Unversioned] = "1";
                 }
             }
+
+            var enterspeedSiteConfigTemplate = masterDb.GetTemplate(enterspeedSiteConfigSection.Parent.ID);
+            if (enterspeedSiteConfigTemplate.StandardValues == null)
+            {
+                using (new EditContext(enterspeedSiteConfigTemplate))
+                {
+                    enterspeedSiteConfigTemplate.CreateStandardValues();
+                }
+
+                using (new EditContext(enterspeedSiteConfigTemplate.StandardValues))
+                {
+                    var apiBaseUrlStandardValues = enterspeedSiteConfigTemplate.StandardValues["API Base Url"];
+                    if (apiBaseUrlStandardValues.ToString() == string.Empty)
+                    {
+                        enterspeedSiteConfigTemplate.StandardValues["API Base Url"] = "https://api.enterspeed.com";
+                    }
+                }
+            }
         }
 
         private void Init()
@@ -392,7 +437,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
                 Language language = Language.Parse("en");
 
                 EnsureTemplates(masterDb, webDb, language);
-
                 EnsureItems(masterDb, webDb, language);
             }
         }
@@ -411,7 +455,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
             EnsureEnterspeedSiteConfigurationTemplateFields(enterspeedSiteConfigTemplateItem);
             Item enterspeedSiteConfigSection = EnsureEnterspeedSiteConfigurationTemplateDataSection(enterspeedSiteConfigTemplateItem);
 
-            EnsureEnterspeedSiteConfigurationDataSectionFields(enterspeedSiteConfigSection);
+            EnsureEnterspeedSiteConfigurationDataSectionFields(enterspeedSiteConfigSection, masterDb);
 
             Item enterspeedConfigTemplateItem = EnsureEnterspeedConfigurationTemplate(EnsureEnterspeedTemplatesFolder(templatesSystemRoot));
 
@@ -419,8 +463,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Pipelines.Initialize
             Item enterspeedConfigSection = EnsureEnterspeedConfigurationTemplateDataSection(enterspeedConfigTemplateItem);
 
             EnsureEnterspeedConfigurationDataSectionFields(enterspeedConfigSection);
-
-            _publishManager.PublishItem(templatesSystemRoot, new[] { webDb }, new[] { language }, true, false, true);
         }
 
         private void EnsureItems(Database masterDb, Database webDb, Language language)

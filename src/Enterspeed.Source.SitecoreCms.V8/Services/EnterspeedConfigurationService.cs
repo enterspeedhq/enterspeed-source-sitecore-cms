@@ -98,7 +98,7 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
                             var siteContext = _siteContextFactory.GetSiteContext(matchingSite.Name);
                             var siteLanguage = _languageManager.GetLanguage(siteContext.Language);
 
-                            var languageEnterspeedSiteConfigurationItem = enterspeedSiteConfigurationItem.Database.GetItem(enterspeedSiteConfigurationItem.ID, siteLanguage);
+                             var languageEnterspeedSiteConfigurationItem = enterspeedSiteConfigurationItem.Database.GetItem(enterspeedSiteConfigurationItem.ID, siteLanguage);
                             if (languageEnterspeedSiteConfigurationItem.Versions.Count == 0)
                             {
                                 languageEnterspeedSiteConfigurationItem = enterspeedSiteConfigurationItem;
@@ -182,15 +182,28 @@ namespace Enterspeed.Source.SitecoreCms.V8.Services
 
         private bool IsConfigurationUpdated(Item item, out DateTime currentUpdatedDate)
         {
-            currentUpdatedDate = item.Children.Max(i => i.Statistics.Updated);
+            var database = _factory.GetDatabase("web");
+            var languages = _languageManager.GetLanguages(database);
+            currentUpdatedDate = DateTime.MinValue;
 
-            if (_lastUpdatedDate >= currentUpdatedDate &&
-                _configuration != null)
+            foreach (var language in languages)
             {
-                return false;
+                var languageItem = _itemManager.GetItem(item.ID, language, Version.Latest, database);
+                if (languageItem != null)
+                {
+                    if (languageItem.Children != null && languageItem.Children.Any())
+                    {
+                        currentUpdatedDate = languageItem.Children.Max(i => i.Statistics.Updated);
+                    }
+
+                    if (_lastUpdatedDate < currentUpdatedDate)
+                    {
+                        return true;
+                    }
+                }
             }
 
-            return true;
+            return false;
         }
     }
 }

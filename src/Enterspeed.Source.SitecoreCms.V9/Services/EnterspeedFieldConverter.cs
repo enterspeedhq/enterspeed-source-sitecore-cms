@@ -4,6 +4,7 @@ using System.Linq;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
 using Enterspeed.Source.SitecoreCms.V9.Extensions;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
+using Enterspeed.Source.SitecoreCms.V9.Services.Contracts;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties;
 using Sitecore.Collections;
 using Sitecore.Data.Fields;
@@ -24,6 +25,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
         public IDictionary<string, IEnterspeedProperty> ConvertFields(Item item, EnterspeedSiteInfo siteInfo, List<IEnterspeedFieldValueConverter> fieldValueConverters, EnterspeedSitecoreConfiguration configuration)
         {
             var output = new Dictionary<string, IEnterspeedProperty>();
+
+            item.Fields.ReadAll();
 
             FieldCollection fieldsCollection = item.Fields;
             if (fieldsCollection == null || !fieldsCollection.Any())
@@ -66,10 +69,6 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services
                 IEnterspeedFieldValueConverter converter = fieldValueConverters.FirstOrDefault(x => x.CanConvert(field));
 
                 var value = converter?.Convert(item, field, siteInfo, fieldValueConverters, configuration);
-                if (value == null)
-                {
-                    continue;
-                }
 
                 output.Add(_fieldService.GetFieldName(field), value);
             }

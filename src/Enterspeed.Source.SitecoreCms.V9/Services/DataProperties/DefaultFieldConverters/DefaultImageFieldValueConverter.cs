@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
+using Enterspeed.Source.SitecoreCms.V9.Services.Contracts;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;
 
@@ -13,6 +14,7 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
         private const string PropertyUrl = "url";
         private const string PropertyExtension = "extension";
         private const string PropertySize = "size";
+        private const string PropertyId = "id";
         private readonly IEnterspeedSitecoreFieldService _fieldService;
         private readonly IEnterspeedUrlService _urlService;
 
@@ -53,6 +55,8 @@ namespace Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.DefaultFieldC
             {
                 properties.Add(PropertyExtension, new StringEnterspeedProperty(PropertyExtension, imageField.MediaItem.Fields["Extension"].Value));
             }
+
+            properties.Add(PropertyId, new StringEnterspeedProperty(PropertyId, imageField.MediaItem.ID.ToString()));
 
             string mediaUrl = _urlService.GetMediaUrl(imageField.MediaItem, siteInfo);
             if (string.IsNullOrEmpty(mediaUrl))

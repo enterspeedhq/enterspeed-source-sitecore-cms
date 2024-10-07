@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Enterspeed.Source.Sdk.Api.Models.Properties;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
+using Enterspeed.Source.SitecoreCms.V9.Services.Contracts;
 using Enterspeed.Source.SitecoreCms.V9.Services.DataProperties.Formatters;
 using Sitecore.Data.Fields;
 using Sitecore.Data.Items;

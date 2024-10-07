@@ -1,6 +1,7 @@
 ﻿using System;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Services;
+using Enterspeed.Source.SitecoreCms.V9.Services.Contracts;
 using Sitecore.Data.Items;
 
 namespace Enterspeed.Source.SitecoreCms.V9.Models.Mappers

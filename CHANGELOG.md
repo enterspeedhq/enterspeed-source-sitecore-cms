@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+
+## [0.10.0 - 2024-10-07]
+* Added dependency constraint for Sitecore.Kernel and Sitecore.Mvc 1.0 > 9.0.0
+* Added job queue implementation
+* Added required field indication in Enterspeed configuration
+* Added media ids to media and file picker
+* Fixed an issue with a Sitecore job implementation
+* Removed auto publish of system templates
+
 ## [0.9.1 - 2022-08-22]
 * https://github.com/enterspeedhq/enterspeed-source-sitecore-cms/pull/24
 

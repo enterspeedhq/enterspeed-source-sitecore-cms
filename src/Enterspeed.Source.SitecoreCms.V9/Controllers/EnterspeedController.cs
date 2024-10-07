@@ -8,7 +8,7 @@ using Enterspeed.Source.SitecoreCms.V9.Extensions;
 using Enterspeed.Source.SitecoreCms.V9.Models;
 using Enterspeed.Source.SitecoreCms.V9.Models.Configuration;
 using Enterspeed.Source.SitecoreCms.V9.Models.Mappers;
-using Enterspeed.Source.SitecoreCms.V9.Services;
+using Enterspeed.Source.SitecoreCms.V9.Services.Contracts;
 using Sitecore.Abstractions;
 using Sitecore.Data;
 using Sitecore.Data.Items;
