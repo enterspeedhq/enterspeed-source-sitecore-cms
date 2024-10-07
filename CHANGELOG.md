@@ -8,6 +8,8 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 ## [0.10.0 - 2024-10-07]
 * Added dependency constraint for Sitecore.Kernel and Sitecore.Mvc 1.0 > 9.0.0
 * Added job queue implementation
+* Added required field indication in Enterspeed configuration
+* Added media ids to media and file picker
 * Fixed an issue with a Sitecore job implementation
 * Removed auto publish of system templates
 
